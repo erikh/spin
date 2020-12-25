@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"code.hollensbe.org/erikh/spin/pkg/testutil"
@@ -102,9 +103,7 @@ func TestAddToPackage(t *testing.T) {
 	}
 }
 
-func TestEnqueueNextSingleResource(t *testing.T) {
-	db := makeDB(t)
-
+func makePackages(t *testing.T, db *DB) ([]string, map[string]struct{}) {
 	packages := []string{}
 	uuidMap := map[string]struct{}{}
 
@@ -135,6 +134,13 @@ func TestEnqueueNextSingleResource(t *testing.T) {
 		packages = append(packages, u)
 	}
 
+	return packages, uuidMap
+}
+
+func TestEnqueueNextSingleResourceSerial(t *testing.T) {
+	db := makeDB(t)
+	packages, uuidMap := makePackages(t, db)
+
 	for _, pkg := range packages {
 		uuids, err := db.EnqueuePackage(pkg)
 		if err != nil {
@@ -145,6 +151,10 @@ func TestEnqueueNextSingleResource(t *testing.T) {
 			if _, ok := uuidMap[uuid]; !ok {
 				t.Fatal("enqueued bogus data")
 			}
+		}
+
+		if _, err := db.EnqueuePackage(pkg); err == nil {
+			t.Fatal("double-enqueue of package")
 		}
 	}
 
@@ -159,5 +169,66 @@ func TestEnqueueNextSingleResource(t *testing.T) {
 		}
 
 		delete(uuidMap, command.UUID)
+	}
+}
+
+func TestEnqueueNextSingleResourceParallel(t *testing.T) {
+	db := makeDB(t)
+	packages, uuidMap := makePackages(t, db)
+
+	for _, pkg := range packages {
+		uuids, err := db.EnqueuePackage(pkg)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, uuid := range uuids {
+			if _, ok := uuidMap[uuid]; !ok {
+				t.Fatal("enqueued bogus data")
+			}
+		}
+
+		if _, err := db.EnqueuePackage(pkg); err == nil {
+			t.Fatal("double-enqueue of package")
+		}
+	}
+
+	errChan := make(chan error, runtime.NumCPU())
+	resultChan := make(chan *Command, runtime.NumCPU())
+	doneChan := make(chan struct{}, runtime.NumCPU())
+
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go func() {
+			defer func() { doneChan <- struct{}{} }()
+			for {
+				command, err := db.NextQueueItem("resource")
+				if err != nil {
+					if err != gorm.ErrRecordNotFound {
+						errChan <- err
+					}
+					return
+				}
+
+				resultChan <- command
+			}
+
+		}()
+	}
+
+	doneCount := 0
+
+	for doneCount != runtime.NumCPU() {
+		select {
+		case err := <-errChan:
+			t.Fatal(err)
+		case result := <-resultChan:
+			if _, ok := uuidMap[result.UUID]; !ok {
+				t.Fatal("could not find queue item")
+			}
+
+			delete(uuidMap, result.UUID)
+		case <-doneChan:
+			doneCount++
+		}
 	}
 }

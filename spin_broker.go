@@ -17,8 +17,8 @@ type spinBrokersrvc struct {
 }
 
 // NewSpinBroker returns the spin-broker service implementation.
-func NewSpinBroker(logger *log.Logger, dbName string) (spinbroker.Service, error) {
-	db, err := db.New(dbName)
+func NewSpinBroker(logger *log.Logger, connConfig db.ConnConfig) (spinbroker.Service, error) {
+	db, err := db.New(connConfig)
 	if err != nil {
 		return nil, err
 	}

@@ -4,11 +4,20 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+type ConnConfig struct {
+	User     string
+	Password string
+	Database string
+	Host     string
+	Port     uint
+}
 
 type DB struct {
 	db *gorm.DB
@@ -20,8 +29,17 @@ var migrateTypes = []interface{}{
 	&QueueItem{},
 }
 
-func New(dbpath string) (*DB, error) {
-	db, err := gorm.Open(sqlite.Open(dbpath), &gorm.Config{})
+func New(config ConnConfig) (*DB, error) {
+	db, err := gorm.Open(
+		postgres.Open(
+			fmt.Sprintf(
+				"user=%s password=%s dbname=%s host=%s port=%d",
+				config.User,
+				config.Password,
+				config.Database,
+				config.Host,
+				config.Port,
+			)), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}

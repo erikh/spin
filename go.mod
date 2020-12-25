@@ -12,6 +12,7 @@ require (
 	golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e // indirect
 	google.golang.org/genproto v0.0.0-20201214200347-8c77b98c765d // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gorm.io/driver/postgres v1.0.6
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.20.8
 )
