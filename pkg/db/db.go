@@ -27,7 +27,9 @@ func New(dbpath string) (*DB, error) {
 	}
 
 	for _, m := range migrateTypes {
-		db.AutoMigrate(m)
+		if err := db.AutoMigrate(m); err != nil {
+			return nil, err
+		}
 	}
 
 	return &DB{db: db}, nil
@@ -35,13 +37,13 @@ func New(dbpath string) (*DB, error) {
 
 type StringArray []string
 
-func (sa StringArray) Scan(value interface{}) error {
+func (sa *StringArray) Scan(value interface{}) error {
 	content, ok := value.([]byte)
 	if !ok {
 		return errors.New("not an array")
 	}
 
-	return json.Unmarshal(content, &sa)
+	return json.Unmarshal(content, sa)
 }
 
 func (sa StringArray) Value() (driver.Value, error) {
