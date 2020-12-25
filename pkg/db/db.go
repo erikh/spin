@@ -81,8 +81,10 @@ func (ac *AddCommand) Validate() error {
 
 type QueueItem struct {
 	gorm.Model
-	UUID     string
-	Resource string
+
+	CommandID uint
+	Command   Command
+	Resource  string
 }
 
 func (db *DB) NewPackage() (string, error) {
@@ -137,7 +139,7 @@ func (db *DB) EnqueuePackage(pkgUUID string) ([]string, error) {
 		uuids = append(uuids, command.UUID)
 
 		qi := &QueueItem{
-			UUID:     command.UUID,
+			Command:  command,
 			Resource: command.Resource,
 		}
 
@@ -152,4 +154,25 @@ func (db *DB) EnqueuePackage(pkgUUID string) ([]string, error) {
 	}
 
 	return uuids, tx.Commit().Error
+}
+
+func (db *DB) NextQueueItem(resource string) (*Command, error) {
+	tx := db.db.Begin()
+	defer tx.Rollback()
+
+	if err := tx.Raw("lock table queue_items").Error; err != nil {
+		return nil, err
+	}
+
+	qi := &QueueItem{}
+
+	if err := tx.Where("resource = ?", resource).Preload("Command").Order("created_at").First(qi).Error; err != nil {
+		return nil, err
+	}
+
+	if err := tx.Delete(qi).Error; err != nil {
+		return nil, err
+	}
+
+	return &qi.Command, tx.Commit().Error
 }

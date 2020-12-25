@@ -101,3 +101,63 @@ func TestAddToPackage(t *testing.T) {
 		}
 	}
 }
+
+func TestEnqueueNextSingleResource(t *testing.T) {
+	db := makeDB(t)
+
+	packages := []string{}
+	uuidMap := map[string]struct{}{}
+
+	for i := 0; i < 100; i++ {
+		u, err := db.NewPackage()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for i := 0; i < 100; i++ {
+			u2, err := db.AddToPackage(u, &AddCommand{
+				Resource:   "resource",
+				Action:     testutil.RandomString(30, 5),
+				Parameters: []string{testutil.RandomString(30, 5)},
+			})
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if _, err := uuid.Parse(u2); err != nil {
+				t.Fatal(err)
+			}
+
+			uuidMap[u2] = struct{}{}
+		}
+
+		packages = append(packages, u)
+	}
+
+	for _, pkg := range packages {
+		uuids, err := db.EnqueuePackage(pkg)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, uuid := range uuids {
+			if _, ok := uuidMap[uuid]; !ok {
+				t.Fatal("enqueued bogus data")
+			}
+		}
+	}
+
+	for len(uuidMap) > 0 {
+		command, err := db.NextQueueItem("resource")
+		if err != nil {
+			t.Fatalf("Error: %v, uuidMap: %v", err, uuidMap)
+		}
+
+		if _, ok := uuidMap[command.UUID]; !ok {
+			t.Fatal("could not find queue item")
+		}
+
+		delete(uuidMap, command.UUID)
+	}
+}
