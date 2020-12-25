@@ -1,0 +1,260 @@
+swagger: "2.0"
+info:
+  title: Spin API service
+  description: HTTP service for controlling the spin service
+  version: ""
+host: localhost:8088
+consumes:
+- application/json
+- application/xml
+- application/gob
+produces:
+- application/json
+- application/xml
+- application/gob
+paths:
+  /add/{id}:
+    post:
+      tags:
+      - spin-broker
+      summary: add spin-broker
+      operationId: spin-broker#add
+      parameters:
+      - name: id
+        in: path
+        description: queue ID
+        required: true
+        type: string
+      - name: AddRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/SpinBrokerAddRequestBody'
+          required:
+          - resource
+          - action
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: string
+      schemes:
+      - http
+  /complete:
+    post:
+      tags:
+      - spin-broker
+      summary: complete spin-broker
+      operationId: spin-broker#complete
+      parameters:
+      - name: CompleteRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/SpinBrokerCompleteRequestBody'
+          required:
+          - id
+          - status
+      responses:
+        "200":
+          description: OK response.
+      schemes:
+      - http
+  /enqueue/{id}:
+    post:
+      tags:
+      - spin-broker
+      summary: enqueue spin-broker
+      operationId: spin-broker#enqueue
+      parameters:
+      - name: id
+        in: path
+        description: queue ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: array
+            items:
+              type: string
+              example: Quaerat itaque aut.
+      schemes:
+      - http
+  /enqueued/{id}:
+    post:
+      tags:
+      - spin-broker
+      summary: enqueued spin-broker
+      operationId: spin-broker#enqueued
+      parameters:
+      - name: id
+        in: path
+        description: queue ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: boolean
+      schemes:
+      - http
+  /new:
+    post:
+      tags:
+      - spin-broker
+      summary: new spin-broker
+      operationId: spin-broker#new
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: string
+      schemes:
+      - http
+  /next/{resource}:
+    get:
+      tags:
+      - spin-broker
+      summary: next spin-broker
+      operationId: spin-broker#next
+      parameters:
+      - name: resource
+        in: path
+        description: resource type
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/SpinBrokerNextResponseBody'
+            required:
+            - resource
+            - action
+      schemes:
+      - http
+  /status/{id}:
+    get:
+      tags:
+      - spin-broker
+      summary: status spin-broker
+      operationId: spin-broker#status
+      parameters:
+      - name: id
+        in: path
+        description: queue ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/SpinBrokerStatusResponseBody'
+            required:
+            - status
+      schemes:
+      - http
+definitions:
+  SpinBrokerAddRequestBody:
+    title: SpinBrokerAddRequestBody
+    type: object
+    properties:
+      action:
+        type: string
+        description: Action name
+        example: Rem qui quia voluptas.
+      parameters:
+        type: array
+        items:
+          type: string
+          example: Non dicta quisquam rem qui.
+        description: Action parameters
+        example:
+        - Est reprehenderit.
+        - Nesciunt omnis voluptatem ullam.
+        - Magnam sint ad ut nulla laboriosam.
+      resource:
+        type: string
+        description: Resource name
+        example: Assumenda voluptatem dignissimos ut doloremque harum et.
+    example:
+      action: Ullam odio tenetur aliquid consequatur.
+      parameters:
+      - Neque dolores id et autem ut debitis.
+      - Saepe occaecati impedit quas laborum.
+      resource: Deserunt vitae rerum illum sint.
+    required:
+    - resource
+    - action
+  SpinBrokerCompleteRequestBody:
+    title: SpinBrokerCompleteRequestBody
+    type: object
+    properties:
+      id:
+        type: string
+        description: queue ID
+        example: Ut hic assumenda assumenda ullam qui.
+      status:
+        type: boolean
+        description: status of work
+        example: false
+      status_reason:
+        type: string
+        description: reason of success/failure
+        example: Qui voluptate sunt itaque tenetur labore quia.
+    example:
+      id: Aperiam nobis soluta voluptatem.
+      status: false
+      status_reason: Non consequatur voluptatem.
+    required:
+    - id
+    - status
+  SpinBrokerNextResponseBody:
+    title: SpinBrokerNextResponseBody
+    type: object
+    properties:
+      action:
+        type: string
+        description: action name
+        example: Porro fugiat ex consequatur provident dignissimos.
+      parameters:
+        type: array
+        items:
+          type: string
+          example: Possimus velit quod sit.
+        description: parameters for action
+        example:
+        - Natus temporibus fugit occaecati ipsum qui.
+        - Non aut molestiae deleniti ad dolorem eos.
+        - Quam adipisci est incidunt sequi.
+        - Maxime aut non.
+      resource:
+        type: string
+        description: resource type
+        example: Dolor sit.
+    example:
+      action: Ratione et ex tempore ipsum in.
+      parameters:
+      - Maiores ut voluptatem sed et consectetur.
+      - Repellat vero.
+      - Doloribus impedit.
+      - Qui dolor ex consequatur.
+      resource: Voluptatibus nostrum commodi error omnis quis quia.
+    required:
+    - resource
+    - action
+  SpinBrokerStatusResponseBody:
+    title: SpinBrokerStatusResponseBody
+    type: object
+    properties:
+      status:
+        type: boolean
+        description: Pass/Fail status
+        example: false
+    example:
+      status: false
+    required:
+    - status
