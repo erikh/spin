@@ -58,7 +58,11 @@ type StringArray []string
 func (sa *StringArray) Scan(value interface{}) error {
 	content, ok := value.([]byte)
 	if !ok {
-		return errors.New("not an array")
+		c, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("not an array: %T", value)
+		}
+		content = []byte(c)
 	}
 
 	return json.Unmarshal(content, sa)
@@ -90,7 +94,7 @@ type Command struct {
 type AddCommand struct {
 	Resource   string
 	Action     string
-	Parameters StringArray `gorm:"type:text"`
+	Parameters StringArray
 }
 
 func (ac *AddCommand) Validate() error {
@@ -103,6 +107,7 @@ type QueueItem struct {
 	CommandID uint
 	Command   Command
 	Resource  string
+	Finished  bool
 }
 
 func (db *DB) NewPackage() (string, error) {
@@ -178,19 +183,26 @@ func (db *DB) NextQueueItem(resource string) (*Command, error) {
 	tx := db.db.Begin()
 	defer tx.Rollback()
 
-	if err := tx.Raw("lock table queue_items").Error; err != nil {
+	if err := tx.Raw("lock table queue_items in exclusive mode").Error; err != nil {
 		return nil, err
 	}
 
-	qi := &QueueItem{}
+	qi := struct {
+		CommandID uint
+	}{}
 
-	if err := tx.Where("resource = ?", resource).Preload("Command").Order("created_at").First(qi).Error; err != nil {
+	err := tx.Raw(`
+		delete from queue_items where resource = ? order by created_at limit 1 returning command_id
+	`, resource).Scan(&qi).Error
+	if err != nil {
 		return nil, err
 	}
 
-	if err := tx.Delete(qi).Error; err != nil {
+	var c Command
+
+	if err := tx.Where("id = ?", qi.CommandID).First(&c).Error; err != nil {
 		return nil, err
 	}
 
-	return &qi.Command, tx.Commit().Error
+	return &c, tx.Commit().Error
 }

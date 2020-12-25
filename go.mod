@@ -3,6 +3,7 @@ module code.hollensbe.org/erikh/spin
 go 1.15
 
 require (
+	github.com/erikh/duct v0.2.0
 	github.com/google/uuid v1.1.2
 	go.etcd.io/bbolt v1.3.5
 	goa.design/goa/v3 v3.2.6

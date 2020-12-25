@@ -1,33 +1,59 @@
 package db
 
 import (
-	"io/ioutil"
-	"os"
+	"context"
+	"fmt"
 	"reflect"
 	"runtime"
 	"testing"
+	"time"
 
 	"code.hollensbe.org/erikh/spin/pkg/testutil"
+	"github.com/erikh/duct"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func makeDB(t *testing.T) *DB {
-	f, err := ioutil.TempFile("", "")
-	if err != nil {
+func makeDB(t *testing.T) (*DB, ConnConfig) {
+	composer := duct.New(duct.Manifest{
+		{
+			Name: "spin-postgres",
+			Env: []string{
+				"POSTGRES_USER=spin",
+				"POSTGRES_PASSWORD=spin",
+				"POSTGRES_DB=spin",
+			},
+			Image:    "postgres:latest",
+			BootWait: 2 * time.Second,
+			PortForwards: map[int]int{
+				5432: 5432,
+			},
+		},
+	}, duct.WithNewNetwork("spin-db-test"))
+
+	go composer.HandleSignals(true)
+	if err := composer.Launch(context.Background()); err != nil {
 		t.Fatal(err)
 	}
-	os.Remove(f.Name())
+
 	t.Cleanup(func() {
-		os.Remove(f.Name())
+		composer.Teardown(context.Background())
 	})
 
-	db, err := New(f.Name())
+	config := ConnConfig{
+		User:     "spin",
+		Password: "spin",
+		Database: "spin",
+		Host:     "localhost",
+		Port:     5432,
+	}
+	db, err := New(config)
+
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	return db
+	return db, config
 }
 
 func TestDBInit(t *testing.T) {
@@ -40,7 +66,7 @@ type SATest struct {
 }
 
 func TestStringArray(t *testing.T) {
-	db := makeDB(t)
+	db, _ := makeDB(t)
 
 	if err := db.db.AutoMigrate(&SATest{}); err != nil {
 		t.Fatal(err)
@@ -63,7 +89,7 @@ func TestStringArray(t *testing.T) {
 }
 
 func TestNewPackage(t *testing.T) {
-	db := makeDB(t)
+	db, _ := makeDB(t)
 	for i := 0; i < 1000; i++ {
 		u, err := db.NewPackage()
 		if err != nil {
@@ -77,7 +103,7 @@ func TestNewPackage(t *testing.T) {
 }
 
 func TestAddToPackage(t *testing.T) {
-	db := makeDB(t)
+	db, _ := makeDB(t)
 
 	for i := 0; i < 100; i++ {
 		u, err := db.NewPackage()
@@ -138,7 +164,7 @@ func makePackages(t *testing.T, db *DB) ([]string, map[string]struct{}) {
 }
 
 func TestEnqueueNextSingleResourceSerial(t *testing.T) {
-	db := makeDB(t)
+	db, _ := makeDB(t)
 	packages, uuidMap := makePackages(t, db)
 
 	for _, pkg := range packages {
@@ -173,7 +199,7 @@ func TestEnqueueNextSingleResourceSerial(t *testing.T) {
 }
 
 func TestEnqueueNextSingleResourceParallel(t *testing.T) {
-	db := makeDB(t)
+	db, config := makeDB(t)
 	packages, uuidMap := makePackages(t, db)
 
 	for _, pkg := range packages {
@@ -200,6 +226,12 @@ func TestEnqueueNextSingleResourceParallel(t *testing.T) {
 	for i := 0; i < runtime.NumCPU(); i++ {
 		go func() {
 			defer func() { doneChan <- struct{}{} }()
+			db, err := New(config)
+			if err != nil {
+				errChan <- err
+				return
+			}
+
 			for {
 				command, err := db.NextQueueItem("resource")
 				if err != nil {
@@ -211,7 +243,6 @@ func TestEnqueueNextSingleResourceParallel(t *testing.T) {
 
 				resultChan <- command
 			}
-
 		}()
 	}
 
@@ -222,8 +253,9 @@ func TestEnqueueNextSingleResourceParallel(t *testing.T) {
 		case err := <-errChan:
 			t.Fatal(err)
 		case result := <-resultChan:
+			fmt.Println(result.UUID)
 			if _, ok := uuidMap[result.UUID]; !ok {
-				t.Fatal("could not find queue item")
+				t.Fatalf("could not find queue item %q: %v", result.UUID, uuidMap)
 			}
 
 			delete(uuidMap, result.UUID)
