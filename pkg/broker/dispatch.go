@@ -2,8 +2,12 @@ package broker
 
 import "errors"
 
+// Dispatcher encapsulates a dispatching system that consists of actions
+// (strings) that correspond to processed/validated properties and a processing
+// function.
 type Dispatcher map[string]Action
 
+// Action is the definition of the protocol action item.
 type Action struct {
 	RequiredParameters []string
 	OptionalParameters []string
@@ -11,11 +15,15 @@ type Action struct {
 }
 
 var (
-	ErrActionNotFound           = errors.New("Action not found")
+	// ErrActionNotFound is returned when an action cannot be dispatched.
+	ErrActionNotFound = errors.New("Action not found")
+	// ErrMissingRequiredParameter is for when required parameters are missing.
 	ErrMissingRequiredParameter = errors.New("Required parameters missing")
-	ErrInvalidParameter         = errors.New("Invalid parameters")
+	// ErrInvalidParameter is for when parameters are supplied that are not allowed.
+	ErrInvalidParameter = errors.New("Invalid parameters")
 )
 
+// Dispatch dispatches the Command, validating the parameters beforehand.
 func (d Dispatcher) Dispatch(c Command) error {
 	action, ok := d[c.Action]
 	if !ok {
