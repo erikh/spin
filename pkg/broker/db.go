@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	BucketQueue    = "queue_items"
+	BucketQueue    = "queues"
 	BucketCommands = "commands"
 	BucketPackages = "packages"
 	BucketStatuses = "statuses"
@@ -66,14 +66,37 @@ func (db *DB) Get(bucket, key string, value interface{}) error {
 	})
 }
 
-func (db *DB) Insert(bucket string, value interface{}) error {
-	return db.db.Update(func(tx *bbolt.Tx) error {
+type Queue struct {
+	name []byte
+	db   *DB
+}
+
+func (db *DB) Queue(name string) (*Queue, error) {
+	err := db.db.Update(func(tx *bbolt.Tx) error {
+		_, err := tx.Bucket([]byte(BucketQueue)).CreateBucketIfNotExists([]byte(name))
+		return err
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Queue{
+		db:   db,
+		name: []byte(name),
+	}, nil
+}
+
+func (q *Queue) Insert(value interface{}) error {
+	return q.db.db.Update(func(tx *bbolt.Tx) error {
 		content, err := json.Marshal(value)
 		if err != nil {
 			return err
 		}
 
-		seq, err := tx.Bucket([]byte(bucket)).NextSequence()
+		queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket([]byte(q.name))
+
+		seq, err := queueBucket.NextSequence()
 		if err != nil {
 			return err
 		}
@@ -81,23 +104,24 @@ func (db *DB) Insert(bucket string, value interface{}) error {
 		key := make([]byte, 8)
 		binary.BigEndian.PutUint64(key, seq)
 
-		return tx.Bucket([]byte(bucket)).Put(key, content)
+		return queueBucket.Put(key, content)
 	})
 }
 
-func (db *DB) Next(bucket string, data interface{}) error {
-	tx, err := db.db.Begin(true)
+func (q *Queue) Next(data interface{}) error {
+	tx, err := q.db.db.Begin(true)
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	key, value := tx.Bucket([]byte(bucket)).Cursor().First()
+	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket([]byte(q.name))
+	key, value := queueBucket.Cursor().First()
 	if key == nil {
 		return ErrRecordNotFound
 	}
 
-	if err := tx.Bucket([]byte(bucket)).Delete(key); err != nil {
+	if err := queueBucket.Delete(key); err != nil {
 		return err
 	}
 

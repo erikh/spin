@@ -54,9 +54,14 @@ func TestNext(t *testing.T) {
 
 	var values []string
 
+	queue, err := db.Queue("std")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	for i := 0; i < 10000; i++ {
 		value := testutil.RandomString(30, 5)
-		if err := db.Insert(BucketCommands, value); err != nil {
+		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
 
@@ -65,7 +70,7 @@ func TestNext(t *testing.T) {
 
 	for _, value := range values {
 		var nextValue string
-		if err := db.Next(BucketCommands, &nextValue); err != nil {
+		if err := queue.Next(&nextValue); err != nil {
 			t.Fatal(err)
 		}
 
@@ -80,9 +85,14 @@ func TestNextParallel(t *testing.T) {
 
 	values := map[string]struct{}{}
 
+	queue, err := db.Queue("std")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	for i := 0; i < 10000; i++ {
 		value := testutil.RandomString(30, 5)
-		if err := db.Insert(BucketCommands, value); err != nil {
+		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
 
@@ -98,7 +108,7 @@ func TestNextParallel(t *testing.T) {
 		go func() {
 			for {
 				var nextValue string
-				if err := db.Next(BucketCommands, &nextValue); err != nil {
+				if err := queue.Next(&nextValue); err != nil {
 					if err != ErrRecordNotFound {
 						errChan <- err
 					}
@@ -126,7 +136,7 @@ func TestNextParallel(t *testing.T) {
 
 	var nextValue string
 
-	if err := db.Next(BucketCommands, &nextValue); err != ErrRecordNotFound {
+	if err := queue.Next(&nextValue); err != ErrRecordNotFound {
 		t.Fatalf("invalid error occurred after draining queue: %v", err)
 	}
 }
