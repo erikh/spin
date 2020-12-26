@@ -282,6 +282,16 @@ func TestPackage(t *testing.T) {
 			if !reflect.DeepEqual(*command, c) {
 				t.Fatalf("values did not match: %v %v", *command, c)
 			}
+
+			if err := db.FinishCommand(c.UUID, true, ""); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	for _, pkg := range packages {
+		if err := pkg.Finished(); err != nil {
+			t.Fatal(err)
 		}
 	}
 }

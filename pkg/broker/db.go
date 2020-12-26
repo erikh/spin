@@ -18,7 +18,10 @@ const (
 
 var MakeBuckets = []string{BucketQueue, BucketCommands, BucketPackages, BucketStatuses}
 
-var ErrRecordNotFound = errors.New("Record not found")
+var (
+	ErrRecordNotFound      = errors.New("Record not found")
+	ErrRecordAlreadyExists = errors.New("Record already exists")
+)
 
 type DB struct {
 	db *bbolt.DB
@@ -64,6 +67,66 @@ func (db *DB) Get(bucket, key string, value interface{}) error {
 		}
 
 		return json.Unmarshal(content, value)
+	})
+}
+
+type status struct {
+	Status bool
+	Reason string
+}
+
+type ErrorStatus struct {
+	Reason string
+}
+
+func (es ErrorStatus) Error() string {
+	return es.Reason
+}
+
+func (db *DB) CommandStatus(uuid string) error {
+	return db.db.View(func(tx *bbolt.Tx) error {
+		value := tx.Bucket([]byte(BucketStatuses)).Get([]byte(uuid))
+		if value == nil {
+			return ErrRecordNotFound
+		}
+
+		var s status
+
+		if err := json.Unmarshal(value, &s); err != nil {
+			return err
+		}
+
+		if !s.Status {
+			return ErrorStatus{s.Reason}
+		}
+
+		return nil
+	})
+}
+
+func (db *DB) FinishCommand(uuid string, statusResult bool, reason string) error {
+	return db.db.Update(func(tx *bbolt.Tx) error {
+		value := tx.Bucket([]byte(BucketCommands)).Get([]byte(uuid))
+		if value == nil {
+			return ErrRecordNotFound
+		}
+
+		value = tx.Bucket([]byte(BucketStatuses)).Get([]byte(uuid))
+		if value != nil {
+			return ErrRecordAlreadyExists
+		}
+
+		s := status{
+			Status: statusResult,
+			Reason: reason,
+		}
+
+		content, err := json.Marshal(s)
+		if err != nil {
+			return err
+		}
+
+		return tx.Bucket([]byte(BucketStatuses)).Put([]byte(uuid), content)
 	})
 }
 
@@ -190,6 +253,21 @@ func (p *Package) Enqueue() error {
 		}
 
 		if err := queue.Insert(c); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Package) Finished() error {
+	commands, err := p.List()
+	if err != nil {
+		return err
+	}
+
+	for _, c := range commands {
+		if err := p.db.CommandStatus(c.UUID); err != nil {
 			return err
 		}
 	}
