@@ -22,7 +22,6 @@ type Server struct {
 	New      http.Handler
 	Add      http.Handler
 	Enqueue  http.Handler
-	Enqueued http.Handler
 	Status   http.Handler
 	Next     http.Handler
 	Complete http.Handler
@@ -64,7 +63,6 @@ func New(
 			{"New", "POST", "/new"},
 			{"Add", "POST", "/add/{id}"},
 			{"Enqueue", "POST", "/enqueue/{id}"},
-			{"Enqueued", "POST", "/enqueued/{id}"},
 			{"Status", "GET", "/status/{id}"},
 			{"Next", "GET", "/next/{resource}"},
 			{"Complete", "POST", "/complete"},
@@ -72,7 +70,6 @@ func New(
 		New:      NewNewHandler(e.New, mux, decoder, encoder, errhandler, formatter),
 		Add:      NewAddHandler(e.Add, mux, decoder, encoder, errhandler, formatter),
 		Enqueue:  NewEnqueueHandler(e.Enqueue, mux, decoder, encoder, errhandler, formatter),
-		Enqueued: NewEnqueuedHandler(e.Enqueued, mux, decoder, encoder, errhandler, formatter),
 		Status:   NewStatusHandler(e.Status, mux, decoder, encoder, errhandler, formatter),
 		Next:     NewNextHandler(e.Next, mux, decoder, encoder, errhandler, formatter),
 		Complete: NewCompleteHandler(e.Complete, mux, decoder, encoder, errhandler, formatter),
@@ -87,7 +84,6 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.New = m(s.New)
 	s.Add = m(s.Add)
 	s.Enqueue = m(s.Enqueue)
-	s.Enqueued = m(s.Enqueued)
 	s.Status = m(s.Status)
 	s.Next = m(s.Next)
 	s.Complete = m(s.Complete)
@@ -98,7 +94,6 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountNewHandler(mux, h.New)
 	MountAddHandler(mux, h.Add)
 	MountEnqueueHandler(mux, h.Enqueue)
-	MountEnqueuedHandler(mux, h.Enqueued)
 	MountStatusHandler(mux, h.Status)
 	MountNextHandler(mux, h.Next)
 	MountCompleteHandler(mux, h.Complete)
@@ -229,57 +224,6 @@ func NewEnqueueHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "enqueue")
-		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-broker")
-		payload, err := decodeRequest(r)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		res, err := endpoint(ctx, payload)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		if err := encodeResponse(ctx, w, res); err != nil {
-			errhandler(ctx, w, err)
-		}
-	})
-}
-
-// MountEnqueuedHandler configures the mux to serve the "spin-broker" service
-// "enqueued" endpoint.
-func MountEnqueuedHandler(mux goahttp.Muxer, h http.Handler) {
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
-	mux.Handle("POST", "/enqueued/{id}", f)
-}
-
-// NewEnqueuedHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-broker" service "enqueued" endpoint.
-func NewEnqueuedHandler(
-	endpoint goa.Endpoint,
-	mux goahttp.Muxer,
-	decoder func(*http.Request) goahttp.Decoder,
-	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
-	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
-) http.Handler {
-	var (
-		decodeRequest  = DecodeEnqueuedRequest(mux, decoder)
-		encodeResponse = EncodeEnqueuedResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
-	)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "enqueued")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-broker")
 		payload, err := decodeRequest(r)
 		if err != nil {

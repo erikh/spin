@@ -74,11 +74,6 @@ func (s *spinBrokersrvc) Enqueue(ctx context.Context, p *spinbroker.EnqueuePaylo
 	return uuids, pkg.Enqueue()
 }
 
-// Enqueued
-func (s *spinBrokersrvc) Enqueued(ctx context.Context, p *spinbroker.EnqueuedPayload) (bool, error) {
-	return false, http.ErrNotSupported
-}
-
 // Status
 func (s *spinBrokersrvc) Status(ctx context.Context, p *spinbroker.StatusPayload) (*spinbroker.StatusResult, error) {
 	return nil, http.ErrNotSupported

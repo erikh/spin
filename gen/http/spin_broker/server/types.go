@@ -102,14 +102,6 @@ func NewEnqueuePayload(id string) *spinbroker.EnqueuePayload {
 	return v
 }
 
-// NewEnqueuedPayload builds a spin-broker service enqueued endpoint payload.
-func NewEnqueuedPayload(id string) *spinbroker.EnqueuedPayload {
-	v := &spinbroker.EnqueuedPayload{}
-	v.ID = id
-
-	return v
-}
-
 // NewStatusPayload builds a spin-broker service status endpoint payload.
 func NewStatusPayload(id string) *spinbroker.StatusPayload {
 	v := &spinbroker.StatusPayload{}

@@ -19,8 +19,6 @@ type Service interface {
 	Add(context.Context, *AddPayload) (res string, err error)
 	// Enqueue implements enqueue.
 	Enqueue(context.Context, *EnqueuePayload) (res []string, err error)
-	// Enqueued implements enqueued.
-	Enqueued(context.Context, *EnqueuedPayload) (res bool, err error)
 	// Status implements status.
 	Status(context.Context, *StatusPayload) (res *StatusResult, err error)
 	// Next implements next.
@@ -37,7 +35,7 @@ const ServiceName = "spin-broker"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"new", "add", "enqueue", "enqueued", "status", "next", "complete"}
+var MethodNames = [6]string{"new", "add", "enqueue", "status", "next", "complete"}
 
 // AddPayload is the payload type of the spin-broker service add method.
 type AddPayload struct {
@@ -53,13 +51,6 @@ type AddPayload struct {
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.
 type EnqueuePayload struct {
-	// queue ID
-	ID string
-}
-
-// EnqueuedPayload is the payload type of the spin-broker service enqueued
-// method.
-type EnqueuedPayload struct {
 	// queue ID
 	ID string
 }

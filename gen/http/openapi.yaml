@@ -79,26 +79,7 @@ paths:
             type: array
             items:
               type: string
-              example: Quaerat itaque aut.
-      schemes:
-      - http
-  /enqueued/{id}:
-    post:
-      tags:
-      - spin-broker
-      summary: enqueued spin-broker
-      operationId: spin-broker#enqueued
-      parameters:
-      - name: id
-        in: path
-        description: queue ID
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            type: boolean
+              example: Aut non dicta quisquam rem qui ut.
       schemes:
       - http
   /new:
@@ -165,27 +146,28 @@ definitions:
       action:
         type: string
         description: Action name
-        example: Rem qui quia voluptas.
+        example: Vitae sunt amet nostrum amet.
       parameters:
         type: array
         items:
           type: string
-          example: Non dicta quisquam rem qui.
+          example: Itaque dolorem odio.
         description: Action parameters
         example:
-        - Est reprehenderit.
-        - Nesciunt omnis voluptatem ullam.
-        - Magnam sint ad ut nulla laboriosam.
+        - Et rerum ut voluptatem.
+        - Fugit fuga impedit dolor.
+        - Quo non.
       resource:
         type: string
         description: Resource name
-        example: Assumenda voluptatem dignissimos ut doloremque harum et.
+        example: Ipsam dolor distinctio.
     example:
-      action: Ullam odio tenetur aliquid consequatur.
+      action: Labore qui nobis.
       parameters:
-      - Neque dolores id et autem ut debitis.
-      - Saepe occaecati impedit quas laborum.
-      resource: Deserunt vitae rerum illum sint.
+      - Dolor assumenda voluptatem dignissimos.
+      - Doloremque harum et tempora.
+      - Qui quia.
+      resource: Rerum officia iusto minima.
     required:
     - resource
     - action
@@ -196,7 +178,7 @@ definitions:
       id:
         type: string
         description: queue ID
-        example: Ut hic assumenda assumenda ullam qui.
+        example: Non aut molestiae deleniti ad dolorem eos.
       status:
         type: boolean
         description: status of work
@@ -204,11 +186,11 @@ definitions:
       status_reason:
         type: string
         description: reason of success/failure
-        example: Qui voluptate sunt itaque tenetur labore quia.
+        example: Adipisci est incidunt sequi.
     example:
-      id: Aperiam nobis soluta voluptatem.
+      id: Maxime aut non.
       status: false
-      status_reason: Non consequatur voluptatem.
+      status_reason: Nostrum commodi error omnis quis quia.
     required:
     - id
     - status
@@ -219,30 +201,29 @@ definitions:
       action:
         type: string
         description: action name
-        example: Porro fugiat ex consequatur provident dignissimos.
+        example: Ullam amet magnam.
       parameters:
         type: array
         items:
           type: string
-          example: Possimus velit quod sit.
+          example: Ad ut nulla laboriosam non deserunt vitae.
         description: parameters for action
         example:
-        - Natus temporibus fugit occaecati ipsum qui.
-        - Non aut molestiae deleniti ad dolorem eos.
-        - Quam adipisci est incidunt sequi.
-        - Maxime aut non.
+        - Sint ducimus ullam odio.
+        - Aliquid consequatur atque quam neque.
+        - Id et autem ut debitis.
+        - Saepe occaecati impedit quas laborum.
       resource:
         type: string
         description: resource type
-        example: Dolor sit.
+        example: Dolor nesciunt omnis.
     example:
-      action: Ratione et ex tempore ipsum in.
+      action: Voluptatem quibusdam dolor.
       parameters:
-      - Maiores ut voluptatem sed et consectetur.
-      - Repellat vero.
-      - Doloribus impedit.
-      - Qui dolor ex consequatur.
-      resource: Voluptatibus nostrum commodi error omnis quis quia.
+      - Porro fugiat ex consequatur provident dignissimos.
+      - Possimus velit quod sit.
+      - Mollitia natus temporibus fugit occaecati ipsum qui.
+      resource: Quaerat itaque aut.
     required:
     - resource
     - action

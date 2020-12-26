@@ -49,18 +49,6 @@ var _ = Service("spin-broker", func() {
 		})
 	})
 
-	Method("enqueued", func() {
-		Payload(func() {
-			Attribute("id", String, "queue ID")
-			Required("id")
-		})
-		Result(Boolean)
-		HTTP(func() {
-			POST("/enqueued/{id}")
-			Response(StatusOK)
-		})
-	})
-
 	Method("status", func() {
 		Payload(func() {
 			Attribute("id", String, "queue ID")

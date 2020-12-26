@@ -20,8 +20,8 @@ paths:
         schema:
           type: string
           description: queue ID
-          example: Et nobis quia neque excepturi.
-        example: Expedita a.
+          example: Dicta id sint rerum rerum.
+        example: Eius officiis esse labore voluptas perferendis.
       requestBody:
         required: true
         content:
@@ -29,12 +29,13 @@ paths:
             schema:
               $ref: '#/components/schemas/AddRequestBody'
             example:
-              action: Ullam maxime corrupti molestias est sunt.
+              action: Temporibus ipsa quibusdam nostrum.
               parameters:
-              - Soluta quia eum temporibus.
-              - Odit eligendi.
-              - Reprehenderit molestiae quia tempore.
-              resource: Dolore saepe voluptatum dolorem rerum et.
+              - Est officia.
+              - Est esse similique officiis.
+              - Saepe voluptatum dolorem rerum et vel.
+              - Maxime corrupti molestias est sunt ab repellat.
+              resource: Sint quisquam ducimus autem consequatur reprehenderit.
       responses:
         "200":
           description: OK response.
@@ -42,8 +43,9 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Vel vel illum voluptatem voluptatibus.
-              example: Similique corrupti ab soluta vel qui vel.
+                example: Consequatur quo exercitationem occaecati magnam molestiae
+                  qui.
+              example: Iusto adipisci sapiente temporibus.
   /complete:
     post:
       tags:
@@ -57,9 +59,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CompleteRequestBody'
             example:
-              id: Rerum officia iusto minima.
+              id: Quibusdam reiciendis ipsum commodi.
               status: true
-              status_reason: Qui nobis consequatur omnis.
+              status_reason: Consequatur sunt.
       responses:
         "200":
           description: OK response.
@@ -77,8 +79,8 @@ paths:
         schema:
           type: string
           description: queue ID
-          example: Dolores nihil autem dolorem soluta.
-        example: Vero sit ratione molestiae asperiores ut temporibus.
+          example: Aut minima recusandae et.
+        example: Fugit quis.
       responses:
         "200":
           description: OK response.
@@ -88,40 +90,16 @@ paths:
                 type: array
                 items:
                   type: string
-                  example: Minima cum delectus occaecati enim.
+                  example: Iure aut voluptas qui.
                 example:
-                - Vero amet quia quis omnis suscipit est.
-                - Dicta id sint rerum rerum.
-                - Eius officiis esse labore voluptas perferendis.
-                - Iusto adipisci sapiente temporibus.
+                - Inventore cupiditate soluta ut corporis sit.
+                - Sit recusandae eum repellat.
+                - Provident sint.
+                - Hic minus facere animi quas tempora.
               example:
-              - Ab quo et.
-              - Quidem nulla numquam rerum.
-  /enqueued/{id}:
-    post:
-      tags:
-      - spin-broker
-      summary: enqueued spin-broker
-      operationId: spin-broker#enqueued
-      parameters:
-      - name: id
-        in: path
-        description: queue ID
-        required: true
-        schema:
-          type: string
-          description: queue ID
-          example: Corporis aut enim.
-        example: Ipsa enim non maxime est.
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                type: boolean
-                example: false
-              example: true
+              - Error modi magni voluptas corrupti et.
+              - Et et occaecati.
+              - Quo dolore soluta consectetur.
   /new:
     post:
       tags:
@@ -135,8 +113,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Eos iste illum omnis suscipit.
-              example: Assumenda pariatur.
+                example: Ratione et ex tempore ipsum in.
+              example: Vero amet quia quis omnis suscipit est.
   /next/{resource}:
     get:
       tags:
@@ -151,8 +129,8 @@ paths:
         schema:
           type: string
           description: resource type
-          example: Amet et id.
-        example: Alias vel.
+          example: Et nobis quia neque excepturi.
+        example: Expedita a.
       responses:
         "200":
           description: OK response.
@@ -161,13 +139,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddRequestBody'
               example:
-                action: Ipsam dolor distinctio.
+                action: Eum officiis eligendi.
                 parameters:
-                - Sunt amet nostrum amet sit itaque dolorem.
-                - Laborum et et rerum ut voluptatem.
-                - Fugit fuga impedit dolor.
-                - Quo non.
-                resource: Et consequatur sunt.
+                - Qui ipsum.
+                - Voluptatibus quis at distinctio.
+                resource: Non deleniti consequuntur qui doloremque.
   /status/{id}:
     get:
       tags:
@@ -182,8 +158,8 @@ paths:
         schema:
           type: string
           description: queue ID
-          example: Reprehenderit vitae.
-        example: Aut adipisci.
+          example: Quia non nihil vitae nesciunt.
+        example: Assumenda pariatur.
       responses:
         "200":
           description: OK response.
@@ -201,27 +177,28 @@ components:
         action:
           type: string
           description: Action name
-          example: Neque reiciendis ipsum.
+          example: Consectetur et.
         parameters:
           type: array
           items:
             type: string
-            example: Consequatur quo exercitationem occaecati magnam molestiae qui.
+            example: Vero alias doloribus impedit impedit qui dolor.
           description: Action parameters
           example:
-          - Aut voluptas qui fuga unde.
-          - Cupiditate soluta ut corporis.
+          - Non ut hic.
+          - Assumenda ullam qui et.
+          - Qui voluptate sunt itaque tenetur labore quia.
+          - Aperiam nobis soluta voluptatem.
         resource:
           type: string
           description: Resource name
-          example: Repellendus eaque nesciunt quia.
+          example: Et maiores ut voluptatem sed.
       example:
-        action: Sint eveniet hic minus facere.
+        action: Iste illum omnis.
         parameters:
-        - Tempora nisi aperiam occaecati.
-        - Qui praesentium temporibus esse reprehenderit.
-        - Molestias eum voluptatem qui nihil officia.
-        resource: Non sit recusandae eum repellat earum.
+        - Repellendus eaque nesciunt quia.
+        - Neque reiciendis ipsum.
+        resource: Natus non consequatur voluptatem nostrum.
       required:
       - resource
       - action
@@ -231,7 +208,7 @@ components:
         id:
           type: string
           description: queue ID
-          example: Et qui fugit quis dignissimos qui.
+          example: Deserunt qui praesentium temporibus esse.
         status:
           type: boolean
           description: status of work
@@ -239,11 +216,11 @@ components:
         status_reason:
           type: string
           description: reason of success/failure
-          example: Magni voluptas corrupti et voluptatibus et.
+          example: Molestias eum voluptatem qui nihil officia.
       example:
-        id: Occaecati qui quo dolore soluta.
-        status: true
-        status_reason: Quia non nihil vitae nesciunt.
+        id: Vel vel illum voluptatem voluptatibus.
+        status: false
+        status_reason: Cum delectus occaecati enim in.
       required:
       - id
       - status
@@ -255,6 +232,6 @@ components:
           description: Pass/Fail status
           example: true
       example:
-        status: true
+        status: false
       required:
       - status

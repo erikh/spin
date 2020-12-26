@@ -23,7 +23,7 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `spin-broker (new|add|enqueue|enqueued|status|next|complete)
+	return `spin-broker (new|add|enqueue|status|next|complete)
 `
 }
 
@@ -54,9 +54,6 @@ func ParseEndpoint(
 		spinBrokerEnqueueFlags  = flag.NewFlagSet("enqueue", flag.ExitOnError)
 		spinBrokerEnqueueIDFlag = spinBrokerEnqueueFlags.String("id", "REQUIRED", "queue ID")
 
-		spinBrokerEnqueuedFlags  = flag.NewFlagSet("enqueued", flag.ExitOnError)
-		spinBrokerEnqueuedIDFlag = spinBrokerEnqueuedFlags.String("id", "REQUIRED", "queue ID")
-
 		spinBrokerStatusFlags  = flag.NewFlagSet("status", flag.ExitOnError)
 		spinBrokerStatusIDFlag = spinBrokerStatusFlags.String("id", "REQUIRED", "queue ID")
 
@@ -70,7 +67,6 @@ func ParseEndpoint(
 	spinBrokerNewFlags.Usage = spinBrokerNewUsage
 	spinBrokerAddFlags.Usage = spinBrokerAddUsage
 	spinBrokerEnqueueFlags.Usage = spinBrokerEnqueueUsage
-	spinBrokerEnqueuedFlags.Usage = spinBrokerEnqueuedUsage
 	spinBrokerStatusFlags.Usage = spinBrokerStatusUsage
 	spinBrokerNextFlags.Usage = spinBrokerNextUsage
 	spinBrokerCompleteFlags.Usage = spinBrokerCompleteUsage
@@ -118,9 +114,6 @@ func ParseEndpoint(
 			case "enqueue":
 				epf = spinBrokerEnqueueFlags
 
-			case "enqueued":
-				epf = spinBrokerEnqueuedFlags
-
 			case "status":
 				epf = spinBrokerStatusFlags
 
@@ -164,9 +157,6 @@ func ParseEndpoint(
 			case "enqueue":
 				endpoint = c.Enqueue()
 				data, err = spinbrokerc.BuildEnqueuePayload(*spinBrokerEnqueueIDFlag)
-			case "enqueued":
-				endpoint = c.Enqueued()
-				data, err = spinbrokerc.BuildEnqueuedPayload(*spinBrokerEnqueuedIDFlag)
 			case "status":
 				endpoint = c.Status()
 				data, err = spinbrokerc.BuildStatusPayload(*spinBrokerStatusIDFlag)
@@ -197,7 +187,6 @@ COMMAND:
     new: New implements new.
     add: Add implements add.
     enqueue: Enqueue implements enqueue.
-    enqueued: Enqueued implements enqueued.
     status: Status implements status.
     next: Next implements next.
     complete: Complete implements complete.
@@ -225,14 +214,15 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
-      "action": "Ullam maxime corrupti molestias est sunt.",
+      "action": "Temporibus ipsa quibusdam nostrum.",
       "parameters": [
-         "Soluta quia eum temporibus.",
-         "Odit eligendi.",
-         "Reprehenderit molestiae quia tempore."
+         "Est officia.",
+         "Est esse similique officiis.",
+         "Saepe voluptatum dolorem rerum et vel.",
+         "Maxime corrupti molestias est sunt ab repellat."
       ],
-      "resource": "Dolore saepe voluptatum dolorem rerum et."
-   }' --id "Aliquam repellat officiis qui."
+      "resource": "Sint quisquam ducimus autem consequatur reprehenderit."
+   }' --id "Quia eum temporibus."
 `, os.Args[0])
 }
 
@@ -243,18 +233,7 @@ Enqueue implements enqueue.
     -id STRING: queue ID
 
 Example:
-    `+os.Args[0]+` spin-broker enqueue --id "Natus cum maxime ea."
-`, os.Args[0])
-}
-
-func spinBrokerEnqueuedUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker enqueued -id STRING
-
-Enqueued implements enqueued.
-    -id STRING: queue ID
-
-Example:
-    `+os.Args[0]+` spin-broker enqueued --id "Quia soluta veniam adipisci quia."
+    `+os.Args[0]+` spin-broker enqueue --id "Veniam natus."
 `, os.Args[0])
 }
 
@@ -265,7 +244,7 @@ Status implements status.
     -id STRING: queue ID
 
 Example:
-    `+os.Args[0]+` spin-broker status --id "Velit eum officiis eligendi consequatur autem."
+    `+os.Args[0]+` spin-broker status --id "Ipsa blanditiis."
 `, os.Args[0])
 }
 
@@ -276,7 +255,7 @@ Next implements next.
     -resource STRING: resource type
 
 Example:
-    `+os.Args[0]+` spin-broker next --resource "At distinctio magni quibusdam reiciendis ipsum commodi."
+    `+os.Args[0]+` spin-broker next --resource "Quia recusandae autem neque adipisci."
 `, os.Args[0])
 }
 
@@ -288,9 +267,9 @@ Complete implements complete.
 
 Example:
     `+os.Args[0]+` spin-broker complete --body '{
-      "id": "Rerum officia iusto minima.",
+      "id": "Quibusdam reiciendis ipsum commodi.",
       "status": true,
-      "status_reason": "Qui nobis consequatur omnis."
+      "status_reason": "Consequatur sunt."
    }'
 `, os.Args[0])
 }

@@ -18,19 +18,17 @@ type Client struct {
 	NewEndpoint      goa.Endpoint
 	AddEndpoint      goa.Endpoint
 	EnqueueEndpoint  goa.Endpoint
-	EnqueuedEndpoint goa.Endpoint
 	StatusEndpoint   goa.Endpoint
 	NextEndpoint     goa.Endpoint
 	CompleteEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "spin-broker" service client given the endpoints.
-func NewClient(new, add, enqueue, enqueued, status, next, complete goa.Endpoint) *Client {
+func NewClient(new, add, enqueue, status, next, complete goa.Endpoint) *Client {
 	return &Client{
 		NewEndpoint:      new,
 		AddEndpoint:      add,
 		EnqueueEndpoint:  enqueue,
-		EnqueuedEndpoint: enqueued,
 		StatusEndpoint:   status,
 		NextEndpoint:     next,
 		CompleteEndpoint: complete,
@@ -65,16 +63,6 @@ func (c *Client) Enqueue(ctx context.Context, p *EnqueuePayload) (res []string, 
 		return
 	}
 	return ires.([]string), nil
-}
-
-// Enqueued calls the "enqueued" endpoint of the "spin-broker" service.
-func (c *Client) Enqueued(ctx context.Context, p *EnqueuedPayload) (res bool, err error) {
-	var ires interface{}
-	ires, err = c.EnqueuedEndpoint(ctx, p)
-	if err != nil {
-		return
-	}
-	return ires.(bool), nil
 }
 
 // Status calls the "status" endpoint of the "spin-broker" service.

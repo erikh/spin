@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Ullam maxime corrupti molestias est sunt.\",\n      \"parameters\": [\n         \"Soluta quia eum temporibus.\",\n         \"Odit eligendi.\",\n         \"Reprehenderit molestiae quia tempore.\"\n      ],\n      \"resource\": \"Dolore saepe voluptatum dolorem rerum et.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Temporibus ipsa quibusdam nostrum.\",\n      \"parameters\": [\n         \"Est officia.\",\n         \"Est esse similique officiis.\",\n         \"Saepe voluptatum dolorem rerum et vel.\",\n         \"Maxime corrupti molestias est sunt ab repellat.\"\n      ],\n      \"resource\": \"Sint quisquam ducimus autem consequatur reprehenderit.\"\n   }'")
 		}
 	}
 	var id string
@@ -52,19 +52,6 @@ func BuildEnqueuePayload(spinBrokerEnqueueID string) (*spinbroker.EnqueuePayload
 		id = spinBrokerEnqueueID
 	}
 	v := &spinbroker.EnqueuePayload{}
-	v.ID = id
-
-	return v, nil
-}
-
-// BuildEnqueuedPayload builds the payload for the spin-broker enqueued
-// endpoint from CLI flags.
-func BuildEnqueuedPayload(spinBrokerEnqueuedID string) (*spinbroker.EnqueuedPayload, error) {
-	var id string
-	{
-		id = spinBrokerEnqueuedID
-	}
-	v := &spinbroker.EnqueuedPayload{}
 	v.ID = id
 
 	return v, nil
@@ -104,7 +91,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Rerum officia iusto minima.\",\n      \"status\": true,\n      \"status_reason\": \"Qui nobis consequatur omnis.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Quibusdam reiciendis ipsum commodi.\",\n      \"status\": true,\n      \"status_reason\": \"Consequatur sunt.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

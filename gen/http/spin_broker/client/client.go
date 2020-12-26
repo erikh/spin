@@ -27,10 +27,6 @@ type Client struct {
 	// endpoint.
 	EnqueueDoer goahttp.Doer
 
-	// Enqueued Doer is the HTTP client used to make requests to the enqueued
-	// endpoint.
-	EnqueuedDoer goahttp.Doer
-
 	// Status Doer is the HTTP client used to make requests to the status endpoint.
 	StatusDoer goahttp.Doer
 
@@ -64,7 +60,6 @@ func NewClient(
 		NewDoer:             doer,
 		AddDoer:             doer,
 		EnqueueDoer:         doer,
-		EnqueuedDoer:        doer,
 		StatusDoer:          doer,
 		NextDoer:            doer,
 		CompleteDoer:        doer,
@@ -133,25 +128,6 @@ func (c *Client) Enqueue() goa.Endpoint {
 		resp, err := c.EnqueueDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-broker", "enqueue", err)
-		}
-		return decodeResponse(resp)
-	}
-}
-
-// Enqueued returns an endpoint that makes HTTP requests to the spin-broker
-// service enqueued server.
-func (c *Client) Enqueued() goa.Endpoint {
-	var (
-		decodeResponse = DecodeEnqueuedResponse(c.decoder, c.RestoreResponseBody)
-	)
-	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildEnqueuedRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := c.EnqueuedDoer.Do(req)
-		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-broker", "enqueued", err)
 		}
 		return decodeResponse(resp)
 	}

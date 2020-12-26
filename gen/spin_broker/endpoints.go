@@ -18,7 +18,6 @@ type Endpoints struct {
 	New      goa.Endpoint
 	Add      goa.Endpoint
 	Enqueue  goa.Endpoint
-	Enqueued goa.Endpoint
 	Status   goa.Endpoint
 	Next     goa.Endpoint
 	Complete goa.Endpoint
@@ -30,7 +29,6 @@ func NewEndpoints(s Service) *Endpoints {
 		New:      NewNewEndpoint(s),
 		Add:      NewAddEndpoint(s),
 		Enqueue:  NewEnqueueEndpoint(s),
-		Enqueued: NewEnqueuedEndpoint(s),
 		Status:   NewStatusEndpoint(s),
 		Next:     NewNextEndpoint(s),
 		Complete: NewCompleteEndpoint(s),
@@ -42,7 +40,6 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.New = m(e.New)
 	e.Add = m(e.Add)
 	e.Enqueue = m(e.Enqueue)
-	e.Enqueued = m(e.Enqueued)
 	e.Status = m(e.Status)
 	e.Next = m(e.Next)
 	e.Complete = m(e.Complete)
@@ -71,15 +68,6 @@ func NewEnqueueEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*EnqueuePayload)
 		return s.Enqueue(ctx, p)
-	}
-}
-
-// NewEnqueuedEndpoint returns an endpoint function that calls the method
-// "enqueued" of service "spin-broker".
-func NewEnqueuedEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*EnqueuedPayload)
-		return s.Enqueued(ctx, p)
 	}
 }
 

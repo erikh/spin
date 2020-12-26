@@ -101,34 +101,6 @@ func DecodeEnqueueRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp
 	}
 }
 
-// EncodeEnqueuedResponse returns an encoder for responses returned by the
-// spin-broker enqueued endpoint.
-func EncodeEnqueuedResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
-	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res := v.(bool)
-		enc := encoder(ctx, w)
-		body := res
-		w.WriteHeader(http.StatusOK)
-		return enc.Encode(body)
-	}
-}
-
-// DecodeEnqueuedRequest returns a decoder for requests sent to the spin-broker
-// enqueued endpoint.
-func DecodeEnqueuedRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
-	return func(r *http.Request) (interface{}, error) {
-		var (
-			id string
-
-			params = mux.Vars(r)
-		)
-		id = params["id"]
-		payload := NewEnqueuedPayload(id)
-
-		return payload, nil
-	}
-}
-
 // EncodeStatusResponse returns an encoder for responses returned by the
 // spin-broker status endpoint.
 func EncodeStatusResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {

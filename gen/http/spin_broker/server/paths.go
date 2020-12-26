@@ -26,11 +26,6 @@ func EnqueueSpinBrokerPath(id string) string {
 	return fmt.Sprintf("/enqueue/%v", id)
 }
 
-// EnqueuedSpinBrokerPath returns the URL path to the spin-broker service enqueued HTTP endpoint.
-func EnqueuedSpinBrokerPath(id string) string {
-	return fmt.Sprintf("/enqueued/%v", id)
-}
-
 // StatusSpinBrokerPath returns the URL path to the spin-broker service status HTTP endpoint.
 func StatusSpinBrokerPath(id string) string {
 	return fmt.Sprintf("/status/%v", id)
