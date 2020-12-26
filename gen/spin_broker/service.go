@@ -13,17 +13,18 @@ import (
 
 // The message broker for the other services
 type Service interface {
-	// New implements new.
+	// Create a new package; a collection of items to join into the queue
+	// simultaneously
 	New(context.Context) (res string, err error)
-	// Add implements add.
+	// Add a command to the package
 	Add(context.Context, *AddPayload) (res string, err error)
-	// Enqueue implements enqueue.
+	// Enqueue the package into the various resource queues
 	Enqueue(context.Context, *EnqueuePayload) (res []string, err error)
-	// Status implements status.
+	// Get the status for a package
 	Status(context.Context, *StatusPayload) (res *StatusResult, err error)
-	// Next implements next.
+	// Get the next command for a given resource
 	Next(context.Context, *NextPayload) (res *NextResult, err error)
-	// Complete implements complete.
+	// Mark a command as completed with a result status
 	Complete(context.Context, *CompletePayload) (err error)
 }
 

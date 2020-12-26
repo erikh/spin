@@ -11,6 +11,7 @@ paths:
       tags:
       - spin-broker
       summary: add spin-broker
+      description: Add a command to the package
       operationId: spin-broker#add
       parameters:
       - name: id
@@ -50,6 +51,7 @@ paths:
       tags:
       - spin-broker
       summary: complete spin-broker
+      description: Mark a command as completed with a result status
       operationId: spin-broker#complete
       requestBody:
         required: true
@@ -69,6 +71,7 @@ paths:
       tags:
       - spin-broker
       summary: enqueue spin-broker
+      description: Enqueue the package into the various resource queues
       operationId: spin-broker#enqueue
       parameters:
       - name: id
@@ -104,6 +107,8 @@ paths:
       tags:
       - spin-broker
       summary: new spin-broker
+      description: Create a new package; a collection of items to join into the queue
+        simultaneously
       operationId: spin-broker#new
       responses:
         "200":
@@ -119,6 +124,7 @@ paths:
       tags:
       - spin-broker
       summary: next spin-broker
+      description: Get the next command for a given resource
       operationId: spin-broker#next
       parameters:
       - name: resource
@@ -149,6 +155,7 @@ paths:
       tags:
       - spin-broker
       summary: status spin-broker
+      description: Get the status for a package
       operationId: spin-broker#status
       parameters:
       - name: id

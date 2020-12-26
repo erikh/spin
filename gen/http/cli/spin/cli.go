@@ -437,12 +437,12 @@ Usage:
     %s [globalflags] spin-broker COMMAND [flags]
 
 COMMAND:
-    new: New implements new.
-    add: Add implements add.
-    enqueue: Enqueue implements enqueue.
-    status: Status implements status.
-    next: Next implements next.
-    complete: Complete implements complete.
+    new: Create a new package; a collection of items to join into the queue simultaneously
+    add: Add a command to the package
+    enqueue: Enqueue the package into the various resource queues
+    status: Get the status for a package
+    next: Get the next command for a given resource
+    complete: Mark a command as completed with a result status
 
 Additional help:
     %s spin-broker COMMAND --help
@@ -451,7 +451,7 @@ Additional help:
 func spinBrokerNewUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker new
 
-New implements new.
+Create a new package; a collection of items to join into the queue simultaneously
 
 Example:
     `+os.Args[0]+` spin-broker new
@@ -461,7 +461,7 @@ Example:
 func spinBrokerAddUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker add -body JSON -id STRING
 
-Add implements add.
+Add a command to the package
     -body JSON: 
     -id STRING: Package ID
 
@@ -482,7 +482,7 @@ Example:
 func spinBrokerEnqueueUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker enqueue -id STRING
 
-Enqueue implements enqueue.
+Enqueue the package into the various resource queues
     -id STRING: Package ID
 
 Example:
@@ -493,7 +493,7 @@ Example:
 func spinBrokerStatusUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker status -id STRING
 
-Status implements status.
+Get the status for a package
     -id STRING: Package ID
 
 Example:
@@ -504,7 +504,7 @@ Example:
 func spinBrokerNextUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker next -resource STRING
 
-Next implements next.
+Get the next command for a given resource
     -resource STRING: resource type
 
 Example:
@@ -515,7 +515,7 @@ Example:
 func spinBrokerCompleteUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker complete -body JSON
 
-Complete implements complete.
+Mark a command as completed with a result status
     -body JSON: 
 
 Example:
