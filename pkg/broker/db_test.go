@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"code.hollensbe.org/erikh/spin/pkg/testutil"
+	"github.com/google/uuid"
 )
 
 func makeDB(t *testing.T) *DB {
@@ -198,6 +199,60 @@ func TestNextParallelMultiQueue(t *testing.T) {
 			}
 
 			delete(values, nextValue)
+		}
+	}
+}
+
+func TestPackage(t *testing.T) {
+	db := makeDB(t)
+
+	packages := []*Package{}
+	commands := []Command{}
+
+	for i := 0; i < 100; i++ {
+		pkg, err := db.NewPackage()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for i := 0; i < 100; i++ {
+			c := Command{
+				UUID:       uuid.New().String(),
+				Resource:   testutil.RandomString(30, 5),
+				Action:     testutil.RandomString(30, 5),
+				Parameters: []string{testutil.RandomString(30, 5)},
+			}
+			err := pkg.Add(c)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			commands = append(commands, c)
+		}
+
+		packages = append(packages, pkg)
+	}
+
+	for _, pkg := range packages {
+		list, err := pkg.List()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(list) == 0 {
+			t.Fatal("list yielded no results")
+		}
+
+		for _, c := range list {
+			command := commands[0]
+			if len(commands) > 0 {
+				commands = commands[1:]
+			}
+
+			if !reflect.DeepEqual(command, c) {
+				t.Fatal("commands did not match")
+			}
 		}
 	}
 }

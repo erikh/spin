@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/google/uuid"
 	"go.etcd.io/bbolt"
 )
 
@@ -66,6 +67,104 @@ func (db *DB) Get(bucket, key string, value interface{}) error {
 	})
 }
 
+type Package struct {
+	name []byte
+	db   *DB
+}
+
+func (db *DB) Package(uuid string) (*Package, error) {
+	err := db.db.View(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte(BucketPackages)).Bucket([]byte(uuid))
+		if bucket == nil {
+			return ErrRecordNotFound
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Package{
+		db:   db,
+		name: []byte(uuid),
+	}, nil
+}
+
+func (db *DB) NewPackage() (*Package, error) {
+	var u string
+
+	err := db.db.Update(func(tx *bbolt.Tx) error {
+	redo:
+		u = uuid.New().String()
+		_, err := tx.Bucket([]byte(BucketPackages)).CreateBucket([]byte(u))
+
+		if err == bbolt.ErrBucketExists {
+			goto redo
+		} else if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Package{
+		db:   db,
+		name: []byte(u),
+	}, nil
+}
+
+type Command struct {
+	UUID       string
+	Resource   string
+	Action     string
+	Parameters []string
+}
+
+func (p *Package) Add(value Command) error {
+	content, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+
+	return p.db.db.Update(func(tx *bbolt.Tx) error {
+		bucket := tx.Bucket([]byte(BucketPackages)).Bucket(p.name)
+		id, err := bucket.NextSequence()
+		if err != nil {
+			return err
+		}
+
+		byt := make([]byte, 8)
+		binary.BigEndian.PutUint64(byt, id)
+
+		return bucket.Put(byt, content)
+	})
+}
+
+func (p *Package) List() ([]Command, error) {
+	var c []Command
+
+	return c, p.db.db.View(func(tx *bbolt.Tx) error {
+		cursor := tx.Bucket([]byte(BucketPackages)).Bucket(p.name).Cursor()
+
+		for k, v := cursor.First(); k != nil; k, v = cursor.Next() {
+			var command Command
+			if err := json.Unmarshal(v, &command); err != nil {
+				return err // XXX skip these items, maybe?
+			}
+
+			c = append(c, command)
+		}
+
+		return nil
+	})
+}
+
 type Queue struct {
 	name []byte
 	db   *DB
@@ -94,7 +193,7 @@ func (q *Queue) Insert(value interface{}) error {
 			return err
 		}
 
-		queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket([]byte(q.name))
+		queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket(q.name)
 
 		seq, err := queueBucket.NextSequence()
 		if err != nil {
@@ -115,7 +214,7 @@ func (q *Queue) Next(data interface{}) error {
 	}
 	defer tx.Rollback()
 
-	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket([]byte(q.name))
+	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket(q.name)
 
 	key, value := queueBucket.Cursor().First()
 	if key == nil {
