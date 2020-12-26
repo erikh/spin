@@ -3,7 +3,6 @@ package spin
 import (
 	"context"
 	"log"
-	"net/http"
 
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
@@ -76,15 +75,47 @@ func (s *spinBrokersrvc) Enqueue(ctx context.Context, p *spinbroker.EnqueuePaylo
 
 // Status
 func (s *spinBrokersrvc) Status(ctx context.Context, p *spinbroker.StatusPayload) (*spinbroker.StatusResult, error) {
-	return nil, http.ErrNotSupported
+	pkg, err := s.db.Package(p.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := pkg.Finished(); err != nil {
+		if e, ok := err.(broker.ErrorStatus); ok {
+			return &spinbroker.StatusResult{Reason: &e.Reason}, nil
+		}
+		return nil, err
+	}
+
+	return &spinbroker.StatusResult{Status: true}, nil
 }
 
 // Next
 func (s *spinBrokersrvc) Next(ctx context.Context, p *spinbroker.NextPayload) (*spinbroker.NextResult, error) {
-	return nil, http.ErrNotSupported
+	queue, err := s.db.Queue(p.Resource)
+	if err != nil {
+		return nil, err
+	}
+
+	var c broker.Command
+
+	if err := queue.Next(&c); err != nil {
+		return nil, err
+	}
+
+	return &spinbroker.NextResult{
+		UUID:       c.UUID,
+		Resource:   c.Resource,
+		Action:     c.Action,
+		Parameters: c.Parameters,
+	}, nil
 }
 
 // Complete
 func (s *spinBrokersrvc) Complete(ctx context.Context, p *spinbroker.CompletePayload) error {
-	return http.ErrNotSupported
+	sr := ""
+	if p.StatusReason != nil {
+		sr = *p.StatusReason
+	}
+	return s.db.FinishCommand(p.ID, p.Status, sr)
 }
