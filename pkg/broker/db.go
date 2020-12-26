@@ -126,7 +126,7 @@ type Command struct {
 	Parameters []string
 }
 
-func (p *Package) Add(value Command) error {
+func (p *Package) Add(value *Command) error {
 	content, err := json.Marshal(value)
 	if err != nil {
 		return err
@@ -146,8 +146,8 @@ func (p *Package) Add(value Command) error {
 	})
 }
 
-func (p *Package) List() ([]Command, error) {
-	var c []Command
+func (p *Package) List() ([]*Command, error) {
+	var c []*Command
 
 	return c, p.db.db.View(func(tx *bbolt.Tx) error {
 		cursor := tx.Bucket([]byte(BucketPackages)).Bucket(p.name).Cursor()
@@ -158,7 +158,7 @@ func (p *Package) List() ([]Command, error) {
 				return err // XXX skip these items, maybe?
 			}
 
-			c = append(c, command)
+			c = append(c, &command)
 		}
 
 		return nil

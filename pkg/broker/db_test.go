@@ -207,7 +207,7 @@ func TestPackage(t *testing.T) {
 	db := makeDB(t)
 
 	packages := []*Package{}
-	commands := []Command{}
+	commands := []*Command{}
 
 	for i := 0; i < 100; i++ {
 		pkg, err := db.NewPackage()
@@ -216,7 +216,7 @@ func TestPackage(t *testing.T) {
 		}
 
 		for i := 0; i < 100; i++ {
-			c := Command{
+			c := &Command{
 				UUID:       uuid.New().String(),
 				Resource:   testutil.RandomString(30, 5),
 				Action:     testutil.RandomString(30, 5),
