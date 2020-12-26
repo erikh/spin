@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -138,5 +139,65 @@ func TestNextParallel(t *testing.T) {
 
 	if err := queue.Next(&nextValue); err != ErrRecordNotFound {
 		t.Fatalf("invalid error occurred after draining queue: %v", err)
+	}
+}
+
+func TestNextParallelMultiQueue(t *testing.T) {
+	db := makeDB(t)
+
+	values := map[string]struct{}{}
+	queues := []*Queue{}
+	concurrency := runtime.NumCPU() * 2
+
+	for i := 0; i < concurrency; i++ {
+		queue, err := db.Queue(fmt.Sprintf("%d", i))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		queues = append(queues, queue)
+	}
+
+	for i := 0; i < 100000; i++ {
+		value := testutil.RandomString(30, 5)
+		if err := queues[i%concurrency].Insert(value); err != nil {
+			t.Fatal(err)
+		}
+
+		values[value] = struct{}{}
+	}
+
+	errChan := make(chan error, 1)
+	valueChan := make(chan string, concurrency)
+
+	for i := 0; i < concurrency; i++ {
+		queue := queues[i]
+		go func(queue *Queue) {
+			for {
+				var nextValue string
+				if err := queue.Next(&nextValue); err != nil {
+					if err != ErrRecordNotFound {
+						errChan <- err
+					}
+
+					return
+				}
+
+				valueChan <- nextValue
+			}
+		}(queue)
+	}
+
+	for len(values) > 0 {
+		select {
+		case err := <-errChan:
+			t.Fatal(err)
+		case nextValue := <-valueChan:
+			if _, ok := values[nextValue]; !ok {
+				t.Fatal("value was already returned")
+			}
+
+			delete(values, nextValue)
+		}
 	}
 }

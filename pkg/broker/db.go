@@ -10,8 +10,8 @@ import (
 
 const (
 	BucketQueue    = "queues"
-	BucketCommands = "commands"
 	BucketPackages = "packages"
+	BucketCommands = "commands"
 	BucketStatuses = "statuses"
 )
 
@@ -116,6 +116,7 @@ func (q *Queue) Next(data interface{}) error {
 	defer tx.Rollback()
 
 	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket([]byte(q.name))
+
 	key, value := queueBucket.Cursor().First()
 	if key == nil {
 		return ErrRecordNotFound
