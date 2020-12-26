@@ -15,4 +15,7 @@ server: stop-server
 gen:
 	go run goa.design/goa/v3/cmd/goa gen code.hollensbe.org/erikh/spin/design
 
+examples:
+	go run goa.design/goa/v3/cmd/goa example code.hollensbe.org/erikh/spin/design
+
 .PHONY: gen

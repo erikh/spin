@@ -9,7 +9,9 @@ import (
 	"sync"
 	"time"
 
+	spinapiserversvr "code.hollensbe.org/erikh/spin/gen/http/spin_apiserver/server"
 	spinbrokersvr "code.hollensbe.org/erikh/spin/gen/http/spin_broker/server"
+	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
@@ -18,7 +20,7 @@ import (
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, spinBrokerEndpoints *spinbroker.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, spinApiserverEndpoints *spinapiserver.Endpoints, spinBrokerEndpoints *spinbroker.Endpoints, wg *sync.WaitGroup, errc chan error, logger *log.Logger, debug bool) {
 
 	// Setup goa log adapter.
 	var (
@@ -49,19 +51,23 @@ func handleHTTPServer(ctx context.Context, u *url.URL, spinBrokerEndpoints *spin
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		spinBrokerServer *spinbrokersvr.Server
+		spinApiserverServer *spinapiserversvr.Server
+		spinBrokerServer    *spinbrokersvr.Server
 	)
 	{
 		eh := errorHandler(logger)
+		spinApiserverServer = spinapiserversvr.New(spinApiserverEndpoints, mux, dec, enc, eh, nil)
 		spinBrokerServer = spinbrokersvr.New(spinBrokerEndpoints, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
+				spinApiserverServer,
 				spinBrokerServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
 	}
 	// Configure the mux.
+	spinapiserversvr.Mount(mux, spinApiserverServer)
 	spinbrokersvr.Mount(mux, spinBrokerServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
@@ -75,6 +81,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, spinBrokerEndpoints *spin
 	// Start HTTP server using default configuration, change the code to
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
+	for _, m := range spinApiserverServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
 	for _, m := range spinBrokerServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}

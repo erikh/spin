@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Dolore saepe voluptatum dolorem rerum et.\",\n      \"parameters\": [\n         \"Maxime corrupti molestias est sunt ab repellat.\",\n         \"Quia eum temporibus.\",\n         \"Odit eligendi.\"\n      ],\n      \"resource\": \"Qui est officia laborum est esse similique.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Officiis porro fugiat.\",\n      \"parameters\": [\n         \"Provident dignissimos eum possimus velit quod.\",\n         \"Aut mollitia natus temporibus fugit occaecati.\",\n         \"Qui dolorem non aut molestiae.\",\n         \"Ad dolorem eos rerum quam adipisci est.\"\n      ],\n      \"resource\": \"Voluptatem quibusdam dolor.\"\n   }'")
 		}
 	}
 	var id string
@@ -91,7 +91,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Nobis consequatur omnis.\",\n      \"status\": false,\n      \"status_reason\": \"Voluptatem dignissimos ut doloremque harum et tempora.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Quas tempora nisi aperiam occaecati deserunt qui.\",\n      \"status\": false,\n      \"status_reason\": \"Esse reprehenderit qui molestias eum voluptatem.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

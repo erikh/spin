@@ -4,7 +4,7 @@ info:
   description: HTTP service for controlling the spin service
   version: "1.0"
 servers:
-- url: http://localhost:8088
+- url: http://localhost:8080
 paths:
   /add/{id}:
     post:
@@ -20,8 +20,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Facilis ad quod.
-        example: Quia facere.
+          example: Odit tenetur cupiditate amet fugiat.
+        example: Sequi molestiae inventore aut consequatur officiis perspiciatis.
       requestBody:
         required: true
         content:
@@ -29,12 +29,13 @@ paths:
             schema:
               $ref: '#/components/schemas/AddRequestBody'
             example:
-              action: Dolore saepe voluptatum dolorem rerum et.
+              action: Officiis porro fugiat.
               parameters:
-              - Maxime corrupti molestias est sunt ab repellat.
-              - Quia eum temporibus.
-              - Odit eligendi.
-              resource: Qui est officia laborum est esse similique.
+              - Provident dignissimos eum possimus velit quod.
+              - Aut mollitia natus temporibus fugit occaecati.
+              - Qui dolorem non aut molestiae.
+              - Ad dolorem eos rerum quam adipisci est.
+              resource: Voluptatem quibusdam dolor.
       responses:
         "200":
           description: OK response.
@@ -42,8 +43,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Aut minima recusandae et.
-              example: Sunt nesciunt natus dolorem.
+                example: Qui sit nihil.
+              example: Dolore voluptate voluptas veniam.
   /complete:
     post:
       tags:
@@ -57,9 +58,9 @@ paths:
             schema:
               $ref: '#/components/schemas/CompleteRequestBody'
             example:
-              id: Nobis consequatur omnis.
+              id: Quas tempora nisi aperiam occaecati deserunt qui.
               status: false
-              status_reason: Voluptatem dignissimos ut doloremque harum et tempora.
+              status_reason: Esse reprehenderit qui molestias eum voluptatem.
       responses:
         "200":
           description: OK response.
@@ -77,8 +78,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Vel tempora est.
-        example: Quis aut quis vel.
+          example: Eum laudantium tempora pariatur possimus autem.
+        example: Qui ad aut possimus quisquam harum.
       responses:
         "200":
           description: OK response.
@@ -88,14 +89,16 @@ paths:
                 type: array
                 items:
                   type: string
-                  example: Fugit quis.
+                  example: Libero commodi placeat.
                 example:
-                - Error modi magni voluptas corrupti et.
-                - Et et occaecati.
-                - Quo dolore soluta consectetur.
+                - Est totam quasi eligendi quod.
+                - Sed cum.
+                - Voluptatem culpa unde ut.
+                - Aut ut illum.
               example:
-              - Fugit incidunt tempora.
-              - Sed quae ea.
+              - Natus quasi quia vel ut.
+              - Cupiditate cumque ratione occaecati quos vel in.
+              - Rerum eos ut.
   /new:
     post:
       tags:
@@ -109,8 +112,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Voluptas qui fuga unde inventore cupiditate.
-              example: Velit ut ea excepturi.
+                example: Itaque omnis fuga.
+              example: Minima voluptas dolorem et corporis quo dolores.
   /next/{resource}:
     get:
       tags:
@@ -125,8 +128,8 @@ paths:
         schema:
           type: string
           description: resource type
-          example: Ut nulla et cum consequatur in.
-        example: Iure qui voluptas.
+          example: Natus consectetur.
+        example: Sint et nesciunt et molestiae soluta ut.
       responses:
         "200":
           description: OK response.
@@ -135,14 +138,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/NextResponseBody'
               example:
-                action: Vitae sunt amet nostrum amet.
+                action: Unde inventore cupiditate soluta.
                 parameters:
-                - Dolorem odio laborum et.
-                - Rerum ut voluptatem at fugit fuga impedit.
-                - Veritatis quo non quae rerum officia iusto.
-                - Et labore.
-                resource: Ipsam dolor distinctio.
-                uuid: Et consequatur sunt.
+                - Sit non sit recusandae eum.
+                - Earum provident sint eveniet hic minus facere.
+                resource: Iure aut voluptas qui.
+                uuid: Consequatur quo exercitationem occaecati magnam molestiae qui.
   /status/{id}:
     get:
       tags:
@@ -157,8 +158,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Tempore voluptate voluptas.
-        example: Mollitia eius hic.
+          example: Aut architecto deleniti incidunt alias.
+        example: Tempora quisquam inventore inventore qui nihil.
       responses:
         "200":
           description: OK response.
@@ -167,8 +168,205 @@ paths:
               schema:
                 $ref: '#/components/schemas/StatusResponseBody'
               example:
-                reason: Qui ipsum.
-                status: true
+                reason: Illum omnis suscipit illum repellendus.
+                status: false
+  /storage/volume/add:
+    post:
+      tags:
+      - spin-apiserver
+      summary: add_volume spin-apiserver
+      description: Add a volume for image allocation with backing storage, and name
+        it
+      operationId: spin-apiserver#add_volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddVolumeRequestBody'
+            example:
+              path: Eum officiis eligendi.
+              volume: Non deleniti consequuntur qui doloremque.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/image/create:
+    post:
+      tags:
+      - spin-apiserver
+      summary: create_image_on_volume spin-apiserver
+      description: Create an image on a volume
+      operationId: spin-apiserver#create_image_on_volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateImageOnVolumeRequestBody'
+            example:
+              image_name: Iusto minima et labore.
+              image_size: 8231368540121560477
+              volume: Consequatur omnis dolor assumenda.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/image/delete:
+    post:
+      tags:
+      - spin-apiserver
+      summary: delete_image_on_volume spin-apiserver
+      description: Delete an image on a volume
+      operationId: spin-apiserver#delete_image_on_volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteImageOnVolumeRequestBody'
+            example:
+              image_name: Dignissimos ut doloremque.
+              volume: Et tempora rem.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/image/info/{volume}/{image_name}:
+    get:
+      tags:
+      - spin-apiserver
+      summary: info_image_on_volume spin-apiserver
+      description: Obtain information on an image
+      operationId: spin-apiserver#info_image_on_volume
+      parameters:
+      - name: volume
+        in: path
+        description: volume identifier
+        required: true
+        schema:
+          type: string
+          description: volume identifier
+          example: Reprehenderit quo ab iure nihil.
+        example: Non officiis molestiae nostrum quia quisquam.
+      - name: image_name
+        in: path
+        description: image name
+        required: true
+        schema:
+          type: string
+          description: image name
+          example: Est quisquam inventore quae.
+        example: Nulla sit.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/image/move:
+    post:
+      tags:
+      - spin-apiserver
+      summary: move_image spin-apiserver
+      description: Move an image from one volume to another
+      operationId: spin-apiserver#move_image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveImageRequestBody'
+            example:
+              image_name: Illum sint.
+              target_volume: Quam neque.
+              volume: Ullam odio tenetur aliquid consequatur.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/image/resize:
+    post:
+      tags:
+      - spin-apiserver
+      summary: resize_image_on_volume spin-apiserver
+      description: Resize an image on a volume
+      operationId: spin-apiserver#resize_image_on_volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateImageOnVolumeRequestBody'
+            example:
+              image_name: Quia voluptas aut.
+              image_size: 4442355973768769894
+              volume: Quisquam rem.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/info/{volume}:
+    get:
+      tags:
+      - spin-apiserver
+      summary: info_volume spin-apiserver
+      description: Get information on a volume
+      operationId: spin-apiserver#info_volume
+      parameters:
+      - name: volume
+        in: path
+        description: volume identifier
+        required: true
+        schema:
+          type: string
+          description: volume identifier
+          example: Doloremque saepe in.
+        example: Reiciendis eveniet repudiandae reiciendis perferendis impedit reiciendis.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/label/{volume}/{label}:
+    post:
+      tags:
+      - spin-apiserver
+      summary: label_volume spin-apiserver
+      description: Apply a label to a volume.
+      operationId: spin-apiserver#label_volume
+      parameters:
+      - name: volume
+        in: path
+        description: volume identifier
+        required: true
+        schema:
+          type: string
+          description: volume identifier
+          example: Animi fugiat excepturi sed.
+        example: Aut tempore aliquam.
+      - name: label
+        in: path
+        description: label identifier to apply to volume
+        required: true
+        schema:
+          type: string
+          description: label identifier to apply to volume
+          example: Illum molestiae voluptates natus.
+        example: Qui iusto ex.
+      responses:
+        "200":
+          description: OK response.
+  /storage/volume/remove/{volume}:
+    post:
+      tags:
+      - spin-apiserver
+      summary: remove_volume spin-apiserver
+      description: Remove a volume. Requires all images to be removed.
+      operationId: spin-apiserver#remove_volume
+      parameters:
+      - name: volume
+        in: path
+        description: volume identifier
+        required: true
+        schema:
+          type: string
+          description: volume identifier
+          example: Quae at sed necessitatibus et.
+        example: Earum hic sequi.
+      responses:
+        "200":
+          description: OK response.
 components:
   schemas:
     AddRequestBody:
@@ -177,85 +375,166 @@ components:
         action:
           type: string
           description: Action name
-          example: Repellat earum provident sint eveniet hic minus.
+          example: Odio similique qui qui architecto.
         parameters:
           type: array
           items:
             type: string
-            example: Animi quas tempora nisi aperiam occaecati.
+            example: Nemo omnis quia deleniti voluptate.
           description: Action parameters
           example:
-          - Praesentium temporibus esse reprehenderit qui molestias eum.
-          - Qui nihil officia aspernatur vel vel.
-          - Voluptatem voluptatibus est minima cum delectus occaecati.
+          - Qui omnis qui sit et vel.
+          - Enim ut voluptas ullam quas aliquam.
         resource:
           type: string
           description: Resource name
-          example: Ut corporis sit non sit recusandae.
+          example: Incidunt quae est velit eaque mollitia.
       example:
-        action: Quis omnis suscipit est et dicta id.
+        action: Cupiditate perspiciatis voluptas quia.
         parameters:
-        - Rerum porro eius.
-        - Esse labore voluptas.
-        - Ea iusto adipisci sapiente temporibus.
-        resource: In aut vero amet.
+        - Et provident.
+        - Ea iusto modi aspernatur.
+        resource: Quaerat illo molestiae.
       required:
       - resource
       - action
+    AddVolumeRequestBody:
+      type: object
+      properties:
+        path:
+          type: string
+          description: path to backing storage
+          example: Natus dicta aliquid.
+        volume:
+          type: string
+          description: volume identifier
+          example: Ab delectus amet magnam.
+      example:
+        path: Quo quaerat iusto non.
+        volume: Provident sint ut facilis.
+      required:
+      - volume
+      - path
     CompleteRequestBody:
       type: object
       properties:
         id:
           type: string
           description: Command ID
-          example: Alias vel.
+          example: Perspiciatis in.
         status:
           type: boolean
           description: status of work
-          example: true
+          example: false
         status_reason:
           type: string
           description: reason of success/failure
-          example: Cupiditate veniam atque accusamus.
+          example: Sequi temporibus.
       example:
-        id: Et ipsa.
+        id: Inventore cupiditate commodi aut asperiores quidem sit.
         status: true
-        status_reason: Aliquam sit necessitatibus pariatur quam.
+        status_reason: Cum repudiandae veniam vel.
       required:
       - id
       - status
+    CreateImageOnVolumeRequestBody:
+      type: object
+      properties:
+        image_name:
+          type: string
+          description: image name
+          example: Et aut sit a quas velit adipisci.
+        image_size:
+          type: integer
+          description: image size in GB
+          example: 6027849388767421274
+        volume:
+          type: string
+          description: volume identifier
+          example: Ratione totam quia.
+      example:
+        image_name: Deleniti illum quod est enim aperiam laborum.
+        image_size: 18427148167345111597
+        volume: Dolores atque excepturi ut.
+      required:
+      - image_name
+      - image_size
+      - volume
+    DeleteImageOnVolumeRequestBody:
+      type: object
+      properties:
+        image_name:
+          type: string
+          description: image name
+          example: Ipsum ea deleniti.
+        volume:
+          type: string
+          description: volume identifier
+          example: Enim autem doloribus sunt ut quos.
+      example:
+        image_name: Ut ex molestiae quod distinctio voluptatibus.
+        volume: Itaque non quis quae.
+      required:
+      - image_name
+      - volume
+    MoveImageRequestBody:
+      type: object
+      properties:
+        image_name:
+          type: string
+          description: image name
+          example: Accusantium laboriosam sunt minima saepe architecto.
+        target_volume:
+          type: string
+          description: volume identifier to move to
+          example: Laboriosam fugit.
+        volume:
+          type: string
+          description: volume identifier
+          example: Enim quos numquam recusandae ut.
+      example:
+        image_name: Excepturi non voluptate.
+        target_volume: Ut laboriosam.
+        volume: Qui consectetur nihil omnis voluptas.
+      required:
+      - image_name
+      - volume
+      - target_volume
     NextResponseBody:
       type: object
       properties:
         action:
           type: string
           description: action name
-          example: Similique corrupti ab soluta vel qui vel.
+          example: Et quisquam.
         parameters:
           type: array
           items:
             type: string
-            example: Dolores nihil autem dolorem soluta.
+            example: Officia voluptas voluptate.
           description: parameters for action
           example:
-          - Sit ratione molestiae asperiores ut.
-          - Explicabo sit ab.
+          - Animi quos.
+          - Qui explicabo quaerat officiis.
+          - Deleniti maxime possimus vero omnis sed.
+          - Sint delectus quis et recusandae nobis.
         resource:
           type: string
           description: resource type
-          example: Expedita a.
+          example: Commodi accusamus veritatis quos.
         uuid:
           type: string
           description: Command ID
-          example: Neque excepturi.
+          example: Provident occaecati animi saepe.
       example:
-        action: In ipsa enim non maxime est.
+        action: Qui recusandae.
         parameters:
-        - Reprehenderit vitae.
-        - Aut adipisci.
-        - Amet et id.
-        resource: Numquam rerum asperiores corporis aut.
-        uuid: Et quis quidem.
+        - Repudiandae adipisci accusantium consequuntur.
+        - Et inventore.
+        - Molestias deserunt dicta eaque reiciendis autem exercitationem.
+        - Esse blanditiis qui repellendus voluptate.
+        resource: Officiis sit quis itaque.
+        uuid: Molestiae nihil tempora.
       required:
       - uuid
       - resource
@@ -266,13 +545,13 @@ components:
         reason:
           type: string
           description: Failure reason (if any)
-          example: Non nihil vitae nesciunt.
+          example: Eos eos quibusdam error dolorem ut et.
         status:
           type: boolean
           description: Pass/Fail status
           example: true
       example:
-        reason: Pariatur rem et nobis.
+        reason: Autem optio ut quidem.
         status: false
       required:
       - status

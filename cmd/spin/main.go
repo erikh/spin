@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	spin "code.hollensbe.org/erikh/spin"
+	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 )
 
@@ -23,9 +24,10 @@ func main() {
 		hostF     = flag.String("host", "localhost", "Server host (valid values: localhost)")
 		domainF   = flag.String("domain", "", "Host domain name (overrides host domain specified in service design)")
 		httpPortF = flag.String("http-port", "", "HTTP port (overrides host HTTP port specified in service design)")
-		dbName    = flag.String("dbname", "spin-broker.db", "Name of database")
 		secureF   = flag.Bool("secure", false, "Use secure scheme (https or grpcs)")
 		dbgF      = flag.Bool("debug", false, "Log request and response bodies")
+
+		brokerDBPath = flag.String("dbPath", "spin-broker.db", "Database filename")
 	)
 	flag.Parse()
 
@@ -39,23 +41,26 @@ func main() {
 
 	// Initialize the services.
 	var (
-		spinBrokerSvc spinbroker.Service
-		err           error
+		spinApiserverSvc spinapiserver.Service
+		spinBrokerSvc    spinbroker.Service
+		err              error
 	)
 	{
-		spinBrokerSvc, err = spin.NewSpinBroker(logger, *dbName)
-	}
-
-	if err != nil {
-		panic(err)
+		spinApiserverSvc = spin.NewSpinApiserver(logger)
+		spinBrokerSvc, err = spin.NewSpinBroker(logger, *brokerDBPath)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
-		spinBrokerEndpoints *spinbroker.Endpoints
+		spinApiserverEndpoints *spinapiserver.Endpoints
+		spinBrokerEndpoints    *spinbroker.Endpoints
 	)
 	{
+		spinApiserverEndpoints = spinapiserver.NewEndpoints(spinApiserverSvc)
 		spinBrokerEndpoints = spinbroker.NewEndpoints(spinBrokerSvc)
 	}
 
@@ -78,7 +83,7 @@ func main() {
 	switch *hostF {
 	case "localhost":
 		{
-			addr := "http://localhost:8088"
+			addr := "http://localhost:8080"
 			u, err := url.Parse(addr)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "invalid URL %#v: %s\n", addr, err)
@@ -100,7 +105,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host = net.JoinHostPort(u.Host, ":80")
 			}
-			handleHTTPServer(ctx, u, spinBrokerEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, spinApiserverEndpoints, spinBrokerEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:
