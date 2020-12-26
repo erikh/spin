@@ -79,7 +79,7 @@ paths:
             type: array
             items:
               type: string
-              example: Aut non dicta quisquam rem qui ut.
+              example: Possimus velit quod sit.
       schemes:
       - http
   /new:
@@ -113,6 +113,7 @@ paths:
           schema:
             $ref: '#/definitions/SpinBrokerNextResponseBody'
             required:
+            - uuid
             - resource
             - action
       schemes:
@@ -146,28 +147,30 @@ definitions:
       action:
         type: string
         description: Action name
-        example: Vitae sunt amet nostrum amet.
+        example: Aut non dicta quisquam rem qui ut.
       parameters:
         type: array
         items:
           type: string
-          example: Itaque dolorem odio.
+          example: Est reprehenderit.
         description: Action parameters
         example:
-        - Et rerum ut voluptatem.
-        - Fugit fuga impedit dolor.
-        - Quo non.
+        - Omnis voluptatem ullam amet magnam.
+        - Ad ut nulla laboriosam non deserunt vitae.
+        - Illum sint.
+        - Ullam odio tenetur aliquid consequatur.
       resource:
         type: string
         description: Resource name
-        example: Ipsam dolor distinctio.
+        example: Qui quia.
     example:
-      action: Labore qui nobis.
+      action: Id et autem ut debitis.
       parameters:
-      - Dolor assumenda voluptatem dignissimos.
-      - Doloremque harum et tempora.
-      - Qui quia.
-      resource: Rerum officia iusto minima.
+      - Occaecati impedit quas laborum consequatur.
+      - Itaque aut dolorem.
+      - Quibusdam dolor sit.
+      - Porro fugiat ex consequatur provident dignissimos.
+      resource: Quam neque.
     required:
     - resource
     - action
@@ -178,7 +181,7 @@ definitions:
       id:
         type: string
         description: Command ID
-        example: Non aut molestiae deleniti ad dolorem eos.
+        example: Repellendus eaque nesciunt quia.
       status:
         type: boolean
         description: status of work
@@ -186,11 +189,11 @@ definitions:
       status_reason:
         type: string
         description: reason of success/failure
-        example: Adipisci est incidunt sequi.
+        example: Reiciendis ipsum assumenda.
     example:
-      id: Maxime aut non.
+      id: Quo exercitationem.
       status: false
-      status_reason: Nostrum commodi error omnis quis quia.
+      status_reason: Molestiae qui maxime iure.
     required:
     - id
     - status
@@ -201,41 +204,51 @@ definitions:
       action:
         type: string
         description: action name
-        example: Ullam amet magnam.
+        example: Voluptatibus nostrum commodi error omnis quis quia.
       parameters:
         type: array
         items:
           type: string
-          example: Ad ut nulla laboriosam non deserunt vitae.
+          example: Ratione et ex tempore ipsum in.
         description: parameters for action
         example:
-        - Sint ducimus ullam odio.
-        - Aliquid consequatur atque quam neque.
-        - Id et autem ut debitis.
-        - Saepe occaecati impedit quas laborum.
+        - Maiores ut voluptatem sed et consectetur.
+        - Repellat vero.
+        - Doloribus impedit.
+        - Qui dolor ex consequatur.
       resource:
         type: string
         description: resource type
-        example: Dolor nesciunt omnis.
+        example: Maxime aut non.
+      uuid:
+        type: string
+        description: Command ID
+        example: Rerum quam adipisci est incidunt sequi.
     example:
-      action: Voluptatem quibusdam dolor.
+      action: Sunt itaque tenetur labore quia distinctio aperiam.
       parameters:
-      - Porro fugiat ex consequatur provident dignissimos.
-      - Possimus velit quod sit.
-      - Mollitia natus temporibus fugit occaecati ipsum qui.
-      resource: Quaerat itaque aut.
+      - Voluptatem minima natus non consequatur voluptatem.
+      - Eos iste illum omnis suscipit.
+      resource: Quidem qui.
+      uuid: Ut hic assumenda assumenda ullam qui.
     required:
+    - uuid
     - resource
     - action
   SpinBrokerStatusResponseBody:
     title: SpinBrokerStatusResponseBody
     type: object
     properties:
+      reason:
+        type: string
+        description: Failure reason (if any)
+        example: Natus temporibus fugit occaecati ipsum qui.
       status:
         type: boolean
         description: Pass/Fail status
-        example: false
+        example: true
     example:
+      reason: Aut molestiae deleniti ad dolorem.
       status: false
     required:
     - status

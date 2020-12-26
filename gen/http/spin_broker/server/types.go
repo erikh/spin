@@ -39,11 +39,15 @@ type CompleteRequestBody struct {
 type StatusResponseBody struct {
 	// Pass/Fail status
 	Status bool `form:"status" json:"status" xml:"status"`
+	// Failure reason (if any)
+	Reason *string `form:"reason,omitempty" json:"reason,omitempty" xml:"reason,omitempty"`
 }
 
 // NextResponseBody is the type of the "spin-broker" service "next" endpoint
 // HTTP response body.
 type NextResponseBody struct {
+	// Command ID
+	UUID string `form:"uuid" json:"uuid" xml:"uuid"`
 	// resource type
 	Resource string `form:"resource" json:"resource" xml:"resource"`
 	// action name
@@ -57,6 +61,7 @@ type NextResponseBody struct {
 func NewStatusResponseBody(res *spinbroker.StatusResult) *StatusResponseBody {
 	body := &StatusResponseBody{
 		Status: res.Status,
+		Reason: res.Reason,
 	}
 	return body
 }
@@ -65,6 +70,7 @@ func NewStatusResponseBody(res *spinbroker.StatusResult) *StatusResponseBody {
 // "next" endpoint of the "spin-broker" service.
 func NewNextResponseBody(res *spinbroker.NextResult) *NextResponseBody {
 	body := &NextResponseBody{
+		UUID:     res.UUID,
 		Resource: res.Resource,
 		Action:   res.Action,
 	}

@@ -56,6 +56,7 @@ var _ = Service("spin-broker", func() {
 		})
 		Result(func() {
 			Attribute("status", Boolean, "Pass/Fail status")
+			Attribute("reason", String, "Failure reason (if any)")
 			Required("status")
 		})
 		HTTP(func() {
@@ -70,10 +71,11 @@ var _ = Service("spin-broker", func() {
 			Required("resource")
 		})
 		Result(func() {
+			Attribute("uuid", String, "Command ID")
 			Attribute("resource", String, "resource type")
 			Attribute("action", String, "action name")
 			Attribute("parameters", ArrayOf(String), "parameters for action")
-			Required("resource", "action")
+			Required("uuid", "resource", "action")
 		})
 		HTTP(func() {
 			GET("/next/{resource}")

@@ -39,11 +39,15 @@ type CompleteRequestBody struct {
 type StatusResponseBody struct {
 	// Pass/Fail status
 	Status *bool `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
+	// Failure reason (if any)
+	Reason *string `form:"reason,omitempty" json:"reason,omitempty" xml:"reason,omitempty"`
 }
 
 // NextResponseBody is the type of the "spin-broker" service "next" endpoint
 // HTTP response body.
 type NextResponseBody struct {
+	// Command ID
+	UUID *string `form:"uuid,omitempty" json:"uuid,omitempty" xml:"uuid,omitempty"`
 	// resource type
 	Resource *string `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 	// action name
@@ -84,6 +88,7 @@ func NewCompleteRequestBody(p *spinbroker.CompletePayload) *CompleteRequestBody 
 func NewStatusResultOK(body *StatusResponseBody) *spinbroker.StatusResult {
 	v := &spinbroker.StatusResult{
 		Status: *body.Status,
+		Reason: body.Reason,
 	}
 
 	return v
@@ -93,6 +98,7 @@ func NewStatusResultOK(body *StatusResponseBody) *spinbroker.StatusResult {
 // HTTP "OK" response.
 func NewNextResultOK(body *NextResponseBody) *spinbroker.NextResult {
 	v := &spinbroker.NextResult{
+		UUID:     *body.UUID,
 		Resource: *body.Resource,
 		Action:   *body.Action,
 	}
@@ -116,6 +122,9 @@ func ValidateStatusResponseBody(body *StatusResponseBody) (err error) {
 
 // ValidateNextResponseBody runs the validations defined on NextResponseBody
 func ValidateNextResponseBody(body *NextResponseBody) (err error) {
+	if body.UUID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("uuid", "body"))
+	}
 	if body.Resource == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("resource", "body"))
 	}

@@ -65,6 +65,8 @@ type StatusPayload struct {
 type StatusResult struct {
 	// Pass/Fail status
 	Status bool
+	// Failure reason (if any)
+	Reason *string
 }
 
 // NextPayload is the payload type of the spin-broker service next method.
@@ -75,6 +77,8 @@ type NextPayload struct {
 
 // NextResult is the result type of the spin-broker service next method.
 type NextResult struct {
+	// Command ID
+	UUID string
 	// resource type
 	Resource string
 	// action name

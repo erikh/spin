@@ -214,15 +214,14 @@ Add implements add.
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
-      "action": "Temporibus ipsa quibusdam nostrum.",
+      "action": "Dolore saepe voluptatum dolorem rerum et.",
       "parameters": [
-         "Est officia.",
-         "Est esse similique officiis.",
-         "Saepe voluptatum dolorem rerum et vel.",
-         "Maxime corrupti molestias est sunt ab repellat."
+         "Maxime corrupti molestias est sunt ab repellat.",
+         "Quia eum temporibus.",
+         "Odit eligendi."
       ],
-      "resource": "Sint quisquam ducimus autem consequatur reprehenderit."
-   }' --id "Quia eum temporibus."
+      "resource": "Qui est officia laborum est esse similique."
+   }' --id "Reprehenderit molestiae quia tempore."
 `, os.Args[0])
 }
 
@@ -233,7 +232,7 @@ Enqueue implements enqueue.
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker enqueue --id "Veniam natus."
+    `+os.Args[0]+` spin-broker enqueue --id "Voluptas optio."
 `, os.Args[0])
 }
 
@@ -244,7 +243,7 @@ Status implements status.
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker status --id "Ipsa blanditiis."
+    `+os.Args[0]+` spin-broker status --id "Eum officiis eligendi."
 `, os.Args[0])
 }
 
@@ -255,7 +254,7 @@ Next implements next.
     -resource STRING: resource type
 
 Example:
-    `+os.Args[0]+` spin-broker next --resource "Quia recusandae autem neque adipisci."
+    `+os.Args[0]+` spin-broker next --resource "Quibusdam reiciendis ipsum commodi."
 `, os.Args[0])
 }
 
@@ -267,9 +266,9 @@ Complete implements complete.
 
 Example:
     `+os.Args[0]+` spin-broker complete --body '{
-      "id": "Quibusdam reiciendis ipsum commodi.",
-      "status": true,
-      "status_reason": "Consequatur sunt."
+      "id": "Nobis consequatur omnis.",
+      "status": false,
+      "status_reason": "Voluptatem dignissimos ut doloremque harum et tempora."
    }'
 `, os.Args[0])
 }
