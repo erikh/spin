@@ -10,23 +10,37 @@ import (
 )
 
 const (
-	BucketQueue    = "queues"
+	// BucketQueue is the outer bucket for other queue-oriented buckets, keyed by resource.
+	BucketQueue = "queues"
+	// BucketPackages is the outer bucket for all package queues.
 	BucketPackages = "packages"
+	// BucketCommands is the bucket for all commands.
 	BucketCommands = "commands"
+	// BucketStatuses is the bucket for all statuses.
 	BucketStatuses = "statuses"
 )
 
-var MakeBuckets = []string{BucketQueue, BucketCommands, BucketPackages, BucketStatuses}
+var makeBuckets = []string{BucketQueue, BucketCommands, BucketPackages, BucketStatuses}
 
 var (
-	ErrRecordNotFound      = errors.New("Record not found")
+	// ErrRecordNotFound is returned when records are not found. This in
+	// particular can happen in scenarios when requesting the status of an object
+	// and it is unavailable.
+	ErrRecordNotFound = errors.New("Record not found")
+
+	// ErrRecordAlreadyExists is returned when trying to set a status that has
+	// already been set.
 	ErrRecordAlreadyExists = errors.New("Record already exists")
 )
 
+// DB is our DB handle. It contains a *bbolt.DB handle for internal use.
 type DB struct {
 	db *bbolt.DB
 }
 
+// New creates a new database handle. The file is created if it does not
+// already exist with 0600 perms, and some tuning is applied. The outermost
+// buckets are also created at this time if they do not exist.
 func New(dbpath string) (*DB, error) {
 	db, err := bbolt.Open(dbpath, 0600, &bbolt.Options{FreelistType: bbolt.FreelistMapType})
 	if err != nil {
@@ -34,7 +48,7 @@ func New(dbpath string) (*DB, error) {
 	}
 
 	return &DB{db: db}, db.Update(func(tx *bbolt.Tx) error {
-		for _, bucket := range MakeBuckets {
+		for _, bucket := range makeBuckets {
 			if _, err := tx.CreateBucketIfNotExists([]byte(bucket)); err != nil {
 				return err
 			}
@@ -44,30 +58,9 @@ func New(dbpath string) (*DB, error) {
 	})
 }
 
+// Close the database.
 func (db *DB) Close() error {
 	return db.db.Close()
-}
-
-func (db *DB) Put(bucket, key string, data interface{}) error {
-	return db.db.Update(func(tx *bbolt.Tx) error {
-		content, err := json.Marshal(data)
-		if err != nil {
-			return err
-		}
-
-		return tx.Bucket([]byte(bucket)).Put([]byte(key), content)
-	})
-}
-
-func (db *DB) Get(bucket, key string, value interface{}) error {
-	return db.db.View(func(tx *bbolt.Tx) error {
-		content := tx.Bucket([]byte(bucket)).Get([]byte(key))
-		if content == nil {
-			return ErrRecordNotFound
-		}
-
-		return json.Unmarshal(content, value)
-	})
 }
 
 type status struct {
@@ -75,6 +68,9 @@ type status struct {
 	Reason string
 }
 
+// ErrorStatus is for status reports that are in an errored state. This
+// includes the reason as well. The type mostly exists to distinguish it from
+// other golang errors.
 type ErrorStatus struct {
 	Reason string
 }
@@ -83,6 +79,8 @@ func (es ErrorStatus) Error() string {
 	return es.Reason
 }
 
+// CommandStatus returns the status of the Command UUID as an error if faulty,
+// otherwise nil for success.
 func (db *DB) CommandStatus(uuid string) error {
 	return db.db.View(func(tx *bbolt.Tx) error {
 		value := tx.Bucket([]byte(BucketStatuses)).Get([]byte(uuid))
@@ -104,6 +102,8 @@ func (db *DB) CommandStatus(uuid string) error {
 	})
 }
 
+// FinishCommand reports a status for the Command UUID. If the result is true,
+// reason is ignored.
 func (db *DB) FinishCommand(uuid string, statusResult bool, reason string) error {
 	return db.db.Update(func(tx *bbolt.Tx) error {
 		value := tx.Bucket([]byte(BucketCommands)).Get([]byte(uuid))
@@ -130,11 +130,15 @@ func (db *DB) FinishCommand(uuid string, statusResult bool, reason string) error
 	})
 }
 
+// Package is a collection of queue items that are in a waiting or enqueued
+// state as a group.
 type Package struct {
 	name []byte
 	db   *DB
 }
 
+// Package returns a Package from the provided UUID. If none is found,
+// ErrRecordNotFound is returned.
 func (db *DB) Package(uuid string) (*Package, error) {
 	err := db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(BucketPackages)).Bucket([]byte(uuid))
@@ -155,6 +159,8 @@ func (db *DB) Package(uuid string) (*Package, error) {
 	}, nil
 }
 
+// NewPackage creates a new Package and returns it, or error if there was any
+// trouble. It will retry on collisions.
 func (db *DB) NewPackage() (*Package, error) {
 	var u string
 
@@ -182,6 +188,15 @@ func (db *DB) NewPackage() (*Package, error) {
 	}, nil
 }
 
+// Command is a unit of instruction; it contains a UUID, the unique identifier
+// of the commmand, a Resource, the type of command to execute, an action, the
+// name of the command to execute, and parameters, a collection of items that
+// relate to the action for the purposes of execution.
+//
+// Commands are typically fed to Packages, then the Package is Enqueued, Next()
+// calls are made to yield the commands for the resource, the command is
+// processed, FinishCommand is called to finish the command, then statuses are
+// polled and eventually yielded.
 type Command struct {
 	UUID       string
 	Resource   string
@@ -189,10 +204,14 @@ type Command struct {
 	Parameters []string
 }
 
+// UUID returns the Package UUID.
 func (p *Package) UUID() string {
 	return string(p.name)
 }
 
+// Add adds a Command to the Package. It will be assigned a UUID which is
+// written back to the pointered value. This may be retried. Any error writing
+// to the database or marshaling the values will return an error.
 func (p *Package) Add(value *Command) error {
 	return p.db.db.Update(func(tx *bbolt.Tx) error {
 	redo:
@@ -225,6 +244,7 @@ func (p *Package) Add(value *Command) error {
 	})
 }
 
+// List lists the commands for the Package.
 func (p *Package) List() ([]*Command, error) {
 	var c []*Command
 
@@ -244,6 +264,7 @@ func (p *Package) List() ([]*Command, error) {
 	})
 }
 
+// Enqueue enqueues the package in the relevant resource queues.
 func (p *Package) Enqueue() error {
 	commands, err := p.List()
 	if err != nil {
@@ -264,6 +285,11 @@ func (p *Package) Enqueue() error {
 	return nil
 }
 
+// Finished returns non-nil if:
+// - The package is unfinished (ErrRecordNotFound)
+// - The package had errors (ErrorStatus)
+//
+// Otherwise, it returns nil, which means everything ran fine.
 func (p *Package) Finished() error {
 	commands, err := p.List()
 	if err != nil {
@@ -279,11 +305,14 @@ func (p *Package) Finished() error {
 	return nil
 }
 
+// Queue is the notion of a resource-based queue in the broker. These are
+// Command structs separated by resource and organized into order.
 type Queue struct {
 	name []byte
 	db   *DB
 }
 
+// Queue retrieves the Queue object for the named resource.
 func (db *DB) Queue(name string) (*Queue, error) {
 	err := db.db.Update(func(tx *bbolt.Tx) error {
 		_, err := tx.Bucket([]byte(BucketQueue)).CreateBucketIfNotExists([]byte(name))
@@ -300,6 +329,7 @@ func (db *DB) Queue(name string) (*Queue, error) {
 	}, nil
 }
 
+// Insert inserts an item into the Queue.
 func (q *Queue) Insert(value interface{}) error {
 	return q.db.db.Update(func(tx *bbolt.Tx) error {
 		content, err := json.Marshal(value)
@@ -321,6 +351,7 @@ func (q *Queue) Insert(value interface{}) error {
 	})
 }
 
+// Next returns the next item in the queue, then removes it from the queue.
 func (q *Queue) Next(data interface{}) error {
 	tx, err := q.db.db.Begin(true)
 	if err != nil {

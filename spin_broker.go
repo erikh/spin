@@ -8,8 +8,6 @@ import (
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
-// spin-broker service example implementation.
-// The example methods log the requests and return zero values.
 type spinBrokersrvc struct {
 	logger *log.Logger
 	db     *broker.DB
@@ -24,7 +22,7 @@ func NewSpinBroker(logger *log.Logger, dbpath string) (spinbroker.Service, error
 	return &spinBrokersrvc{logger: logger, db: db}, nil
 }
 
-// New implements new.
+// New
 func (s *spinBrokersrvc) New(ctx context.Context) (res string, err error) {
 	pkg, err := s.db.NewPackage()
 	if err != nil {

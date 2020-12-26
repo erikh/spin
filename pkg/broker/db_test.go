@@ -32,24 +32,6 @@ func TestDBInit(t *testing.T) {
 	makeDB(t)
 }
 
-func TestGetPut(t *testing.T) {
-	db := makeDB(t)
-
-	if err := db.Put(BucketCommands, "one", []string{"one", "two", "three"}); err != nil {
-		t.Fatal(err)
-	}
-
-	var result []string
-
-	if err := db.Get(BucketCommands, "one", &result); err != nil {
-		t.Fatal(err)
-	}
-
-	if !reflect.DeepEqual(result, []string{"one", "two", "three"}) {
-		t.Fatal("result did not match insert")
-	}
-}
-
 func TestNext(t *testing.T) {
 	db := makeDB(t)
 
