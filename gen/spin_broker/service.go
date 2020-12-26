@@ -39,7 +39,7 @@ var MethodNames = [6]string{"new", "add", "enqueue", "status", "next", "complete
 
 // AddPayload is the payload type of the spin-broker service add method.
 type AddPayload struct {
-	// queue ID
+	// Package ID
 	ID string
 	// Resource name
 	Resource string
@@ -51,13 +51,13 @@ type AddPayload struct {
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.
 type EnqueuePayload struct {
-	// queue ID
+	// Package ID
 	ID string
 }
 
 // StatusPayload is the payload type of the spin-broker service status method.
 type StatusPayload struct {
-	// queue ID
+	// Package ID
 	ID string
 }
 
@@ -86,7 +86,7 @@ type NextResult struct {
 // CompletePayload is the payload type of the spin-broker service complete
 // method.
 type CompletePayload struct {
-	// queue ID
+	// Command ID
 	ID string
 	// status of work
 	Status bool

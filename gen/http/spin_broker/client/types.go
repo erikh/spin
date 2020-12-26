@@ -26,7 +26,7 @@ type AddRequestBody struct {
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
 // endpoint HTTP request body.
 type CompleteRequestBody struct {
-	// queue ID
+	// Command ID
 	ID string `form:"id" json:"id" xml:"id"`
 	// status of work
 	Status bool `form:"status" json:"status" xml:"status"`

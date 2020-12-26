@@ -22,7 +22,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         type: string
       - name: AddRequestBody
@@ -69,7 +69,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         type: string
       responses:
@@ -126,7 +126,7 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         type: string
       responses:
@@ -177,7 +177,7 @@ definitions:
     properties:
       id:
         type: string
-        description: queue ID
+        description: Command ID
         example: Non aut molestiae deleniti ad dolorem eos.
       status:
         type: boolean

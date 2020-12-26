@@ -49,13 +49,13 @@ func ParseEndpoint(
 
 		spinBrokerAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
 		spinBrokerAddBodyFlag = spinBrokerAddFlags.String("body", "REQUIRED", "")
-		spinBrokerAddIDFlag   = spinBrokerAddFlags.String("id", "REQUIRED", "queue ID")
+		spinBrokerAddIDFlag   = spinBrokerAddFlags.String("id", "REQUIRED", "Package ID")
 
 		spinBrokerEnqueueFlags  = flag.NewFlagSet("enqueue", flag.ExitOnError)
-		spinBrokerEnqueueIDFlag = spinBrokerEnqueueFlags.String("id", "REQUIRED", "queue ID")
+		spinBrokerEnqueueIDFlag = spinBrokerEnqueueFlags.String("id", "REQUIRED", "Package ID")
 
 		spinBrokerStatusFlags  = flag.NewFlagSet("status", flag.ExitOnError)
-		spinBrokerStatusIDFlag = spinBrokerStatusFlags.String("id", "REQUIRED", "queue ID")
+		spinBrokerStatusIDFlag = spinBrokerStatusFlags.String("id", "REQUIRED", "Package ID")
 
 		spinBrokerNextFlags        = flag.NewFlagSet("next", flag.ExitOnError)
 		spinBrokerNextResourceFlag = spinBrokerNextFlags.String("resource", "REQUIRED", "resource type")
@@ -210,7 +210,7 @@ func spinBrokerAddUsage() {
 
 Add implements add.
     -body JSON: 
-    -id STRING: queue ID
+    -id STRING: Package ID
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
@@ -230,7 +230,7 @@ func spinBrokerEnqueueUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker enqueue -id STRING
 
 Enqueue implements enqueue.
-    -id STRING: queue ID
+    -id STRING: Package ID
 
 Example:
     `+os.Args[0]+` spin-broker enqueue --id "Veniam natus."
@@ -241,7 +241,7 @@ func spinBrokerStatusUsage() {
 	fmt.Fprintf(os.Stderr, `%s [flags] spin-broker status -id STRING
 
 Status implements status.
-    -id STRING: queue ID
+    -id STRING: Package ID
 
 Example:
     `+os.Args[0]+` spin-broker status --id "Ipsa blanditiis."

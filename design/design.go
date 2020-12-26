@@ -23,7 +23,7 @@ var _ = Service("spin-broker", func() {
 
 	Method("add", func() {
 		Payload(func() {
-			Attribute("id", String, "queue ID")
+			Attribute("id", String, "Package ID")
 			Attribute("resource", String, "Resource name")
 			Attribute("action", String, "Action name")
 			Attribute("parameters", ArrayOf(String), "Action parameters")
@@ -39,7 +39,7 @@ var _ = Service("spin-broker", func() {
 
 	Method("enqueue", func() {
 		Payload(func() {
-			Attribute("id", String, "queue ID")
+			Attribute("id", String, "Package ID")
 			Required("id")
 		})
 		Result(ArrayOf(String))
@@ -51,7 +51,7 @@ var _ = Service("spin-broker", func() {
 
 	Method("status", func() {
 		Payload(func() {
-			Attribute("id", String, "queue ID")
+			Attribute("id", String, "Package ID")
 			Required("id")
 		})
 		Result(func() {
@@ -83,7 +83,7 @@ var _ = Service("spin-broker", func() {
 
 	Method("complete", func() {
 		Payload(func() {
-			Attribute("id", String, "queue ID")
+			Attribute("id", String, "Command ID")
 			Attribute("status", Boolean, "status of work")
 			Attribute("status_reason", String, "reason of success/failure")
 			Required("id", "status")

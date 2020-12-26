@@ -15,11 +15,11 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         schema:
           type: string
-          description: queue ID
+          description: Package ID
           example: Dicta id sint rerum rerum.
         example: Eius officiis esse labore voluptas perferendis.
       requestBody:
@@ -74,11 +74,11 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         schema:
           type: string
-          description: queue ID
+          description: Package ID
           example: Aut minima recusandae et.
         example: Fugit quis.
       responses:
@@ -153,11 +153,11 @@ paths:
       parameters:
       - name: id
         in: path
-        description: queue ID
+        description: Package ID
         required: true
         schema:
           type: string
-          description: queue ID
+          description: Package ID
           example: Quia non nihil vitae nesciunt.
         example: Assumenda pariatur.
       responses:
@@ -207,7 +207,7 @@ components:
       properties:
         id:
           type: string
-          description: queue ID
+          description: Command ID
           example: Deserunt qui praesentium temporibus esse.
         status:
           type: boolean
