@@ -20,7 +20,7 @@ type AddRequestBody struct {
 	// Action name
 	Action string `form:"action" json:"action" xml:"action"`
 	// Action parameters
-	Parameters []string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
@@ -53,7 +53,7 @@ type NextResponseBody struct {
 	// action name
 	Action *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
 	// parameters for action
-	Parameters []string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // NewAddRequestBody builds the HTTP request body from the payload of the "add"
@@ -64,9 +64,11 @@ func NewAddRequestBody(p *spinbroker.AddPayload) *AddRequestBody {
 		Action:   p.Action,
 	}
 	if p.Parameters != nil {
-		body.Parameters = make([]string, len(p.Parameters))
-		for i, val := range p.Parameters {
-			body.Parameters[i] = val
+		body.Parameters = make(map[string]string, len(p.Parameters))
+		for key, val := range p.Parameters {
+			tk := key
+			tv := val
+			body.Parameters[tk] = tv
 		}
 	}
 	return body
@@ -103,9 +105,11 @@ func NewNextResultOK(body *NextResponseBody) *spinbroker.NextResult {
 		Action:   *body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make([]string, len(body.Parameters))
-		for i, val := range body.Parameters {
-			v.Parameters[i] = val
+		v.Parameters = make(map[string]string, len(body.Parameters))
+		for key, val := range body.Parameters {
+			tk := key
+			tv := val
+			v.Parameters[tk] = tv
 		}
 	}
 

@@ -22,7 +22,7 @@ func BuildAddVolumePayload(spinApiserverAddVolumeBody string) (*spinapiserver.Ad
 	{
 		err = json.Unmarshal([]byte(spinApiserverAddVolumeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"path\": \"Eum officiis eligendi.\",\n      \"volume\": \"Non deleniti consequuntur qui doloremque.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"path\": \"Autem neque adipisci.\",\n      \"volume\": \"Quia soluta veniam adipisci quia.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.AddVolumePayload{
@@ -85,7 +85,7 @@ func BuildCreateImageOnVolumePayload(spinApiserverCreateImageOnVolumeBody string
 	{
 		err = json.Unmarshal([]byte(spinApiserverCreateImageOnVolumeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Iusto minima et labore.\",\n      \"image_size\": 8231368540121560477,\n      \"volume\": \"Consequatur omnis dolor assumenda.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Et et rerum ut voluptatem at fugit.\",\n      \"image_size\": 15419653682127034888,\n      \"volume\": \"Dolor veritatis quo non quae rerum officia.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.CreateImageOnVolumePayload{
@@ -105,7 +105,7 @@ func BuildDeleteImageOnVolumePayload(spinApiserverDeleteImageOnVolumeBody string
 	{
 		err = json.Unmarshal([]byte(spinApiserverDeleteImageOnVolumeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Dignissimos ut doloremque.\",\n      \"volume\": \"Et tempora rem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Minima et labore qui nobis.\",\n      \"volume\": \"Omnis dolor assumenda voluptatem dignissimos ut.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.DeleteImageOnVolumePayload{
@@ -124,7 +124,7 @@ func BuildResizeImageOnVolumePayload(spinApiserverResizeImageOnVolumeBody string
 	{
 		err = json.Unmarshal([]byte(spinApiserverResizeImageOnVolumeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Quia voluptas aut.\",\n      \"image_size\": 4442355973768769894,\n      \"volume\": \"Quisquam rem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Harum et tempora rem qui quia.\",\n      \"image_size\": 7533879699541094989,\n      \"volume\": \"Non dicta quisquam rem qui.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.ResizeImageOnVolumePayload{
@@ -162,7 +162,7 @@ func BuildMoveImagePayload(spinApiserverMoveImageBody string) (*spinapiserver.Mo
 	{
 		err = json.Unmarshal([]byte(spinApiserverMoveImageBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Illum sint.\",\n      \"target_volume\": \"Quam neque.\",\n      \"volume\": \"Ullam odio tenetur aliquid consequatur.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"image_name\": \"Ullam odio tenetur aliquid consequatur.\",\n      \"target_volume\": \"Id et autem ut debitis.\",\n      \"volume\": \"Quam neque.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.MoveImagePayload{

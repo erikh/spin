@@ -32,8 +32,8 @@ spin-broker (new|add|enqueue|status|next|complete)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` spin-apiserver add-volume --body '{
-      "path": "Eum officiis eligendi.",
-      "volume": "Non deleniti consequuntur qui doloremque."
+      "path": "Autem neque adipisci.",
+      "volume": "Quia soluta veniam adipisci quia."
    }'` + "\n" +
 		os.Args[0] + ` spin-broker new` + "\n" +
 		""
@@ -318,8 +318,8 @@ Add a volume for image allocation with backing storage, and name it
 
 Example:
     `+os.Args[0]+` spin-apiserver add-volume --body '{
-      "path": "Eum officiis eligendi.",
-      "volume": "Non deleniti consequuntur qui doloremque."
+      "path": "Autem neque adipisci.",
+      "volume": "Quia soluta veniam adipisci quia."
    }'
 `, os.Args[0])
 }
@@ -331,7 +331,7 @@ Remove a volume. Requires all images to be removed.
     -volume STRING: volume identifier
 
 Example:
-    `+os.Args[0]+` spin-apiserver remove-volume --volume "Distinctio magni quibusdam reiciendis ipsum commodi sed."
+    `+os.Args[0]+` spin-apiserver remove-volume --volume "Eum officiis eligendi."
 `, os.Args[0])
 }
 
@@ -343,7 +343,7 @@ Apply a label to a volume.
     -label STRING: label identifier to apply to volume
 
 Example:
-    `+os.Args[0]+` spin-apiserver label-volume --volume "Vitae sunt amet nostrum amet." --label "Itaque dolorem odio."
+    `+os.Args[0]+` spin-apiserver label-volume --volume "Consequatur sunt." --label "Ipsam dolor distinctio."
 `, os.Args[0])
 }
 
@@ -354,7 +354,7 @@ Get information on a volume
     -volume STRING: volume identifier
 
 Example:
-    `+os.Args[0]+` spin-apiserver info-volume --volume "Impedit dolor veritatis quo non quae rerum."
+    `+os.Args[0]+` spin-apiserver info-volume --volume "Itaque dolorem odio."
 `, os.Args[0])
 }
 
@@ -366,9 +366,9 @@ Create an image on a volume
 
 Example:
     `+os.Args[0]+` spin-apiserver create-image-on-volume --body '{
-      "image_name": "Iusto minima et labore.",
-      "image_size": 8231368540121560477,
-      "volume": "Consequatur omnis dolor assumenda."
+      "image_name": "Et et rerum ut voluptatem at fugit.",
+      "image_size": 15419653682127034888,
+      "volume": "Dolor veritatis quo non quae rerum officia."
    }'
 `, os.Args[0])
 }
@@ -381,8 +381,8 @@ Delete an image on a volume
 
 Example:
     `+os.Args[0]+` spin-apiserver delete-image-on-volume --body '{
-      "image_name": "Dignissimos ut doloremque.",
-      "volume": "Et tempora rem."
+      "image_name": "Minima et labore qui nobis.",
+      "volume": "Omnis dolor assumenda voluptatem dignissimos ut."
    }'
 `, os.Args[0])
 }
@@ -395,9 +395,9 @@ Resize an image on a volume
 
 Example:
     `+os.Args[0]+` spin-apiserver resize-image-on-volume --body '{
-      "image_name": "Quia voluptas aut.",
-      "image_size": 4442355973768769894,
-      "volume": "Quisquam rem."
+      "image_name": "Harum et tempora rem qui quia.",
+      "image_size": 7533879699541094989,
+      "volume": "Non dicta quisquam rem qui."
    }'
 `, os.Args[0])
 }
@@ -410,7 +410,7 @@ Obtain information on an image
     -image-name STRING: image name
 
 Example:
-    `+os.Args[0]+` spin-apiserver info-image-on-volume --volume "Ullam amet magnam." --image-name "Ad ut nulla laboriosam non deserunt vitae."
+    `+os.Args[0]+` spin-apiserver info-image-on-volume --volume "Ad ut nulla laboriosam non deserunt vitae." --image-name "Illum sint."
 `, os.Args[0])
 }
 
@@ -422,9 +422,9 @@ Move an image from one volume to another
 
 Example:
     `+os.Args[0]+` spin-apiserver move-image --body '{
-      "image_name": "Illum sint.",
-      "target_volume": "Quam neque.",
-      "volume": "Ullam odio tenetur aliquid consequatur."
+      "image_name": "Ullam odio tenetur aliquid consequatur.",
+      "target_volume": "Id et autem ut debitis.",
+      "volume": "Quam neque."
    }'
 `, os.Args[0])
 }
@@ -467,15 +467,12 @@ Add a command to the package
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
-      "action": "Officiis porro fugiat.",
-      "parameters": [
-         "Provident dignissimos eum possimus velit quod.",
-         "Aut mollitia natus temporibus fugit occaecati.",
-         "Qui dolorem non aut molestiae.",
-         "Ad dolorem eos rerum quam adipisci est."
-      ],
-      "resource": "Voluptatem quibusdam dolor."
-   }' --id "Sequi consequatur maxime aut non."
+      "action": "Consequatur provident dignissimos.",
+      "parameters": {
+         "Velit quod sit aut.": "Natus temporibus fugit occaecati ipsum qui."
+      },
+      "resource": "Officiis porro fugiat."
+   }' --id "Non aut molestiae deleniti ad dolorem eos."
 `, os.Args[0])
 }
 
@@ -486,7 +483,7 @@ Enqueue the package into the various resource queues
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker enqueue --id "Consectetur et."
+    `+os.Args[0]+` spin-broker enqueue --id "Ratione et ex tempore ipsum in."
 `, os.Args[0])
 }
 
@@ -497,7 +494,7 @@ Get the status for a package
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker status --id "Natus non consequatur voluptatem nostrum."
+    `+os.Args[0]+` spin-broker status --id "Iste illum omnis."
 `, os.Args[0])
 }
 
@@ -508,7 +505,7 @@ Get the next command for a given resource
     -resource STRING: resource type
 
 Example:
-    `+os.Args[0]+` spin-broker next --resource "Neque reiciendis ipsum."
+    `+os.Args[0]+` spin-broker next --resource "Consequatur quo exercitationem occaecati magnam molestiae qui."
 `, os.Args[0])
 }
 
@@ -520,9 +517,9 @@ Mark a command as completed with a result status
 
 Example:
     `+os.Args[0]+` spin-broker complete --body '{
-      "id": "Quas tempora nisi aperiam occaecati deserunt qui.",
-      "status": false,
-      "status_reason": "Esse reprehenderit qui molestias eum voluptatem."
+      "id": "Aut vero amet quia quis.",
+      "status": true,
+      "status_reason": "Est et dicta id."
    }'
 `, os.Args[0])
 }

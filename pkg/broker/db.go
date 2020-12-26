@@ -201,7 +201,7 @@ type Command struct {
 	UUID       string
 	Resource   string
 	Action     string
-	Parameters []string
+	Parameters map[string]string
 }
 
 // UUID returns the Package UUID.

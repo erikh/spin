@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Officiis porro fugiat.\",\n      \"parameters\": [\n         \"Provident dignissimos eum possimus velit quod.\",\n         \"Aut mollitia natus temporibus fugit occaecati.\",\n         \"Qui dolorem non aut molestiae.\",\n         \"Ad dolorem eos rerum quam adipisci est.\"\n      ],\n      \"resource\": \"Voluptatem quibusdam dolor.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Consequatur provident dignissimos.\",\n      \"parameters\": {\n         \"Velit quod sit aut.\": \"Natus temporibus fugit occaecati ipsum qui.\"\n      },\n      \"resource\": \"Officiis porro fugiat.\"\n   }'")
 		}
 	}
 	var id string
@@ -34,9 +34,11 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 		Action:   body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make([]string, len(body.Parameters))
-		for i, val := range body.Parameters {
-			v.Parameters[i] = val
+		v.Parameters = make(map[string]string, len(body.Parameters))
+		for key, val := range body.Parameters {
+			tk := key
+			tv := val
+			v.Parameters[tk] = tv
 		}
 	}
 	v.ID = id
@@ -91,7 +93,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Quas tempora nisi aperiam occaecati deserunt qui.\",\n      \"status\": false,\n      \"status_reason\": \"Esse reprehenderit qui molestias eum voluptatem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Aut vero amet quia quis.\",\n      \"status\": true,\n      \"status_reason\": \"Est et dicta id.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

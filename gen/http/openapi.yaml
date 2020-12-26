@@ -82,7 +82,7 @@ paths:
             type: array
             items:
               type: string
-              example: Quia facere.
+              example: Qui provident.
       schemes:
       - http
   /new:
@@ -345,14 +345,14 @@ definitions:
       path:
         type: string
         description: path to backing storage
-        example: Vel illum voluptatem.
+        example: Esse labore voluptas.
       volume:
         type: string
         description: volume identifier
-        example: Nihil officia aspernatur.
+        example: Rerum rerum porro eius.
     example:
-      path: Occaecati enim in aut vero.
-      volume: Est minima cum.
+      path: Aut minima recusandae et.
+      volume: Ea iusto adipisci sapiente temporibus.
     required:
     - volume
     - path
@@ -363,20 +363,20 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Quia quis omnis suscipit est et.
+        example: Fugit quis.
       image_size:
         type: integer
         description: image size in GB
-        example: 2453152901843734876
+        example: 18117003792351848781
         format: int64
       volume:
         type: string
         description: volume identifier
-        example: Sint rerum rerum porro eius.
+        example: Error modi magni voluptas corrupti et.
     example:
-      image_name: Esse labore voluptas.
-      image_size: 4373530742914524004
-      volume: Iusto adipisci sapiente temporibus.
+      image_name: Et et occaecati.
+      image_size: 8308809769684407427
+      volume: Dolore soluta consectetur adipisci quia.
     required:
     - image_name
     - image_size
@@ -388,14 +388,14 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Aut minima recusandae et.
+        example: Nihil vitae nesciunt.
       volume:
         type: string
         description: volume identifier
-        example: Fugit quis.
+        example: Assumenda pariatur.
     example:
-      image_name: Qui error modi magni.
-      volume: Corrupti et voluptatibus et et occaecati.
+      image_name: Et nobis quia neque excepturi.
+      volume: Expedita a.
     required:
     - image_name
     - volume
@@ -406,19 +406,19 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Excepturi iste expedita a aut similique.
+        example: Rerum asperiores corporis aut.
       target_volume:
         type: string
         description: volume identifier to move to
-        example: Vel qui dolores nihil autem dolorem.
+        example: Quia reprehenderit vitae.
       volume:
         type: string
         description: volume identifier
-        example: Ab soluta vel.
+        example: In ipsa enim non maxime est.
     example:
-      image_name: Quisquam vero sit.
-      target_volume: Temporibus explicabo sit ab quo et quis.
-      volume: Molestiae asperiores.
+      image_name: Aut adipisci.
+      target_volume: Alias vel.
+      volume: Amet et id.
     required:
     - image_name
     - volume
@@ -430,20 +430,20 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Quo dolore soluta consectetur.
+        example: Similique corrupti ab soluta vel qui vel.
       image_size:
         type: integer
         description: new image size; must be larger than original size
-        example: 3472743333644681302
+        example: 7281469901257479230
         format: int64
       volume:
         type: string
         description: volume identifier
-        example: Non nihil vitae nesciunt.
+        example: Nihil autem dolorem soluta quisquam.
     example:
-      image_name: Assumenda pariatur.
-      image_size: 9112671615115988735
-      volume: Nobis quia.
+      image_name: Sit ratione molestiae asperiores ut.
+      image_size: 4544141496920960600
+      volume: Sit ab quo et quis quidem nulla.
     required:
     - image_name
     - image_size
@@ -455,26 +455,26 @@ definitions:
       action:
         type: string
         description: Action name
-        example: Ipsa enim non maxime est.
+        example: Et ipsa.
       parameters:
-        type: array
-        items:
-          type: string
-          example: Quia reprehenderit vitae.
+        type: object
         description: Action parameters
         example:
-        - Adipisci recusandae amet et id et.
-        - Vel ratione vitae cupiditate veniam.
+          Aliquam sit necessitatibus pariatur quam.: Velit ut ea excepturi.
+          Facilis ad quod.: Quia facere.
+          Sunt nesciunt natus dolorem.: Vel tempora est.
+        additionalProperties: true
       resource:
         type: string
         description: Resource name
-        example: Nulla numquam rerum asperiores corporis aut enim.
+        example: Vitae cupiditate veniam atque accusamus.
     example:
-      action: Aliquam sit necessitatibus pariatur quam.
+      action: Vel fugit incidunt tempora.
       parameters:
-      - Ut ea excepturi.
-      - Facilis ad quod.
-      resource: Accusamus velit et ipsa at.
+        Et cum.: In illo iure.
+        Quae ea ex tempore.: Voluptas rerum mollitia eius hic expedita ut.
+        Voluptas minima nostrum qui perferendis rerum molestias.: Qui laborum.
+      resource: Quis aut quis vel.
     required:
     - resource
     - action
@@ -485,19 +485,19 @@ definitions:
       id:
         type: string
         description: Command ID
-        example: In ea natus tempore.
+        example: Accusantium laboriosam sunt minima saepe architecto.
       status:
         type: boolean
         description: status of work
-        example: false
+        example: true
       status_reason:
         type: string
         description: reason of success/failure
-        example: Consectetur assumenda soluta repellendus eaque neque.
+        example: Quos numquam recusandae ut omnis laboriosam.
     example:
-      id: Accusamus beatae nihil.
-      status: true
-      status_reason: Quaerat consequatur nemo.
+      id: Odio excepturi non voluptate est qui.
+      status: false
+      status_reason: Omnis voluptas quia ut laboriosam.
     required:
     - id
     - status
@@ -508,33 +508,32 @@ definitions:
       action:
         type: string
         description: action name
-        example: Tempore voluptate voluptas.
+        example: In ea natus tempore.
       parameters:
-        type: array
-        items:
-          type: string
-          example: Mollitia eius hic.
+        type: object
         description: parameters for action
         example:
-        - Nulla et cum.
-        - In illo iure.
+          Consectetur assumenda soluta repellendus eaque neque.: Accusamus beatae
+            nihil.
+          Molestiae quaerat.: Nemo autem ab delectus amet magnam.
+          Natus dicta aliquid.: Provident sint ut facilis.
+        additionalProperties: true
       resource:
         type: string
         description: resource type
-        example: Sed quae ea.
+        example: Ipsam dicta accusantium.
       uuid:
         type: string
         description: Command ID
-        example: Vel fugit incidunt tempora.
+        example: Impedit laboriosam et dolorum tempora inventore officia.
     example:
-      action: Qui provident.
+      action: Illo ratione totam.
       parameters:
-      - Sapiente ut.
-      - Officia quod tempora consequatur ut.
-      - Impedit laboriosam et dolorum tempora inventore officia.
-      - Ipsam dicta accusantium.
-      resource: Qui laborum.
-      uuid: Voluptas minima nostrum qui perferendis rerum molestias.
+        Deleniti illum quod est enim aperiam laborum.: Aut dolores.
+        Excepturi ut quo ipsum ea.: Facilis enim autem doloribus sunt ut quos.
+        Ut ex molestiae quod distinctio voluptatibus.: Itaque non quis quae.
+      resource: Et aut sit a quas velit adipisci.
+      uuid: Quo quaerat iusto non.
     required:
     - uuid
     - resource
@@ -546,13 +545,13 @@ definitions:
       reason:
         type: string
         description: Failure reason (if any)
-        example: Nesciunt natus dolorem nemo vel tempora.
+        example: Sapiente ut.
       status:
         type: boolean
         description: Pass/Fail status
         example: false
     example:
-      reason: Quis aut quis vel.
-      status: false
+      reason: Quod tempora consequatur ut.
+      status: true
     required:
     - status

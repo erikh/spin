@@ -47,7 +47,7 @@ type AddPayload struct {
 	// Action name
 	Action string
 	// Action parameters
-	Parameters []string
+	Parameters map[string]string
 }
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.
@@ -85,7 +85,7 @@ type NextResult struct {
 	// action name
 	Action string
 	// parameters for action
-	Parameters []string
+	Parameters map[string]string
 }
 
 // CompletePayload is the payload type of the spin-broker service complete

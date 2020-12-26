@@ -190,7 +190,7 @@ func TestPackage(t *testing.T) {
 	packages := []*Package{}
 	commands := []*Command{}
 	resources := []string{}
-	resource_commands := map[string][]*Command{}
+	resourceCommands := map[string][]*Command{}
 
 	for i := 0; i < 100; i++ {
 		resource := testutil.RandomString(30, 5)
@@ -207,7 +207,7 @@ func TestPackage(t *testing.T) {
 			c := &Command{
 				Resource:   resources[i],
 				Action:     testutil.RandomString(30, 5),
-				Parameters: []string{testutil.RandomString(30, 5)},
+				Parameters: map[string]string{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
 			err := pkg.Add(c)
@@ -216,7 +216,7 @@ func TestPackage(t *testing.T) {
 			}
 
 			commands = append(commands, c)
-			resource_commands[resources[i]] = append(resource_commands[resources[i]], c)
+			resourceCommands[resources[i]] = append(resourceCommands[resources[i]], c)
 		}
 
 		packages = append(packages, pkg)
@@ -254,9 +254,9 @@ func TestPackage(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var c Command
+		for _, command := range resourceCommands[resource] {
+			var c Command
 
-		for _, command := range resource_commands[resource] {
 			if err := queue.Next(&c); err != nil {
 				t.Fatal(err)
 			}
