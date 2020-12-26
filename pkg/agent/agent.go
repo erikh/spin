@@ -45,8 +45,8 @@ func New(cc ClientConfig, resource string, dispatcher broker.Dispatcher) *Agent 
 	}
 }
 
-func (a *Agent) Tick() error {
-	p, err := a.client.Next()(context.Background(), &spinbroker.NextPayload{Resource: a.resource})
+func (a *Agent) Tick(ctx context.Context) error {
+	p, err := a.client.Next()(ctx, &spinbroker.NextPayload{Resource: a.resource})
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (a *Agent) Tick() error {
 		sr = &s
 	}
 
-	_, err = a.client.Complete()(context.Background(), &spinbroker.CompletePayload{
+	_, err = a.client.Complete()(ctx, &spinbroker.CompletePayload{
 		ID:           nr.UUID,
 		Status:       err == nil,
 		StatusReason: sr,
@@ -78,9 +78,15 @@ func (a *Agent) Tick() error {
 	return err
 }
 
-func (a *Agent) Loop() error {
+func (a *Agent) Loop(ctx context.Context) error {
 	for {
-		if err := a.Tick(); err != nil {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
+		if err := a.Tick(ctx); err != nil {
 			// FIXME will this actually work
 			if err != broker.ErrRecordNotFound {
 				log.Println(err)
