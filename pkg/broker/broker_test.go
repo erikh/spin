@@ -123,4 +123,10 @@ func TestNextParallel(t *testing.T) {
 			delete(values, nextValue)
 		}
 	}
+
+	var nextValue string
+
+	if err := db.Next(BucketCommands, &nextValue); err != ErrRecordNotFound {
+		t.Fatalf("invalid error occurred after draining queue: %v", err)
+	}
 }
