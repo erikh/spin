@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"code.hollensbe.org/erikh/spin/pkg/testutil"
-	"github.com/google/uuid"
 )
 
 func makeDB(t *testing.T) *DB {
@@ -208,6 +207,13 @@ func TestPackage(t *testing.T) {
 
 	packages := []*Package{}
 	commands := []*Command{}
+	resources := []string{}
+	resource_commands := map[string][]*Command{}
+
+	for i := 0; i < 100; i++ {
+		resource := testutil.RandomString(30, 5)
+		resources = append(resources, resource)
+	}
 
 	for i := 0; i < 100; i++ {
 		pkg, err := db.NewPackage()
@@ -217,18 +223,18 @@ func TestPackage(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
 			c := &Command{
-				UUID:       uuid.New().String(),
-				Resource:   testutil.RandomString(30, 5),
+				Resource:   resources[i],
 				Action:     testutil.RandomString(30, 5),
 				Parameters: []string{testutil.RandomString(30, 5)},
 			}
-			err := pkg.Add(c)
 
+			err := pkg.Add(c)
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			commands = append(commands, c)
+			resource_commands[resources[i]] = append(resource_commands[resources[i]], c)
 		}
 
 		packages = append(packages, pkg)
@@ -252,6 +258,29 @@ func TestPackage(t *testing.T) {
 
 			if !reflect.DeepEqual(command, c) {
 				t.Fatal("commands did not match")
+			}
+		}
+
+		if err := pkg.Enqueue(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	for _, resource := range resources {
+		queue, err := db.Queue(resource)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var c Command
+
+		for _, command := range resource_commands[resource] {
+			if err := queue.Next(&c); err != nil {
+				t.Fatal(err)
+			}
+
+			if !reflect.DeepEqual(*command, c) {
+				t.Fatalf("values did not match: %v %v", *command, c)
 			}
 		}
 	}

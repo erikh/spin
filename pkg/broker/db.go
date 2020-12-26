@@ -127,12 +127,24 @@ type Command struct {
 }
 
 func (p *Package) Add(value *Command) error {
-	content, err := json.Marshal(value)
-	if err != nil {
-		return err
-	}
-
 	return p.db.db.Update(func(tx *bbolt.Tx) error {
+	redo:
+		u := uuid.New().String()
+		value.UUID = u
+		cmdBucket := tx.Bucket([]byte(BucketCommands))
+		if cmdBucket.Get([]byte(u)) != nil {
+			goto redo
+		}
+
+		content, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+
+		if err := cmdBucket.Put([]byte(u), content); err != nil {
+			return err
+		}
+
 		bucket := tx.Bucket([]byte(BucketPackages)).Bucket(p.name)
 		id, err := bucket.NextSequence()
 		if err != nil {
@@ -163,6 +175,26 @@ func (p *Package) List() ([]*Command, error) {
 
 		return nil
 	})
+}
+
+func (p *Package) Enqueue() error {
+	commands, err := p.List()
+	if err != nil {
+		return err
+	}
+
+	for _, c := range commands {
+		queue, err := p.db.Queue(c.Resource)
+		if err != nil {
+			return err
+		}
+
+		if err := queue.Insert(c); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 type Queue struct {
