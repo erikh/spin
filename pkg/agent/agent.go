@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -75,4 +76,16 @@ func (a *Agent) Tick() error {
 	})
 
 	return err
+}
+
+func (a *Agent) Loop() error {
+	for {
+		if err := a.Tick(); err != nil {
+			// FIXME will this actually work
+			if err != broker.ErrRecordNotFound {
+				log.Println(err)
+				time.Sleep(time.Second)
+			}
+		}
+	}
 }
