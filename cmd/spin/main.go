@@ -14,23 +14,18 @@ import (
 
 	spin "code.hollensbe.org/erikh/spin"
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	"code.hollensbe.org/erikh/spin/pkg/db"
 )
 
 func main() {
 	// Define command line flags, add any other flag required to configure the
 	// service.
 	var (
-		hostF      = flag.String("host", "localhost", "Server host (valid values: localhost)")
-		domainF    = flag.String("domain", "", "Host domain name (overrides host domain specified in service design)")
-		httpPortF  = flag.String("http-port", "", "HTTP port (overrides host HTTP port specified in service design)")
-		dbName     = flag.String("dbname", "spin", "Name of database")
-		dbHost     = flag.String("dbhost", "127.0.0.1", "database host")
-		dbPort     = flag.Uint("dbport", 5432, "database port")
-		dbUser     = flag.String("dbuser", "spin", "database user")
-		dbPassword = flag.String("dbpassword", "spin", "database password")
-		secureF    = flag.Bool("secure", false, "Use secure scheme (https or grpcs)")
-		dbgF       = flag.Bool("debug", false, "Log request and response bodies")
+		hostF     = flag.String("host", "localhost", "Server host (valid values: localhost)")
+		domainF   = flag.String("domain", "", "Host domain name (overrides host domain specified in service design)")
+		httpPortF = flag.String("http-port", "", "HTTP port (overrides host HTTP port specified in service design)")
+		dbName    = flag.String("dbname", "spin-broker.db", "Name of database")
+		secureF   = flag.Bool("secure", false, "Use secure scheme (https or grpcs)")
+		dbgF      = flag.Bool("debug", false, "Log request and response bodies")
 	)
 	flag.Parse()
 
@@ -48,13 +43,7 @@ func main() {
 		err           error
 	)
 	{
-		spinBrokerSvc, err = spin.NewSpinBroker(logger, db.ConnConfig{
-			User:     *dbUser,
-			Password: *dbPassword,
-			Database: *dbName,
-			Host:     *dbHost,
-			Port:     *dbPort,
-		})
+		spinBrokerSvc, err = spin.NewSpinBroker(logger, *dbName)
 	}
 
 	if err != nil {

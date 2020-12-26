@@ -189,6 +189,10 @@ type Command struct {
 	Parameters []string
 }
 
+func (p *Package) UUID() string {
+	return string(p.name)
+}
+
 func (p *Package) Add(value *Command) error {
 	return p.db.db.Update(func(tx *bbolt.Tx) error {
 	redo:

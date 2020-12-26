@@ -1,56 +1,8 @@
 package testutil
 
 import (
-	"bytes"
 	"crypto/rand"
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
 )
-
-// JSONDeepEquals compares the JSON marshaled results.
-//
-// a little miffed I had to make this. basically routes around comparing
-// different pointer values with reflect.DeepEqual.
-func JSONDeepEquals(r1, r2 interface{}) (bool, error) {
-	r1b := bytes.NewBuffer(nil)
-	r2b := bytes.NewBuffer(nil)
-
-	if err := json.NewEncoder(r1b).Encode(r1); err != nil {
-		return false, fmt.Errorf("while encoding first object: %v", err)
-	}
-
-	if err := json.NewEncoder(r2b).Encode(r2); err != nil {
-		return false, fmt.Errorf("while encoding second object: %v", err)
-	}
-
-	return bytes.Equal(r1b.Bytes(), r2b.Bytes()), nil
-}
-
-// RandomSHA generates a random hex-encoded git-looking thing.
-func RandomSHA() string {
-	return randomSHA(20)
-}
-
-// RandomUploadSHA generates a random hex-encoded SHA256-looking thing.
-func RandomUploadSHA() string {
-	return randomSHA(32)
-}
-
-func randomSHA(sz int) string {
-	buf := make([]byte, sz)
-
-	n, err := rand.Reader.Read(buf)
-	if err != nil {
-		panic(err)
-	}
-
-	if n != sz {
-		panic("short read in random device")
-	}
-
-	return hex.EncodeToString(buf)
-}
 
 // RandomString generates a random string which has a length of the provided
 // amount with a guaranteed minimum. It chooses from a-zA-Z0-9. It's very

@@ -6,19 +6,19 @@ import (
 	"net/http"
 
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	"code.hollensbe.org/erikh/spin/pkg/db"
+	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
 // spin-broker service example implementation.
 // The example methods log the requests and return zero values.
 type spinBrokersrvc struct {
 	logger *log.Logger
-	db     *db.DB
+	db     *broker.DB
 }
 
 // NewSpinBroker returns the spin-broker service implementation.
-func NewSpinBroker(logger *log.Logger, connConfig db.ConnConfig) (spinbroker.Service, error) {
-	db, err := db.New(connConfig)
+func NewSpinBroker(logger *log.Logger, dbpath string) (spinbroker.Service, error) {
+	db, err := broker.New(dbpath)
 	if err != nil {
 		return nil, err
 	}
@@ -27,21 +27,51 @@ func NewSpinBroker(logger *log.Logger, connConfig db.ConnConfig) (spinbroker.Ser
 
 // New implements new.
 func (s *spinBrokersrvc) New(ctx context.Context) (res string, err error) {
-	return s.db.NewPackage()
+	pkg, err := s.db.NewPackage()
+	if err != nil {
+		return "", err
+	}
+
+	return pkg.UUID(), nil
 }
 
 // Add
 func (s *spinBrokersrvc) Add(ctx context.Context, p *spinbroker.AddPayload) (string, error) {
-	return s.db.AddToPackage(p.ID, &db.AddCommand{
+	pkg, err := s.db.Package(p.ID)
+	if err != nil {
+		return "", err
+	}
+
+	cmd := &broker.Command{
 		Resource:   p.Resource,
 		Action:     p.Action,
 		Parameters: p.Parameters,
-	})
+	}
+	if err := pkg.Add(cmd); err != nil {
+		return "", err
+	}
+
+	return cmd.UUID, nil
 }
 
 // Enqueue
 func (s *spinBrokersrvc) Enqueue(ctx context.Context, p *spinbroker.EnqueuePayload) ([]string, error) {
-	return s.db.EnqueuePackage(p.ID)
+	pkg, err := s.db.Package(p.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	uuids := []string{}
+	list, err := pkg.List()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, c := range list {
+		uuids = append(uuids, c.UUID)
+	}
+
+	return uuids, pkg.Enqueue()
 }
 
 // Enqueued
