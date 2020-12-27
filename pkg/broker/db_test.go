@@ -35,7 +35,7 @@ func TestDBInit(t *testing.T) {
 func TestNext(t *testing.T) {
 	db := makeDB(t)
 
-	var values []string
+	var values []Command
 
 	queue, err := db.Queue("std")
 	if err != nil {
@@ -43,7 +43,7 @@ func TestNext(t *testing.T) {
 	}
 
 	for i := 0; i < 10000; i++ {
-		value := testutil.RandomString(30, 5)
+		value := Command{Action: testutil.RandomString(30, 5)}
 		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
@@ -52,12 +52,12 @@ func TestNext(t *testing.T) {
 	}
 
 	for _, value := range values {
-		var nextValue string
-		if err := queue.Next(&nextValue); err != nil {
+		nextValue, err := queue.Next()
+		if err != nil {
 			t.Fatal(err)
 		}
 
-		if value != nextValue {
+		if value.Action != nextValue.Action {
 			t.Fatal("values do not match")
 		}
 	}
@@ -74,12 +74,12 @@ func TestNextParallel(t *testing.T) {
 	}
 
 	for i := 0; i < 10000; i++ {
-		value := testutil.RandomString(30, 5)
+		value := Command{Action: testutil.RandomString(30, 5)}
 		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
 
-		values[value] = struct{}{}
+		values[value.Action] = struct{}{}
 	}
 
 	concurrency := runtime.NumCPU() * 2
@@ -90,8 +90,9 @@ func TestNextParallel(t *testing.T) {
 	for i := 0; i < concurrency; i++ {
 		go func() {
 			for {
-				var nextValue string
-				if err := queue.Next(&nextValue); err != nil {
+				nextValue, err := queue.Next()
+
+				if err != nil {
 					if err != ErrRecordNotFound {
 						errChan <- err
 					}
@@ -99,7 +100,7 @@ func TestNextParallel(t *testing.T) {
 					return
 				}
 
-				valueChan <- nextValue
+				valueChan <- nextValue.Action
 			}
 		}()
 	}
@@ -117,9 +118,7 @@ func TestNextParallel(t *testing.T) {
 		}
 	}
 
-	var nextValue string
-
-	if err := queue.Next(&nextValue); err != ErrRecordNotFound {
+	if _, err := queue.Next(); err != ErrRecordNotFound {
 		t.Fatalf("invalid error occurred after draining queue: %v", err)
 	}
 }
@@ -141,12 +140,12 @@ func TestNextParallelMultiQueue(t *testing.T) {
 	}
 
 	for i := 0; i < 100000; i++ {
-		value := testutil.RandomString(30, 5)
+		value := Command{Action: testutil.RandomString(30, 5)}
 		if err := queues[i%concurrency].Insert(value); err != nil {
 			t.Fatal(err)
 		}
 
-		values[value] = struct{}{}
+		values[value.Action] = struct{}{}
 	}
 
 	errChan := make(chan error, 1)
@@ -156,8 +155,8 @@ func TestNextParallelMultiQueue(t *testing.T) {
 		queue := queues[i]
 		go func(queue *Queue) {
 			for {
-				var nextValue string
-				if err := queue.Next(&nextValue); err != nil {
+				nextValue, err := queue.Next()
+				if err != nil {
 					if err != ErrRecordNotFound {
 						errChan <- err
 					}
@@ -165,7 +164,7 @@ func TestNextParallelMultiQueue(t *testing.T) {
 					return
 				}
 
-				valueChan <- nextValue
+				valueChan <- nextValue.Action
 			}
 		}(queue)
 	}
@@ -188,9 +187,9 @@ func TestPackage(t *testing.T) {
 	db := makeDB(t)
 
 	packages := []*Package{}
-	commands := []*Command{}
+	commands := []Command{}
 	resources := []string{}
-	resourceCommands := map[string][]*Command{}
+	resourceCommands := map[string][]Command{}
 
 	for i := 0; i < 100; i++ {
 		resource := testutil.RandomString(30, 5)
@@ -204,13 +203,13 @@ func TestPackage(t *testing.T) {
 		}
 
 		for i := 0; i < 100; i++ {
-			c := &Command{
+			c := Command{
 				Resource:   resources[i],
 				Action:     testutil.RandomString(30, 5),
 				Parameters: map[string]string{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
-			err := pkg.Add(c)
+			err := pkg.Add(&c)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -257,12 +256,13 @@ func TestPackage(t *testing.T) {
 		for _, command := range resourceCommands[resource] {
 			var c Command
 
-			if err := queue.Next(&c); err != nil {
+			c, err := queue.Next()
+			if err != nil {
 				t.Fatal(err)
 			}
 
-			if !reflect.DeepEqual(*command, c) {
-				t.Fatalf("values did not match: %v %v", *command, c)
+			if !reflect.DeepEqual(command, c) {
+				t.Fatalf("values did not match: %v %v", command, c)
 			}
 
 			if err := db.FinishCommand(c.UUID, true, ""); err != nil {

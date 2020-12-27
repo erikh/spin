@@ -12,10 +12,11 @@ import "errors"
 // processed, FinishCommand is called to finish the command, then statuses are
 // polled and eventually yielded.
 type Command struct {
-	UUID       string
-	Resource   string
-	Action     string
-	Parameters map[string]string
+	UUID         string
+	Resource     string
+	Action       string
+	Parameters   map[string]string
+	Dependencies []string
 }
 
 // Dispatcher encapsulates a dispatching system that consists of actions

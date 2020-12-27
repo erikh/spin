@@ -95,9 +95,8 @@ func (s *spinBrokersrvc) Next(ctx context.Context, p *spinbroker.NextPayload) (*
 		return nil, err
 	}
 
-	var c broker.Command
-
-	if err := queue.Next(&c); err != nil {
+	c, err := queue.Next()
+	if err != nil {
 		return nil, err
 	}
 

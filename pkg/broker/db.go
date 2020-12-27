@@ -241,8 +241,8 @@ func (p *Package) Add(value *Command) error {
 }
 
 // List lists the commands for the Package.
-func (p *Package) List() ([]*Command, error) {
-	var c []*Command
+func (p *Package) List() ([]Command, error) {
+	var c []Command
 
 	return c, p.db.db.View(func(tx *bbolt.Tx) error {
 		cursor := tx.Bucket([]byte(BucketPackages)).Bucket(p.name).Cursor()
@@ -253,7 +253,7 @@ func (p *Package) List() ([]*Command, error) {
 				return err // XXX skip these items, maybe?
 			}
 
-			c = append(c, &command)
+			c = append(c, command)
 		}
 
 		return nil
@@ -326,7 +326,7 @@ func (db *DB) Queue(name string) (*Queue, error) {
 }
 
 // Insert inserts an item into the Queue.
-func (q *Queue) Insert(value interface{}) error {
+func (q *Queue) Insert(value Command) error {
 	return q.db.db.Update(func(tx *bbolt.Tx) error {
 		content, err := json.Marshal(value)
 		if err != nil {
@@ -348,10 +348,12 @@ func (q *Queue) Insert(value interface{}) error {
 }
 
 // Next returns the next item in the queue, then removes it from the queue.
-func (q *Queue) Next(data interface{}) error {
+func (q *Queue) Next() (Command, error) {
+	var data Command
+
 	tx, err := q.db.db.Begin(true)
 	if err != nil {
-		return err
+		return data, err
 	}
 	defer tx.Rollback()
 
@@ -359,16 +361,22 @@ func (q *Queue) Next(data interface{}) error {
 
 	key, value := queueBucket.Cursor().First()
 	if key == nil {
-		return ErrRecordNotFound
+		return data, ErrRecordNotFound
+	}
+
+	if err := json.Unmarshal(value, &data); err != nil {
+		return data, err
+	}
+
+	for _, dep := range data.Dependencies {
+		if err := q.db.CommandStatus(dep); err != nil {
+			return data, err
+		}
 	}
 
 	if err := queueBucket.Delete(key); err != nil {
-		return err
+		return data, err
 	}
 
-	if err := json.Unmarshal(value, data); err != nil {
-		return err
-	}
-
-	return tx.Commit()
+	return data, tx.Commit()
 }
