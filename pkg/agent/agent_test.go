@@ -22,7 +22,7 @@ func TestBasicDispatch(t *testing.T) {
 			},
 		},
 	}
-	cc := brokerclient.ClientConfig{Proto: "http", Host: host, Timeout: 1}
+	cc := brokerclient.Config{Proto: "http", Host: host, Timeout: 1}
 	a := New(cc, "resource", dispatcher)
 	client := brokerclient.New(cc)
 

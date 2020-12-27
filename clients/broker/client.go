@@ -10,7 +10,7 @@ import (
 	goahttp "goa.design/goa/v3/http"
 )
 
-type ClientConfig struct {
+type Config struct {
 	Proto   string
 	Host    string
 	Timeout int
@@ -20,7 +20,7 @@ type Client struct {
 	client *client.Client
 }
 
-func New(cc ClientConfig) *Client {
+func New(cc Config) *Client {
 	return &Client{client.NewClient(
 		cc.Proto,
 		cc.Host,

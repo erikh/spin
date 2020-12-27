@@ -16,7 +16,7 @@ type Agent struct {
 	dispatcher broker.Dispatcher
 }
 
-func New(cc brokerclient.ClientConfig, resource string, dispatcher broker.Dispatcher) *Agent {
+func New(cc brokerclient.Config, resource string, dispatcher broker.Dispatcher) *Agent {
 	return &Agent{
 		resource:   resource,
 		dispatcher: dispatcher,

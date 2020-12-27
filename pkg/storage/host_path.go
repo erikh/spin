@@ -63,6 +63,6 @@ var hostPathDispatcher = broker.Dispatcher{
 	},
 }
 
-func NewHostPathAgent(cc brokerclient.ClientConfig) *agent.Agent {
+func NewHostPathAgent(cc brokerclient.Config) *agent.Agent {
 	return agent.New(cc, ResourceType, hostPathDispatcher)
 }
