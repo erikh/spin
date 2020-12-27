@@ -270,7 +270,7 @@ func NewStatusHandler(
 	var (
 		decodeRequest  = DecodeStatusRequest(mux, decoder)
 		encodeResponse = EncodeStatusResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeStatusError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -321,7 +321,7 @@ func NewNextHandler(
 	var (
 		decodeRequest  = DecodeNextRequest(mux, decoder)
 		encodeResponse = EncodeNextResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+		encodeError    = EncodeNextError(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))

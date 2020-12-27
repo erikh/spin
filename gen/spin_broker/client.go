@@ -66,6 +66,9 @@ func (c *Client) Enqueue(ctx context.Context, p *EnqueuePayload) (res []string, 
 }
 
 // Status calls the "status" endpoint of the "spin-broker" service.
+// Status may return the following errors:
+//	- "record_not_found" (type *goa.ServiceError)
+//	- error: internal error
 func (c *Client) Status(ctx context.Context, p *StatusPayload) (res *StatusResult, err error) {
 	var ires interface{}
 	ires, err = c.StatusEndpoint(ctx, p)
@@ -76,6 +79,9 @@ func (c *Client) Status(ctx context.Context, p *StatusPayload) (res *StatusResul
 }
 
 // Next calls the "next" endpoint of the "spin-broker" service.
+// Next may return the following errors:
+//	- "record_not_found" (type *goa.ServiceError)
+//	- error: internal error
 func (c *Client) Next(ctx context.Context, p *NextPayload) (res *NextResult, err error) {
 	var ires interface{}
 	ires, err = c.NextEndpoint(ctx, p)

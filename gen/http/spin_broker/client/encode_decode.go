@@ -232,6 +232,9 @@ func (c *Client) BuildStatusRequest(ctx context.Context, v interface{}) (*http.R
 // DecodeStatusResponse returns a decoder for responses returned by the
 // spin-broker status endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
+// DecodeStatusResponse may return the following errors:
+//	- "record_not_found" (type *goa.ServiceError): http.StatusBadRequest
+//	- error: internal error
 func DecodeStatusResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -262,6 +265,20 @@ func DecodeStatusResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			}
 			res := NewStatusResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body StatusRecordNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-broker", "status", err)
+			}
+			err = ValidateStatusRecordNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("spin-broker", "status", err)
+			}
+			return nil, NewStatusRecordNotFound(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-broker", "status", resp.StatusCode, string(body))
@@ -297,6 +314,9 @@ func (c *Client) BuildNextRequest(ctx context.Context, v interface{}) (*http.Req
 // DecodeNextResponse returns a decoder for responses returned by the
 // spin-broker next endpoint. restoreBody controls whether the response body
 // should be restored after having been read.
+// DecodeNextResponse may return the following errors:
+//	- "record_not_found" (type *goa.ServiceError): http.StatusBadRequest
+//	- error: internal error
 func DecodeNextResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
@@ -327,6 +347,20 @@ func DecodeNextResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			}
 			res := NewNextResultOK(&body)
 			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body NextRecordNotFoundResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-broker", "next", err)
+			}
+			err = ValidateNextRecordNotFoundResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("spin-broker", "next", err)
+			}
+			return nil, NewNextRecordNotFound(&body)
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-broker", "next", resp.StatusCode, string(body))

@@ -21,8 +21,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Deserunt blanditiis consequatur consequuntur praesentium consequatur.
-        example: Sunt iusto harum.
+          example: Asperiores tempora.
+        example: Inventore inventore qui nihil.
       requestBody:
         required: true
         content:
@@ -41,8 +41,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Blanditiis repudiandae.
-              example: Accusantium labore.
+                example: Officiis voluptatum deleniti maxime possimus vero.
+              example: Natus consectetur.
   /complete:
     post:
       tags:
@@ -78,8 +78,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Corporis ab nulla quis.
-        example: Voluptatem vel dicta.
+          example: Sint et nesciunt et molestiae soluta ut.
+        example: Dolorem totam omnis molestiae.
       responses:
         "200":
           description: OK response.
@@ -89,16 +89,15 @@ paths:
                 type: array
                 items:
                   type: string
-                  example: Accusantium consequuntur.
+                  example: Sed qui sint delectus quis.
                 example:
-                - Inventore sed.
-                - Deserunt dicta eaque reiciendis autem.
-                - Accusamus esse blanditiis.
+                - Nobis nisi molestiae.
+                - Tempora eum officiis sit quis.
+                - Ducimus qui recusandae aliquid blanditiis repudiandae adipisci.
               example:
-              - Dolorem quibusdam minus expedita.
-              - Et iusto fugit.
-              - Similique aliquid corrupti amet numquam sed totam.
-              - Minima omnis.
+              - Libero quas.
+              - Tempore iste voluptatem est.
+              - Deserunt blanditiis consequatur consequuntur praesentium consequatur.
   /new:
     post:
       tags:
@@ -113,8 +112,8 @@ paths:
             application/json:
               schema:
                 type: string
-                example: Et aperiam impedit autem optio ut.
-              example: Tempore iste voluptatem est.
+                example: Ea iusto modi aspernatur.
+              example: Deleniti incidunt.
   /next/{resource}:
     get:
       tags:
@@ -130,8 +129,8 @@ paths:
         schema:
           type: string
           description: resource type
-          example: Totam quia sit.
-        example: Adipisci tempora.
+          example: Corporis ab nulla quis.
+        example: Voluptatem vel dicta.
       responses:
         "200":
           description: OK response.
@@ -147,6 +146,16 @@ paths:
                   Vel vel illum voluptatem voluptatibus.: Minima cum delectus occaecati enim.
                 resource: Unde inventore cupiditate soluta.
                 uuid: Iure aut voluptas qui.
+        "400":
+          description: No records were found
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /status/{id}:
     get:
       tags:
@@ -162,8 +171,8 @@ paths:
         schema:
           type: string
           description: Package ID
-          example: Culpa ut quidem aut et qui porro.
-        example: Labore accusantium ut itaque odio explicabo perferendis.
+          example: Sunt iusto harum.
+        example: Accusantium labore.
       responses:
         "200":
           description: OK response.
@@ -174,6 +183,16 @@ paths:
               example:
                 reason: Repellendus eaque nesciunt quia.
                 status: false
+        "400":
+          description: No records were found
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /storage/volume/add:
     post:
       tags:
@@ -247,8 +266,8 @@ paths:
         schema:
           type: string
           description: volume identifier
-          example: Natus consectetur.
-        example: Sint et nesciunt et molestiae soluta ut.
+          example: Ipsum natus quasi quia.
+        example: Ut suscipit cupiditate cumque ratione occaecati.
       - name: image_name
         in: path
         description: image name
@@ -256,8 +275,8 @@ paths:
         schema:
           type: string
           description: image name
-          example: Dolorem totam omnis molestiae.
-        example: Rerum libero quas.
+          example: Vel in modi rerum.
+        example: Ut veritatis aut.
       responses:
         "200":
           description: OK response.
@@ -316,8 +335,8 @@ paths:
         schema:
           type: string
           description: volume identifier
-          example: Asperiores tempora.
-        example: Inventore inventore qui nihil.
+          example: Eum laudantium tempora pariatur possimus autem.
+        example: Qui ad aut possimus quisquam harum.
       responses:
         "200":
           description: OK response.
@@ -336,8 +355,8 @@ paths:
         schema:
           type: string
           description: volume identifier
-          example: Ratione occaecati.
-        example: Vel in modi rerum.
+          example: Cupiditate amet.
+        example: Sapiente sequi molestiae inventore aut.
       - name: label
         in: path
         description: label identifier to apply to volume
@@ -345,8 +364,8 @@ paths:
         schema:
           type: string
           description: label identifier to apply to volume
-          example: Ut veritatis aut.
-        example: Deleniti incidunt.
+          example: Officiis perspiciatis.
+        example: Dolore voluptate voluptas veniam.
       responses:
         "200":
           description: OK response.
@@ -365,8 +384,8 @@ paths:
         schema:
           type: string
           description: volume identifier
-          example: Quisquam harum ad ipsum.
-        example: Quasi quia vel ut suscipit cupiditate.
+          example: Corporis quo.
+        example: Rerum odit.
       responses:
         "200":
           description: OK response.
@@ -378,23 +397,25 @@ components:
         action:
           type: string
           description: Action name
-          example: Consectetur commodi.
+          example: Libero commodi placeat.
         parameters:
           type: object
           description: Action parameters
           example:
-            Explicabo quaerat officiis voluptatum deleniti maxime.: Vero omnis sed qui sint delectus quis.
-            Quos reiciendis et quisquam ex.: Voluptas voluptate et in animi quos voluptatem.
+            Est totam quasi eligendi quod.: Sed cum.
+            Repudiandae eos.: Quibusdam error dolorem.
+            Voluptatem culpa unde ut.: Aut ut illum.
           additionalProperties: true
         resource:
           type: string
           description: Resource name
-          example: Numquam provident occaecati animi.
+          example: Qui sit nihil.
       example:
-        action: Molestiae nihil tempora.
+        action: Numquam provident occaecati animi.
         parameters:
-          Sit quis itaque.: Qui recusandae.
-        resource: Recusandae nobis.
+          Commodi accusamus veritatis quos.: Et quisquam.
+          Officia voluptas voluptate.: In animi quos voluptatem qui explicabo.
+        resource: Et aperiam impedit autem optio ut.
       required:
       - resource
       - action
@@ -404,14 +425,14 @@ components:
         path:
           type: string
           description: path to backing storage
-          example: Incidunt quae est velit eaque mollitia.
+          example: Itaque non quis quae.
         volume:
           type: string
           description: volume identifier
-          example: Itaque omnis fuga.
+          example: Ut ex molestiae quod distinctio voluptatibus.
       example:
-        path: Nemo omnis quia deleniti voluptate.
-        volume: Odio similique qui qui architecto.
+        path: Enim quos numquam recusandae ut.
+        volume: Accusantium laboriosam sunt minima saepe architecto.
       required:
       - volume
       - path
@@ -421,19 +442,19 @@ components:
         id:
           type: string
           description: Command ID
-          example: Sapiente sequi molestiae inventore aut.
+          example: Voluptas non officiis.
         status:
           type: boolean
           description: status of work
-          example: false
+          example: true
         status_reason:
           type: string
           description: reason of success/failure
-          example: Perspiciatis inventore dolore.
+          example: Quia quisquam hic est quisquam.
       example:
-        id: Voluptas veniam soluta eum laudantium tempora pariatur.
-        status: false
-        status_reason: Eveniet qui ad aut.
+        id: Quae incidunt nulla sit.
+        status: true
+        status_reason: Voluptas dolorem.
       required:
       - id
       - status
@@ -443,19 +464,19 @@ components:
         image_name:
           type: string
           description: image name
-          example: Ea qui omnis qui.
+          example: Laboriosam fugit.
         image_size:
           type: integer
           description: image size in GB
-          example: 10396896588555547173
+          example: 14295512975125348066
         volume:
           type: string
           description: volume identifier
-          example: Vel vel enim ut voluptas.
+          example: Non voluptate est.
       example:
-        image_name: Quas aliquam sit quaerat.
-        image_size: 13139907858509298089
-        volume: Dolor cupiditate perspiciatis.
+        image_name: Consectetur nihil omnis.
+        image_size: 4727890621428056390
+        volume: Ut laboriosam.
       required:
       - image_name
       - image_size
@@ -466,36 +487,74 @@ components:
         image_name:
           type: string
           description: image name
-          example: Quia voluptatem adipisci et provident.
+          example: Itaque omnis fuga.
         volume:
           type: string
           description: volume identifier
-          example: Ea iusto modi aspernatur.
+          example: Incidunt quae est velit eaque mollitia.
       example:
-        image_name: Qui sit nihil.
-        volume: Libero commodi placeat.
+        image_name: Odio similique qui qui architecto.
+        volume: Nemo omnis quia deleniti voluptate.
       required:
       - image_name
       - volume
+    Error:
+      type: object
+      properties:
+        fault:
+          type: boolean
+          description: Is the error a server-side fault?
+          example: true
+        id:
+          type: string
+          description: ID is a unique identifier for this particular occurrence of the problem.
+          example: 123abc
+        message:
+          type: string
+          description: Message is a human-readable explanation specific to this occurrence of the problem.
+          example: parameter 'p' must be an integer
+        name:
+          type: string
+          description: Name is the name of this class of errors.
+          example: bad_request
+        temporary:
+          type: boolean
+          description: Is the error temporary?
+          example: true
+        timeout:
+          type: boolean
+          description: Is the error a timeout?
+          example: true
+      example:
+        id: 3F1FKVRR
+        message: Value of ID must be an integer
+        name: bad_request
+      required:
+      - name
+      - id
+      - message
+      - temporary
+      - timeout
+      - fault
     MoveImageRequestBody:
       type: object
       properties:
         image_name:
           type: string
           description: image name
-          example: Nostrum est totam.
+          example: Ea qui omnis qui.
         target_volume:
           type: string
           description: volume identifier to move to
-          example: Sequi voluptatem culpa unde ut.
+          example: Enim ut voluptas ullam quas aliquam.
         volume:
           type: string
           description: volume identifier
-          example: Eligendi quod voluptas sed.
+          example: Et vel.
       example:
-        image_name: Aut ut illum.
-        target_volume: Quibusdam error dolorem.
-        volume: Repudiandae eos.
+        image_name: Quaerat illo molestiae.
+        target_volume: Adipisci et provident.
+        volume: Cupiditate perspiciatis voluptas quia.
       required:
       - image_name
       - volume
@@ -506,30 +565,29 @@ components:
         action:
           type: string
           description: action name
-          example: Earum hic sequi.
+          example: Sequi temporibus.
         parameters:
           type: object
           description: parameters for action
           example:
-            Fugiat excepturi sed nisi aut tempore aliquam.: Illum molestiae voluptates natus.
-            Qui iusto ex.: Doloremque saepe in.
-            Reiciendis eveniet repudiandae reiciendis perferendis impedit reiciendis.: Reprehenderit quo ab iure nihil.
+            Cupiditate commodi aut asperiores quidem sit facilis.: Cum repudiandae veniam vel.
+            Quae at sed necessitatibus et.: Earum hic sequi.
           additionalProperties: true
         resource:
           type: string
           description: resource type
-          example: Quae at sed necessitatibus et.
+          example: In inventore.
         uuid:
           type: string
           description: Command ID
-          example: Sit facilis deleniti cum repudiandae veniam vel.
+          example: Qui repellendus voluptate voluptas.
       example:
-        action: Nulla sit.
+        action: Illum molestiae voluptates natus.
         parameters:
-          Rerum odit.: Cupiditate amet.
-          Voluptas dolorem.: Corporis quo.
-        resource: Est quisquam inventore quae.
-        uuid: Non officiis molestiae nostrum quia quisquam.
+          Iusto ex et.: Saepe in repudiandae reiciendis eveniet repudiandae.
+          Perferendis impedit.: Dolores reprehenderit quo ab iure.
+        resource: Aut tempore aliquam.
+        uuid: Animi fugiat excepturi sed.
       required:
       - uuid
       - resource
@@ -540,13 +598,13 @@ components:
         reason:
           type: string
           description: Failure reason (if any)
-          example: Voluptate voluptas perspiciatis in inventore.
+          example: Voluptas et inventore.
         status:
           type: boolean
           description: Pass/Fail status
           example: true
       example:
-        reason: Temporibus repudiandae inventore cupiditate commodi aut asperiores.
+        reason: Deserunt dicta eaque reiciendis autem.
         status: true
       required:
       - status

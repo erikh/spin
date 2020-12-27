@@ -9,6 +9,8 @@ package spinbroker
 
 import (
 	"context"
+
+	goa "goa.design/goa/v3/pkg"
 )
 
 // The message broker for the other services
@@ -97,4 +99,13 @@ type CompletePayload struct {
 	Status bool
 	// reason of success/failure
 	StatusReason *string
+}
+
+// MakeRecordNotFound builds a goa.ServiceError from an error.
+func MakeRecordNotFound(err error) *goa.ServiceError {
+	return &goa.ServiceError{
+		Name:    "record_not_found",
+		ID:      goa.NewErrorID(),
+		Message: err.Error(),
+	}
 }

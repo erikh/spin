@@ -6,6 +6,7 @@ import (
 
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
+	goa "goa.design/goa/v3/pkg"
 )
 
 type spinBrokersrvc struct {
@@ -81,7 +82,13 @@ func (s *spinBrokersrvc) Status(ctx context.Context, p *spinbroker.StatusPayload
 	if err := pkg.Finished(); err != nil {
 		if e, ok := err.(broker.ErrorStatus); ok {
 			return &spinbroker.StatusResult{Reason: &e.Reason}, nil
+		} else if err == broker.ErrRecordNotFound {
+			return nil, &goa.ServiceError{
+				Name: "record_not_found",
+				ID:   goa.NewErrorID(),
+			}
 		}
+
 		return nil, err
 	}
 
@@ -97,6 +104,12 @@ func (s *spinBrokersrvc) Next(ctx context.Context, p *spinbroker.NextPayload) (*
 
 	c, err := queue.Next()
 	if err != nil {
+		if err == broker.ErrRecordNotFound {
+			return nil, &goa.ServiceError{
+				Name: "record_not_found",
+				ID:   goa.NewErrorID(),
+			}
+		}
 		return nil, err
 	}
 

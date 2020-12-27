@@ -220,9 +220,16 @@ var _ = Service("spin-broker", func() {
 			Required("status")
 		})
 
+		Error("record_not_found")
+
 		HTTP(func() {
 			GET("/status/{id}")
 			Response(StatusOK)
+
+			Response("record_not_found", StatusBadRequest, func() {
+				// Use HTTP status code 400 (BadRequest) to write "div_by_zero" errors
+				Description("No records were found")
+			})
 		})
 	})
 
@@ -242,9 +249,15 @@ var _ = Service("spin-broker", func() {
 			Required("uuid", "resource", "action")
 		})
 
+		Error("record_not_found")
+
 		HTTP(func() {
 			GET("/next/{resource}")
 			Response(StatusOK)
+			Response("record_not_found", StatusBadRequest, func() {
+				// Use HTTP status code 400 (BadRequest) to write "div_by_zero" errors
+				Description("No records were found")
+			})
 		})
 	})
 

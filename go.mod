@@ -3,6 +3,7 @@ module code.hollensbe.org/erikh/spin
 go 1.15
 
 require (
+	github.com/dimfeld/httptreemux v5.0.1+incompatible // indirect
 	github.com/google/uuid v1.1.2
 	github.com/urfave/cli/v2 v2.3.0
 	go.etcd.io/bbolt v1.3.5

@@ -56,6 +56,42 @@ type NextResponseBody struct {
 	Parameters map[string]string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
+// StatusRecordNotFoundResponseBody is the type of the "spin-broker" service
+// "status" endpoint HTTP response body for the "record_not_found" error.
+type StatusRecordNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
+// NextRecordNotFoundResponseBody is the type of the "spin-broker" service
+// "next" endpoint HTTP response body for the "record_not_found" error.
+type NextRecordNotFoundResponseBody struct {
+	// Name is the name of this class of errors.
+	Name string `form:"name" json:"name" xml:"name"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID string `form:"id" json:"id" xml:"id"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message string `form:"message" json:"message" xml:"message"`
+	// Is the error temporary?
+	Temporary bool `form:"temporary" json:"temporary" xml:"temporary"`
+	// Is the error a timeout?
+	Timeout bool `form:"timeout" json:"timeout" xml:"timeout"`
+	// Is the error a server-side fault?
+	Fault bool `form:"fault" json:"fault" xml:"fault"`
+}
+
 // NewStatusResponseBody builds the HTTP response body from the result of the
 // "status" endpoint of the "spin-broker" service.
 func NewStatusResponseBody(res *spinbroker.StatusResult) *StatusResponseBody {
@@ -81,6 +117,34 @@ func NewNextResponseBody(res *spinbroker.NextResult) *NextResponseBody {
 			tv := val
 			body.Parameters[tk] = tv
 		}
+	}
+	return body
+}
+
+// NewStatusRecordNotFoundResponseBody builds the HTTP response body from the
+// result of the "status" endpoint of the "spin-broker" service.
+func NewStatusRecordNotFoundResponseBody(res *goa.ServiceError) *StatusRecordNotFoundResponseBody {
+	body := &StatusRecordNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
+	}
+	return body
+}
+
+// NewNextRecordNotFoundResponseBody builds the HTTP response body from the
+// result of the "next" endpoint of the "spin-broker" service.
+func NewNextRecordNotFoundResponseBody(res *goa.ServiceError) *NextRecordNotFoundResponseBody {
+	body := &NextRecordNotFoundResponseBody{
+		Name:      res.Name,
+		ID:        res.ID,
+		Message:   res.Message,
+		Temporary: res.Temporary,
+		Timeout:   res.Timeout,
+		Fault:     res.Fault,
 	}
 	return body
 }
