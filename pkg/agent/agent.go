@@ -2,58 +2,32 @@ package agent
 
 import (
 	"context"
-	"errors"
 	"log"
-	"net/http"
 	"time"
 
-	goahttp "goa.design/goa/v3/http"
-
-	"code.hollensbe.org/erikh/spin/gen/http/spin_broker/client"
+	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
-type ClientConfig struct {
-	Proto   string
-	Host    string
-	Timeout int
-}
-
 type Agent struct {
 	resource   string
-	client     *client.Client
+	client     *brokerclient.Client
 	dispatcher broker.Dispatcher
 }
 
-func (cc ClientConfig) MakeClient() *client.Client {
-	return client.NewClient(
-		cc.Proto,
-		cc.Host,
-		&http.Client{Timeout: time.Duration(cc.Timeout) * time.Second},
-		goahttp.RequestEncoder,
-		goahttp.ResponseDecoder,
-		false,
-	)
-}
-
-func New(cc ClientConfig, resource string, dispatcher broker.Dispatcher) *Agent {
+func New(cc brokerclient.ClientConfig, resource string, dispatcher broker.Dispatcher) *Agent {
 	return &Agent{
 		resource:   resource,
 		dispatcher: dispatcher,
-		client:     cc.MakeClient(),
+		client:     brokerclient.New(cc),
 	}
 }
 
 func (a *Agent) Tick(ctx context.Context) error {
-	p, err := a.client.Next()(ctx, &spinbroker.NextPayload{Resource: a.resource})
+	nr, err := a.client.Next(ctx, &spinbroker.NextPayload{Resource: a.resource})
 	if err != nil {
 		return err
-	}
-
-	nr, ok := p.(*spinbroker.NextResult)
-	if !ok {
-		return errors.New("invalid result")
 	}
 
 	err = a.dispatcher.Dispatch(broker.Command{
@@ -69,7 +43,7 @@ func (a *Agent) Tick(ctx context.Context) error {
 		sr = &s
 	}
 
-	_, err = a.client.Complete()(ctx, &spinbroker.CompletePayload{
+	err = a.client.Complete(ctx, &spinbroker.CompletePayload{
 		ID:           nr.UUID,
 		Status:       err == nil,
 		StatusReason: sr,

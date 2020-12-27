@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	"code.hollensbe.org/erikh/spin/pkg/agent"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
@@ -62,6 +63,6 @@ var hostPathDispatcher = broker.Dispatcher{
 	},
 }
 
-func NewHostPathAgent(cc agent.ClientConfig) *agent.Agent {
+func NewHostPathAgent(cc brokerclient.ClientConfig) *agent.Agent {
 	return agent.New(cc, ResourceType, hostPathDispatcher)
 }
