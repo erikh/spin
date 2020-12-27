@@ -1,6 +1,9 @@
 test: gen
 	go test -v ./...
 
+test-all: gen
+	go test -v ./... -count 1
+
 clean: 
 	rm -f spin-broker.db
 
