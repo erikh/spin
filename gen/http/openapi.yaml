@@ -90,8 +90,7 @@ paths:
       tags:
       - spin-broker
       summary: new spin-broker
-      description: Create a new package; a collection of items to join into the queue
-        simultaneously
+      description: Create a new package; a collection of items to join into the queue simultaneously
       operationId: spin-broker#new
       responses:
         "200":
@@ -151,8 +150,7 @@ paths:
       tags:
       - spin-apiserver
       summary: add_volume spin-apiserver
-      description: Add a volume for image allocation with backing storage, and name
-        it
+      description: Add a volume for image allocation with backing storage, and name it
       operationId: spin-apiserver#add_volume
       parameters:
       - name: add_volume_request_body
@@ -513,8 +511,7 @@ definitions:
         type: object
         description: parameters for action
         example:
-          Consectetur assumenda soluta repellendus eaque neque.: Accusamus beatae
-            nihil.
+          Consectetur assumenda soluta repellendus eaque neque.: Accusamus beatae nihil.
           Molestiae quaerat.: Nemo autem ab delectus amet magnam.
           Natus dicta aliquid.: Provident sint ut facilis.
         additionalProperties: true

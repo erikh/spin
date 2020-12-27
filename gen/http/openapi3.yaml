@@ -104,8 +104,7 @@ paths:
       tags:
       - spin-broker
       summary: new spin-broker
-      description: Create a new package; a collection of items to join into the queue
-        simultaneously
+      description: Create a new package; a collection of items to join into the queue simultaneously
       operationId: spin-broker#new
       responses:
         "200":
@@ -143,12 +142,9 @@ paths:
               example:
                 action: Corporis sit non sit recusandae eum repellat.
                 parameters:
-                  Sint eveniet hic minus facere.: Quas tempora nisi aperiam occaecati
-                    deserunt qui.
-                  Temporibus esse reprehenderit qui molestias.: Voluptatem qui nihil
-                    officia.
-                  Vel vel illum voluptatem voluptatibus.: Minima cum delectus occaecati
-                    enim.
+                  Sint eveniet hic minus facere.: Quas tempora nisi aperiam occaecati deserunt qui.
+                  Temporibus esse reprehenderit qui molestias.: Voluptatem qui nihil officia.
+                  Vel vel illum voluptatem voluptatibus.: Minima cum delectus occaecati enim.
                 resource: Unde inventore cupiditate soluta.
                 uuid: Iure aut voluptas qui.
   /status/{id}:
@@ -183,8 +179,7 @@ paths:
       tags:
       - spin-apiserver
       summary: add_volume spin-apiserver
-      description: Add a volume for image allocation with backing storage, and name
-        it
+      description: Add a volume for image allocation with backing storage, and name it
       operationId: spin-apiserver#add_volume
       requestBody:
         required: true
@@ -388,8 +383,7 @@ components:
           type: object
           description: Action parameters
           example:
-            Explicabo quaerat officiis voluptatum deleniti maxime.: Vero omnis sed
-              qui sint delectus quis.
+            Explicabo quaerat officiis voluptatum deleniti maxime.: Vero omnis sed qui sint delectus quis.
             Quos reiciendis et quisquam ex.: Voluptas voluptate et in animi quos voluptatem.
           additionalProperties: true
         resource:
@@ -517,11 +511,9 @@ components:
           type: object
           description: parameters for action
           example:
-            Fugiat excepturi sed nisi aut tempore aliquam.: Illum molestiae voluptates
-              natus.
+            Fugiat excepturi sed nisi aut tempore aliquam.: Illum molestiae voluptates natus.
             Qui iusto ex.: Doloremque saepe in.
-            Reiciendis eveniet repudiandae reiciendis perferendis impedit reiciendis.: Reprehenderit
-              quo ab iure nihil.
+            Reiciendis eveniet repudiandae reiciendis perferendis impedit reiciendis.: Reprehenderit quo ab iure nihil.
           additionalProperties: true
         resource:
           type: string
