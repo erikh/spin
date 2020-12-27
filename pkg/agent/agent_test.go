@@ -7,22 +7,22 @@ import (
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	"code.hollensbe.org/erikh/spin/pkg/broker"
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"code.hollensbe.org/erikh/spin/pkg/services"
 )
 
 func TestBasicDispatch(t *testing.T) {
 	host := services.SetupTestBroker(t)
 
-	dispatcher := broker.Dispatcher{
+	dispatcher := dispatcher.Dispatcher{
 		"an_action": {
-			Dispatch: func(c broker.Command) error {
+			Dispatch: func(c dispatcher.Command) error {
 				fmt.Println(c)
 				return nil
 			},
 		},
 	}
-	cc := brokerclient.Config{Proto: "http", Host: host, Timeout: 1}
+	cc := brokerclient.Config{Host: host, Timeout: 1}
 	a := New(cc, "resource", dispatcher)
 	client := brokerclient.New(cc)
 

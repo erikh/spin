@@ -6,16 +6,17 @@ import (
 	"time"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
 type Agent struct {
 	resource   string
 	client     *brokerclient.Client
-	dispatcher broker.Dispatcher
+	dispatcher dispatcher.Dispatcher
 }
 
-func New(cc brokerclient.Config, resource string, dispatcher broker.Dispatcher) *Agent {
+func New(cc brokerclient.Config, resource string, dispatcher dispatcher.Dispatcher) *Agent {
 	return &Agent{
 		resource:   resource,
 		dispatcher: dispatcher,
@@ -29,7 +30,7 @@ func (a *Agent) Tick(ctx context.Context) error {
 		return err
 	}
 
-	err = a.dispatcher.Dispatch(broker.Command{
+	err = a.dispatcher.Dispatch(dispatcher.Command{
 		UUID:       nr.UUID,
 		Resource:   nr.Resource,
 		Action:     nr.Action,

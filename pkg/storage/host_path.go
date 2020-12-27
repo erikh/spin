@@ -9,13 +9,13 @@ import (
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	"code.hollensbe.org/erikh/spin/pkg/agent"
-	"code.hollensbe.org/erikh/spin/pkg/broker"
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 )
 
-var hostPathDispatcher = broker.Dispatcher{
+var hostPathDispatcher = dispatcher.Dispatcher{
 	"add_volume": {
 		RequiredParameters: []string{"path"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			if fi, err := os.Stat(c.Parameters["path"]); err != nil {
 				return err
 			} else if !fi.IsDir() {
@@ -27,7 +27,7 @@ var hostPathDispatcher = broker.Dispatcher{
 	},
 	"remove_volume": {
 		RequiredParameters: []string{"path"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			if fi, err := os.Stat(c.Parameters["path"]); err != nil {
 				return err
 			} else if !fi.IsDir() {
@@ -39,25 +39,25 @@ var hostPathDispatcher = broker.Dispatcher{
 	},
 	"create_image": {
 		RequiredParameters: []string{"volume_path", "image_name", "image_size"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			return exec.Command("truncate", "-s", fmt.Sprintf("%sG", c.Parameters["image_size"]), filepath.Join(c.Parameters["volume_path"], c.Parameters["image_name"])).Run()
 		},
 	},
 	"delete_image": {
 		RequiredParameters: []string{"volume_path", "image_name"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			return os.Remove(filepath.Join(c.Parameters["volume_path"], c.Parameters["image_name"]))
 		},
 	},
 	"resize_image": {
 		RequiredParameters: []string{"volume_path", "image_name", "image_size"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			return nil
 		},
 	},
 	"move_image": {
 		RequiredParameters: []string{"image_name", "volume", "target_volume"},
-		Dispatch: func(c broker.Command) error {
+		Dispatch: func(c dispatcher.Command) error {
 			return nil
 		},
 	},

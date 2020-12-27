@@ -1,6 +1,22 @@
-package broker
+package dispatcher
 
 import "errors"
+
+// Command is a unit of instruction; it contains a UUID, the unique identifier
+// of the commmand, a Resource, the type of command to execute, an action, the
+// name of the command to execute, and parameters, a collection of items that
+// relate to the action for the purposes of execution.
+//
+// Commands are typically fed to Packages, then the Package is Enqueued, Next()
+// calls are made to yield the commands for the resource, the command is
+// processed, FinishCommand is called to finish the command, then statuses are
+// polled and eventually yielded.
+type Command struct {
+	UUID       string
+	Resource   string
+	Action     string
+	Parameters map[string]string
+}
 
 // Dispatcher encapsulates a dispatching system that consists of actions
 // (strings) that correspond to processed/validated properties and a processing

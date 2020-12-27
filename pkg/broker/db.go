@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"github.com/google/uuid"
 	"go.etcd.io/bbolt"
 )
@@ -197,12 +198,7 @@ func (db *DB) NewPackage() (*Package, error) {
 // calls are made to yield the commands for the resource, the command is
 // processed, FinishCommand is called to finish the command, then statuses are
 // polled and eventually yielded.
-type Command struct {
-	UUID       string
-	Resource   string
-	Action     string
-	Parameters map[string]string
-}
+type Command dispatcher.Command
 
 // UUID returns the Package UUID.
 func (p *Package) UUID() string {
