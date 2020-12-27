@@ -70,8 +70,7 @@ func start(ctx *cli.Context) error {
 		errc <- srv.ListenAndServe()
 	}()
 
-	err = <-errc
-	log.Printf("Shutting down: %v", err)
+	log.Printf("Shutting down: %v", <-errc)
 
 	// Shutdown gracefully with a 30s timeout.
 	cCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
