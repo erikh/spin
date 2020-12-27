@@ -2,7 +2,7 @@ package agent
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"testing"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
@@ -17,8 +17,12 @@ func TestBasicDispatch(t *testing.T) {
 	dispatcher := dispatcher.Dispatcher{
 		"an_action": {
 			Dispatch: func(c dispatcher.Command) error {
-				fmt.Println(c)
 				return nil
+			},
+		},
+		"error_action": {
+			Dispatch: func(c dispatcher.Command) error {
+				return errors.New("this is an error")
 			},
 		},
 	}
@@ -55,5 +59,58 @@ func TestBasicDispatch(t *testing.T) {
 
 	if !status.Status {
 		t.Fatalf("status was unexpectedly invalid. Reason: %v", status.Reason)
+	}
+
+	pkg, err = client.New(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.Add(context.Background(), &spinbroker.AddPayload{
+		ID:       pkg,
+		Resource: "resource",
+		Action:   "an_action",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = client.Add(context.Background(), &spinbroker.AddPayload{
+		ID:       pkg,
+		Resource: "resource",
+		Action:   "error_action",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := client.Enqueue(context.Background(), pkg); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Tick(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	status, err = client.Status(context.Background(), pkg)
+	if err == nil {
+		t.Fatal("No error with unfinished package")
+	}
+
+	if err := a.Tick(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+
+	status, err = client.Status(context.Background(), pkg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if status.Status {
+		t.Fatalf("status was unexpectedly valid.")
+	}
+
+	if *status.Reason != "this is an error" {
+		t.Fatalf("Unexpected reason: %v", *status.Reason)
 	}
 }
