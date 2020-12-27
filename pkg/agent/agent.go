@@ -7,7 +7,6 @@ import (
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
-	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
 type Agent struct {
@@ -56,7 +55,7 @@ func (a *Agent) Loop(ctx context.Context) error {
 
 		if err := a.Tick(ctx); err != nil {
 			// FIXME will this actually work
-			if err != broker.ErrRecordNotFound {
+			if err != nil {
 				log.Println(err)
 				time.Sleep(time.Second)
 			}
