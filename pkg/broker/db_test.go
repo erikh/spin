@@ -277,3 +277,95 @@ func TestPackage(t *testing.T) {
 		}
 	}
 }
+
+func TestQueueDependencies(t *testing.T) {
+	resourceCount := 100
+	packageCount := 100
+
+	packages := []*Package{}
+	resources := []string{}
+	resourceCommands := map[string][]Command{}
+	commands := map[string]Command{}
+
+	db := makeDB(t)
+
+	for i := 0; i < resourceCount; i++ {
+		resource := testutil.RandomString(30, 5)
+		resources = append(resources, resource)
+	}
+
+	for i := 0; i < packageCount; i++ {
+		pkg, err := db.NewPackage()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var lastCommand Command
+
+		for i := 0; i < resourceCount*2; i++ {
+			resource := resources[i%resourceCount]
+
+			c := Command{
+				Resource:   resource,
+				Action:     testutil.RandomString(30, 5),
+				Parameters: map[string]string{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
+			}
+
+			if lastCommand.UUID != "" {
+				c.Dependencies = []string{lastCommand.UUID}
+			}
+
+			if err := pkg.Add(&c); err != nil {
+				t.Fatal(err)
+			}
+
+			lastCommand = c
+			commands[c.UUID] = c
+			resourceCommands[resource] = append(resourceCommands[resource], c)
+		}
+
+		packages = append(packages, pkg)
+	}
+
+	for _, pkg := range packages {
+		if err := pkg.Enqueue(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	for x := 0; x < 2; x++ {
+		for _, resource := range resources {
+			queue, err := db.Queue(resource)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			for i := 0; i < packageCount; i++ {
+				c, err := queue.Next()
+				if err != nil {
+					t.Fatal(err, i, x, c)
+				}
+
+				if _, ok := commands[c.UUID]; !ok {
+					t.Fatal("command is not in table")
+				}
+
+				if len(c.Dependencies) > 0 {
+					if _, ok := commands[c.Dependencies[0]]; ok {
+						t.Fatal("dependency still present in commmands table")
+					}
+				}
+
+				if err := db.FinishCommand(c.UUID, true, ""); err != nil {
+					t.Fatal(err)
+				}
+
+				delete(commands, c.UUID)
+			}
+
+			if _, err := queue.Next(); err == nil {
+				t.Fatal("next call did not yield error despite all queue items dependent")
+			}
+		}
+	}
+}

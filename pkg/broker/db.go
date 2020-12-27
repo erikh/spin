@@ -349,34 +349,40 @@ func (q *Queue) Insert(value Command) error {
 
 // Next returns the next item in the queue, then removes it from the queue.
 func (q *Queue) Next() (Command, error) {
-	var data Command
-
 	tx, err := q.db.db.Begin(true)
 	if err != nil {
-		return data, err
+		return Command{}, err
 	}
+
 	defer tx.Rollback()
 
 	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket(q.name)
+	cursor := queueBucket.Cursor()
 
-	key, value := queueBucket.Cursor().First()
-	if key == nil {
-		return data, ErrRecordNotFound
-	}
-
-	if err := json.Unmarshal(value, &data); err != nil {
-		return data, err
-	}
-
-	for _, dep := range data.Dependencies {
-		if err := q.db.CommandStatus(dep); err != nil {
+	for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
+		var data Command
+		if err := json.Unmarshal(value, &data); err != nil {
 			return data, err
 		}
+
+		passed := true
+		for _, dep := range data.Dependencies {
+			if err := q.db.CommandStatus(dep); err != nil {
+				passed = false
+				break
+			}
+		}
+
+		if !passed {
+			continue
+		}
+
+		if err := queueBucket.Delete(key); err != nil {
+			return data, err
+		}
+
+		return data, tx.Commit()
 	}
 
-	if err := queueBucket.Delete(key); err != nil {
-		return data, err
-	}
-
-	return data, tx.Commit()
+	return Command{}, ErrRecordNotFound
 }
