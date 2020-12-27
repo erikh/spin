@@ -49,8 +49,8 @@ func (c *Client) Add(ctx context.Context, p *spinbroker.AddPayload) (string, err
 	return uuid.(string), nil
 }
 
-func (c *Client) Enqueue(ctx context.Context, p *spinbroker.EnqueuePayload) ([]string, error) {
-	res, err := c.client.Enqueue()(ctx, p)
+func (c *Client) Enqueue(ctx context.Context, uuid string) ([]string, error) {
+	res, err := c.client.Enqueue()(ctx, &spinbroker.EnqueuePayload{ID: uuid})
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func (c *Client) Enqueue(ctx context.Context, p *spinbroker.EnqueuePayload) ([]s
 	return res.([]string), nil
 }
 
-func (c *Client) Status(ctx context.Context, p *spinbroker.StatusPayload) (*spinbroker.StatusResult, error) {
-	res, err := c.client.Status()(ctx, p)
+func (c *Client) Status(ctx context.Context, uuid string) (*spinbroker.StatusResult, error) {
+	res, err := c.client.Status()(ctx, &spinbroker.StatusPayload{ID: uuid})
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +67,17 @@ func (c *Client) Status(ctx context.Context, p *spinbroker.StatusPayload) (*spin
 	return res.(*spinbroker.StatusResult), nil
 }
 
-func (c *Client) Complete(ctx context.Context, p *spinbroker.CompletePayload) error {
-	_, err := c.client.Complete()(ctx, p)
+func (c *Client) Complete(ctx context.Context, uuid string, status bool, reason *string) error {
+	_, err := c.client.Complete()(ctx, &spinbroker.CompletePayload{
+		ID:           uuid,
+		Status:       status,
+		StatusReason: reason,
+	})
 	return err
 }
 
-func (c *Client) Next(ctx context.Context, p *spinbroker.NextPayload) (*spinbroker.NextResult, error) {
-	res, err := c.client.Next()(ctx, p)
+func (c *Client) Next(ctx context.Context, resource string) (*spinbroker.NextResult, error) {
+	res, err := c.client.Next()(ctx, &spinbroker.NextPayload{Resource: resource})
 	if err != nil {
 		return nil, err
 	}

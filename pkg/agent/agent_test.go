@@ -40,7 +40,7 @@ func TestBasicDispatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := client.Enqueue(context.Background(), &spinbroker.EnqueuePayload{ID: pkg}); err != nil {
+	if _, err := client.Enqueue(context.Background(), pkg); err != nil {
 		t.Fatal(err)
 	}
 
@@ -48,7 +48,7 @@ func TestBasicDispatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	status, err := client.Status(context.Background(), &spinbroker.StatusPayload{ID: pkg})
+	status, err := client.Status(context.Background(), pkg)
 	if err != nil {
 		t.Fatal(err)
 	}

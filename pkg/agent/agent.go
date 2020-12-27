@@ -6,7 +6,6 @@ import (
 	"time"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 )
 
@@ -25,7 +24,7 @@ func New(cc brokerclient.Config, resource string, dispatcher broker.Dispatcher) 
 }
 
 func (a *Agent) Tick(ctx context.Context) error {
-	nr, err := a.client.Next(ctx, &spinbroker.NextPayload{Resource: a.resource})
+	nr, err := a.client.Next(ctx, a.resource)
 	if err != nil {
 		return err
 	}
@@ -43,13 +42,7 @@ func (a *Agent) Tick(ctx context.Context) error {
 		sr = &s
 	}
 
-	err = a.client.Complete(ctx, &spinbroker.CompletePayload{
-		ID:           nr.UUID,
-		Status:       err == nil,
-		StatusReason: sr,
-	})
-
-	return err
+	return a.client.Complete(ctx, nr.UUID, err == nil, sr)
 }
 
 func (a *Agent) Loop(ctx context.Context) error {
