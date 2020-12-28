@@ -14,14 +14,22 @@ import (
 )
 
 func hostPathDispatcher(basePath string) dispatcher.Dispatcher {
-	bp := func(strs ...string) (string, error) {
+	bp := func(strs ...interface{}) (string, error) {
 		if len(strs) == 0 {
 			return "", errors.New("empty path")
 		}
 
-		strs = append([]string{basePath}, strs...)
+		res := []string{basePath}
 
-		full := filepath.Join(strs...)
+		for _, str := range strs {
+			if str, ok := str.(string); ok {
+				res = append(res, str)
+			} else {
+				return "", errors.New("path must be a string")
+			}
+		}
+
+		full := filepath.Join(res...)
 		rel, err := filepath.Rel(basePath, full)
 		if err != nil {
 			return "", err

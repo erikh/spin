@@ -34,7 +34,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 		Action:   body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make(map[string]string, len(body.Parameters))
+		v.Parameters = make(map[string]interface{}, len(body.Parameters))
 		for key, val := range body.Parameters {
 			tk := key
 			tv := val

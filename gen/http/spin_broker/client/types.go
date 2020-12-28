@@ -20,7 +20,7 @@ type AddRequestBody struct {
 	// Action name
 	Action string `form:"action" json:"action" xml:"action"`
 	// Action parameters
-	Parameters map[string]string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
@@ -53,7 +53,7 @@ type NextResponseBody struct {
 	// action name
 	Action *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
 	// parameters for action
-	Parameters map[string]string `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // StatusRecordNotFoundResponseBody is the type of the "spin-broker" service
@@ -100,7 +100,7 @@ func NewAddRequestBody(p *spinbroker.AddPayload) *AddRequestBody {
 		Action:   p.Action,
 	}
 	if p.Parameters != nil {
-		body.Parameters = make(map[string]string, len(p.Parameters))
+		body.Parameters = make(map[string]interface{}, len(p.Parameters))
 		for key, val := range p.Parameters {
 			tk := key
 			tv := val
@@ -156,7 +156,7 @@ func NewNextResultOK(body *NextResponseBody) *spinbroker.NextResult {
 		Action:   *body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make(map[string]string, len(body.Parameters))
+		v.Parameters = make(map[string]interface{}, len(body.Parameters))
 		for key, val := range body.Parameters {
 			tk := key
 			tv := val

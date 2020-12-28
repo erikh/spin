@@ -177,7 +177,7 @@ var _ = Service("spin-broker", func() {
 			Attribute("id", String, "Package ID")
 			Attribute("resource", String, "Resource name")
 			Attribute("action", String, "Action name")
-			Attribute("parameters", MapOf(String, String), "Action parameters")
+			Attribute("parameters", MapOf(String, Any), "Action parameters")
 
 			Required("id", "resource", "action")
 		})
@@ -245,7 +245,7 @@ var _ = Service("spin-broker", func() {
 			Attribute("uuid", String, "Command ID")
 			Attribute("resource", String, "resource type")
 			Attribute("action", String, "action name")
-			Attribute("parameters", MapOf(String, String), "parameters for action")
+			Attribute("parameters", MapOf(String, Any), "parameters for action")
 			Required("uuid", "resource", "action")
 		})
 

@@ -46,7 +46,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-green1": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"foo": "quux",
 					"bar": "quux2",
 				},
@@ -56,7 +56,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-green2": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"foo": "quux",
 					"bar": "quux2",
 					"baz": "quux3",
@@ -74,7 +74,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-red2": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"bar": "quux2",
 					"baz": "quux3",
 				},
@@ -85,7 +85,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-red3": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"foo": "quux2",
 					"baz": "quux3",
 				},
@@ -96,7 +96,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-red4": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"baz": "quux3",
 				},
 			},
@@ -106,7 +106,7 @@ func TestDispatcher(t *testing.T) {
 		"action1-red5": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"foo":  "quux",
 					"bar":  "quux2",
 					"quux": "quux3",
@@ -124,7 +124,7 @@ func TestDispatcher(t *testing.T) {
 		"action2-red1": {
 			command: Command{
 				Action: "action2",
-				Parameters: map[string]string{
+				Parameters: map[string]interface{}{
 					"foo": "quux",
 				},
 			},

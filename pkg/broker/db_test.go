@@ -206,7 +206,7 @@ func TestPackage(t *testing.T) {
 			c := Command{
 				Resource:   resources[i],
 				Action:     testutil.RandomString(30, 5),
-				Parameters: map[string]string{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
+				Parameters: map[string]interface{}{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
 			err := pkg.Add(&c)
@@ -308,7 +308,7 @@ func TestQueueDependencies(t *testing.T) {
 			c := Command{
 				Resource:   resource,
 				Action:     testutil.RandomString(30, 5),
-				Parameters: map[string]string{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
+				Parameters: map[string]interface{}{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
 			if lastCommand.UUID != "" {

@@ -15,7 +15,7 @@ type Command struct {
 	UUID         string
 	Resource     string
 	Action       string
-	Parameters   map[string]string
+	Parameters   map[string]interface{}
 	Dependencies []string
 }
 
@@ -49,7 +49,7 @@ func (d Dispatcher) Dispatch(c Command) error {
 
 	for _, param := range action.RequiredParameters {
 		res, ok := c.Parameters[param]
-		if !ok || res == "" {
+		if !ok || res == nil {
 			return ErrMissingRequiredParameter
 		}
 	}
