@@ -31,23 +31,18 @@ spin-broker has the following properties:
 ```bash
 #!bash
 
+set -e
+
 go run ./cmd/agents/sa-host-path &
 
-pkg=$(go run ./cmd/spin-cli spin-broker new | jq -r .)
+pkg=$(go run ./cmd/spin-broker message new)
 
-go run ./cmd/spin-cli spin-broker add --id "${pkg}" --body "{
-  \"action\": \"add_volume\",
-  \"parameters\": { \"path\": \"test\" },
-  \"resource\": \"storage\"
-}"
+go run ./cmd/spin-broker message add "${pkg}" storage add_volume path=test
+go run ./cmd/spin-broker message add "${pkg}" storage create_image volume_path=test image_name=test.img image_size=50
+go run ./cmd/spin-broker message enqueue "${pkg}"
 
-go run ./cmd/spin-cli spin-broker add --id "${pkg}" --body "{
-  \"action\": \"create_image\",
-  \"parameters\": { \"volume_path\": \"test\", \"image_name\": \"test.img\", \"image_size\": \"50\" },
-  \"resource\": \"storage\"
-}"
-
-go run ./cmd/spin-cli spin-broker enqueue --id "${pkg}"
 sleep 1
 pkill sa-host-path
+
+go run ./cmd/spin-broker message status "${pkg}"
 ```
