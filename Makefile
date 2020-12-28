@@ -13,7 +13,7 @@ stop-server:
 
 server: stop-server
 	GOBIN=${PWD}/bin go install -v ./...
-	bin/spin-broker &
+	bin/spin-broker start &
 
 gen:
 	go run goa.design/goa/v3/cmd/goa gen code.hollensbe.org/erikh/spin/design
