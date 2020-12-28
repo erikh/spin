@@ -2,14 +2,19 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
+	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
+	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	"code.hollensbe.org/erikh/spin/pkg/services"
 	"github.com/urfave/cli/v2"
 )
@@ -23,7 +28,7 @@ func main() {
 		},
 	}
 
-	app.Usage = "Start the spin-broker, a message bus for Spin."
+	app.Usage = "Manage the spin-broker, a message bus for Spin."
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:    "dbpath",
@@ -39,7 +44,56 @@ func main() {
 		},
 	}
 
-	app.Action = start
+	app.Commands = []*cli.Command{
+		{
+			Name:        "start",
+			Usage:       "Start the service",
+			Description: "Start the service",
+			Action:      start,
+		},
+		{
+			Name:        "message",
+			Usage:       "Message the broker",
+			Description: "Message the broker",
+			Subcommands: []*cli.Command{
+				{
+					Name:        "new",
+					Usage:       "Create a new package. Returns a UUID.",
+					Description: "Create a new package. Returns a UUID.",
+					ArgsUsage:   " ",
+					Action:      messageNew,
+				},
+				{
+					Name:        "add",
+					Usage:       "Add a command to a package. Returns the UUID of the added command.",
+					Description: "Add a command to a package. Returns the UUID of the added command.",
+					ArgsUsage:   "[pkg uuid] [resource] [action] [key=value parameters...]",
+					Action:      messageAdd,
+				},
+				{
+					Name:        "enqueue",
+					Usage:       "Enqueue a package's items",
+					Description: "Enqueue a package's items",
+					ArgsUsage:   "[pkg uuid]",
+					Action:      messageEnqueue,
+				},
+				{
+					Name:        "status",
+					Usage:       "Obtain status of a package",
+					Description: "Obtain status of a package",
+					ArgsUsage:   "[pkg uuid]",
+					Action:      messageStatus,
+				},
+				{
+					Name:        "complete",
+					Usage:       "Set a status for a specific command, by UUID",
+					Description: "Set a status for a specific command, by UUID",
+					ArgsUsage:   "[command uuid] [true/false] [reason (optional)]",
+					Action:      messageComplete,
+				},
+			},
+		},
+	}
 
 	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -77,4 +131,145 @@ func start(ctx *cli.Context) error {
 	defer cancel()
 
 	return srv.Shutdown(cCtx)
+}
+
+func messageNew(ctx *cli.Context) error {
+	cc := brokerclient.Config{
+		Host:    ctx.String("host"),
+		Timeout: 1,
+	}
+
+	client := brokerclient.New(cc)
+	pkg, err := client.New(context.Background())
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(pkg)
+	return nil
+}
+
+func messageAdd(ctx *cli.Context) error {
+	if ctx.Args().Len() < 3 {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	pkg := ctx.Args().Get(0)
+	resource := ctx.Args().Get(1)
+	action := ctx.Args().Get(2)
+	parameters := map[string]string{}
+
+	if pkg == "" || resource == "" || action == "" {
+		return errors.New("invalid parameters. try --help")
+	}
+
+	for i := 3; ctx.Args().Get(i) != ""; i++ {
+		param := strings.SplitN(ctx.Args().Get(i), "=", 2)
+		if len(param) != 2 {
+			return errors.New("invalid key=value parameters")
+		}
+		parameters[param[0]] = param[1]
+	}
+
+	cc := brokerclient.Config{
+		Host:    ctx.String("host"),
+		Timeout: 1,
+	}
+
+	client := brokerclient.New(cc)
+	uuid, err := client.Add(context.Background(), &spinbroker.AddPayload{
+		ID:         pkg,
+		Resource:   resource,
+		Action:     action,
+		Parameters: parameters,
+	})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(uuid)
+	return nil
+}
+
+func messageEnqueue(ctx *cli.Context) error {
+	if ctx.Args().Len() != 1 {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	pkg := ctx.Args().First()
+	if pkg == "" {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	cc := brokerclient.Config{
+		Host:    ctx.String("host"),
+		Timeout: 1,
+	}
+
+	client := brokerclient.New(cc)
+	res, err := client.Enqueue(context.Background(), pkg)
+	if err != nil {
+		return err
+	}
+
+	for _, r := range res {
+		fmt.Println(r)
+	}
+
+	return nil
+}
+
+func messageStatus(ctx *cli.Context) error {
+	if ctx.Args().Len() != 1 {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	pkg := ctx.Args().First()
+	if pkg == "" {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	cc := brokerclient.Config{
+		Host:    ctx.String("host"),
+		Timeout: 1,
+	}
+
+	client := brokerclient.New(cc)
+	status, err := client.Status(context.Background(), pkg)
+	if err != nil {
+		return err
+	}
+
+	if !status.Status {
+		fmt.Printf("Error during processing: %v\n", *status.Reason)
+		os.Exit(1)
+	}
+
+	return nil
+}
+
+func messageComplete(ctx *cli.Context) error {
+	if ctx.Args().Len() < 2 {
+		return errors.New("invalid arguments. try --help")
+	}
+
+	command := ctx.Args().Get(0)
+	result, err := strconv.ParseBool(ctx.Args().Get(1))
+	if err != nil {
+		return err
+	}
+
+	var sr *string
+
+	if !result {
+		s := ctx.Args().Get(2)
+		sr = &s
+	}
+
+	cc := brokerclient.Config{
+		Host:    ctx.String("host"),
+		Timeout: 1,
+	}
+	client := brokerclient.New(cc)
+	return client.Complete(context.Background(), command, result, sr)
 }
