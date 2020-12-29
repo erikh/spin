@@ -3,8 +3,7 @@ package registry
 import (
 	"errors"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"go.etcd.io/bbolt"
 )
 
 type DBConfig struct {
@@ -12,24 +11,26 @@ type DBConfig struct {
 }
 
 type DB struct {
-	db *gorm.DB
+	db *bbolt.DB
 }
 
-var migrationTables = []interface{}{}
+var makeBuckets = []string{"vms"}
 
 func NewDB(c DBConfig) (*DB, error) {
-	db, err := gorm.Open(sqlite.Open(c.Filename), &gorm.Config{})
+	db, err := bbolt.Open(c.Filename, 0600, &bbolt.Options{FreelistType: bbolt.FreelistMapType})
 	if err != nil {
 		return nil, err
 	}
 
-	for _, table := range migrationTables {
-		if err := db.AutoMigrate(table); err != nil {
-			return nil, err
+	return &DB{db: db}, db.Update(func(tx *bbolt.Tx) error {
+		for _, bucket := range makeBuckets {
+			if _, err := tx.CreateBucketIfNotExists([]byte(bucket)); err != nil {
+				return err
+			}
 		}
-	}
 
-	return &DB{db: db}, nil
+		return nil
+	})
 }
 
 func (db *DB) Get(id uint64) (*VM, error) {
