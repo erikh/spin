@@ -1,14 +1,5 @@
 package registry
 
-type VM struct {
-	Name    string
-	CPUs    uint
-	Memory  uint // in megabytes
-	Volumes []Storage
-}
+import spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 
-type Storage struct {
-	Volume   string
-	Filename string
-	Size     uint // in gigabytes
-}
+type VM spinregistry.VM
