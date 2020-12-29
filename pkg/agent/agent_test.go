@@ -16,7 +16,7 @@ import (
 func TestBasicDispatch(t *testing.T) {
 	host := services.SetupTestBroker(t)
 
-	dispatcher := dispatcher.Dispatcher{
+	dispatcher := dispatcher.Table{
 		"an_action": {
 			Dispatch: func(c dispatcher.Command) error {
 				return nil
@@ -122,7 +122,7 @@ func TestAgentLoop(t *testing.T) {
 
 	host := services.SetupTestBroker(t)
 
-	dispatcher := dispatcher.Dispatcher{
+	dispatcher := dispatcher.Table{
 		"an_action": {
 			Dispatch: func(c dispatcher.Command) error {
 				return nil

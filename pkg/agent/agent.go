@@ -16,13 +16,13 @@ import (
 type Agent struct {
 	resource   string
 	client     *brokerclient.Client
-	dispatcher dispatcher.Dispatcher
+	dispatcher dispatcher.Table
 }
 
 // New constructs a new agent. Typically used inside other constructors, this
 // sews together the dispatcher, resource and a client for future "ticking" or
 // looping.
-func New(cc brokerclient.Config, resource string, dispatcher dispatcher.Dispatcher) *Agent {
+func New(cc brokerclient.Config, resource string, dispatcher dispatcher.Table) *Agent {
 	return &Agent{
 		resource:   resource,
 		dispatcher: dispatcher,

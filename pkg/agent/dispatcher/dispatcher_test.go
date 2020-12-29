@@ -9,7 +9,7 @@ func TestDispatcher(t *testing.T) {
 	var action1 int
 	var action2 int
 
-	dispatcher := Dispatcher{
+	dispatcher := Table{
 		"action1": Action{
 			OptionalParameters: []string{"baz"},
 			RequiredParameters: []string{"foo", "bar"},

@@ -16,6 +16,14 @@ func main() {
 	app := cli.NewApp()
 	app.Description = "Host-path agent for Spin"
 
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:    "root-path",
+			Aliases: []string{"p"},
+			Value:   "/tmp/host-path-test",
+		},
+	}
+
 	app.Action = start
 
 	if err := app.Run(os.Args); err != nil {
@@ -25,7 +33,7 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	agent := storage.NewHostPathAgent(brokerclient.Config{
+	agent := storage.NewHostPathAgent(ctx.String("root-path"), brokerclient.Config{
 		Host:    "localhost:8080",
 		Timeout: 1,
 	})

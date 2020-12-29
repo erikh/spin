@@ -19,16 +19,21 @@ type Command struct {
 	Dependencies []string
 }
 
-// Dispatcher encapsulates a dispatching system that consists of actions
+// Table encapsulates a dispatching system that consists of actions
 // (strings) that correspond to processed/validated properties and a processing
 // function.
-type Dispatcher map[string]Action
+type Table map[string]Action
+
+// Func is the dispatch action function. It accepts a command and the status is
+// published back to the broker automatically as a part of the Tick() and
+// Loop() calls.
+type Func func(Command) error
 
 // Action is the definition of the protocol action item.
 type Action struct {
 	RequiredParameters []string
 	OptionalParameters []string
-	Dispatch           func(Command) error
+	Dispatch           Func
 }
 
 var (
@@ -41,8 +46,8 @@ var (
 )
 
 // Dispatch dispatches the Command, validating the parameters beforehand.
-func (d Dispatcher) Dispatch(c Command) error {
-	action, ok := d[c.Action]
+func (t Table) Dispatch(c Command) error {
+	action, ok := t[c.Action]
 	if !ok {
 		return ErrActionNotFound
 	}
