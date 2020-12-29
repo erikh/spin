@@ -205,6 +205,22 @@ func unmarshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *sp
 	return res
 }
 
+// unmarshalVMRequestBodyToSpinregistryVM builds a value of type
+// *spinregistry.VM from a value of type *VMRequestBody.
+func unmarshalVMRequestBodyToSpinregistryVM(v *VMRequestBody) *spinregistry.VM {
+	res := &spinregistry.VM{
+		Name:   *v.Name,
+		Cpus:   *v.Cpus,
+		Memory: *v.Memory,
+	}
+	res.Storage = make([]*spinregistry.Storage, len(v.Storage))
+	for i, val := range v.Storage {
+		res.Storage[i] = unmarshalStorageRequestBodyToSpinregistryStorage(val)
+	}
+
+	return res
+}
+
 // marshalSpinregistryStorageToStorageResponseBody builds a value of type
 // *StorageResponseBody from a value of type *spinregistry.Storage.
 func marshalSpinregistryStorageToStorageResponseBody(v *spinregistry.Storage) *StorageResponseBody {

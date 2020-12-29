@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"go.etcd.io/bbolt"
 )
 
@@ -47,7 +48,7 @@ func decodeKey(key []byte) uint64 {
 	return binary.BigEndian.Uint64(key)
 }
 
-func (db *DB) Create(vm *VM) (uint64, error) {
+func (db *DB) Create(vm *spinregistry.VM) (uint64, error) {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return 0, err
@@ -70,8 +71,8 @@ func (db *DB) Create(vm *VM) (uint64, error) {
 	return id, err
 }
 
-func (db *DB) Get(id uint64) (*VM, error) {
-	var vm VM
+func (db *DB) Get(id uint64) (*spinregistry.VM, error) {
+	var vm spinregistry.VM
 
 	return &vm, db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(vmBucket))
@@ -98,7 +99,7 @@ func (db *DB) Delete(id uint64) error {
 	})
 }
 
-func (db *DB) Update(id uint64, vm *VM) error {
+func (db *DB) Update(id uint64, vm *spinregistry.VM) error {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return err

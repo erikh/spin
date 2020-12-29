@@ -5,6 +5,8 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 )
 
 func makeDB(t *testing.T) *DB {
@@ -34,7 +36,7 @@ func TestDBInit(t *testing.T) {
 func TestDBCRUD(t *testing.T) {
 	db := makeDB(t)
 
-	vm := &VM{
+	vm := &spinregistry.VM{
 		Name: "foo",
 	}
 
@@ -136,7 +138,7 @@ func TestDBCRUDTable(t *testing.T) {
 		},
 		"update non-existent": {
 			call: func(db *DB) error {
-				return db.Update(1, &VM{})
+				return db.Update(1, &spinregistry.VM{})
 			},
 		},
 	}

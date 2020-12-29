@@ -30,6 +30,7 @@ var _ = Service("spin-registry", func() {
 		Description("Delete a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
+			Required("id")
 		})
 
 		HTTP(func() {
@@ -42,6 +43,7 @@ var _ = Service("spin-registry", func() {
 		Description("Retrieve a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
+			Required("id")
 		})
 		Result(VM)
 

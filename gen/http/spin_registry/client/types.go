@@ -28,14 +28,8 @@ type CreateRequestBody struct {
 // UpdateRequestBody is the type of the "spin-registry" service "update"
 // endpoint HTTP request body.
 type UpdateRequestBody struct {
-	// Name of VM; does not need to be unique
-	Name string `form:"name" json:"name" xml:"name"`
-	// CPU count
-	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
-	// Memory (in megabytes)
-	Memory uint `form:"memory" json:"memory" xml:"memory"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage" json:"storage" xml:"storage"`
+	// VM to publish
+	VM *VMRequestBody `form:"vm" json:"vm" xml:"vm"`
 }
 
 // GetResponseBody is the type of the "spin-registry" service "get" endpoint
@@ -59,6 +53,18 @@ type StorageRequestBody struct {
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
 	ImageSize uint `form:"image_size" json:"image_size" xml:"image_size"`
+}
+
+// VMRequestBody is used to define fields on request body types.
+type VMRequestBody struct {
+	// Name of VM; does not need to be unique
+	Name string `form:"name" json:"name" xml:"name"`
+	// CPU count
+	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
+	// Memory (in megabytes)
+	Memory uint `form:"memory" json:"memory" xml:"memory"`
+	// Storage references
+	Storage []*StorageRequestBody `form:"storage" json:"storage" xml:"storage"`
 }
 
 // StorageResponseBody is used to define fields on response body types.
@@ -91,16 +97,9 @@ func NewCreateRequestBody(p *spinregistry.VM) *CreateRequestBody {
 // NewUpdateRequestBody builds the HTTP request body from the payload of the
 // "update" endpoint of the "spin-registry" service.
 func NewUpdateRequestBody(p *spinregistry.UpdateVM) *UpdateRequestBody {
-	body := &UpdateRequestBody{
-		Name:   p.Name,
-		Cpus:   p.Cpus,
-		Memory: p.Memory,
-	}
-	if p.Storage != nil {
-		body.Storage = make([]*StorageRequestBody, len(p.Storage))
-		for i, val := range p.Storage {
-			body.Storage[i] = marshalSpinregistryStorageToStorageRequestBody(val)
-		}
+	body := &UpdateRequestBody{}
+	if p.VM != nil {
+		body.VM = marshalSpinregistryVMToVMRequestBody(p.VM)
 	}
 	return body
 }
@@ -141,6 +140,14 @@ func ValidateGetResponseBody(body *GetResponseBody) (err error) {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
+	}
+	return
+}
+
+// ValidateVMRequestBody runs the validations defined on VMRequestBody
+func ValidateVMRequestBody(body *VMRequestBody) (err error) {
+	if body.Storage == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
 	}
 	return
 }

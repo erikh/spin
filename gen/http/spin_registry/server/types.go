@@ -28,14 +28,8 @@ type CreateRequestBody struct {
 // UpdateRequestBody is the type of the "spin-registry" service "update"
 // endpoint HTTP request body.
 type UpdateRequestBody struct {
-	// Name of VM; does not need to be unique
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// CPU count
-	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
-	// Memory (in megabytes)
-	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
+	// VM to publish
+	VM *VMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
 }
 
 // GetResponseBody is the type of the "spin-registry" service "get" endpoint
@@ -69,6 +63,18 @@ type StorageRequestBody struct {
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
 	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+}
+
+// VMRequestBody is used to define fields on request body types.
+type VMRequestBody struct {
+	// Name of VM; does not need to be unique
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// CPU count
+	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
+	// Memory (in megabytes)
+	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
+	// Storage references
+	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
 // NewGetResponseBody builds the HTTP response body from the result of the
@@ -105,15 +111,8 @@ func NewCreateVM(body *CreateRequestBody) *spinregistry.VM {
 
 // NewUpdateVM builds a spin-registry service update endpoint payload.
 func NewUpdateVM(body *UpdateRequestBody, id uint64) *spinregistry.UpdateVM {
-	v := &spinregistry.UpdateVM{
-		Name:   *body.Name,
-		Cpus:   *body.Cpus,
-		Memory: *body.Memory,
-	}
-	v.Storage = make([]*spinregistry.Storage, len(body.Storage))
-	for i, val := range body.Storage {
-		v.Storage[i] = unmarshalStorageRequestBodyToSpinregistryStorage(val)
-	}
+	v := &spinregistry.UpdateVM{}
+	v.VM = unmarshalVMRequestBodyToSpinregistryVM(body.VM)
 	v.ID = id
 
 	return v
@@ -122,7 +121,7 @@ func NewUpdateVM(body *UpdateRequestBody, id uint64) *spinregistry.UpdateVM {
 // NewDeletePayload builds a spin-registry service delete endpoint payload.
 func NewDeletePayload(id uint64) *spinregistry.DeletePayload {
 	v := &spinregistry.DeletePayload{}
-	v.ID = &id
+	v.ID = id
 
 	return v
 }
@@ -130,7 +129,7 @@ func NewDeletePayload(id uint64) *spinregistry.DeletePayload {
 // NewGetPayload builds a spin-registry service get endpoint payload.
 func NewGetPayload(id uint64) *spinregistry.GetPayload {
 	v := &spinregistry.GetPayload{}
-	v.ID = &id
+	v.ID = id
 
 	return v
 }
@@ -161,6 +160,33 @@ func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
 
 // ValidateUpdateRequestBody runs the validations defined on UpdateRequestBody
 func ValidateUpdateRequestBody(body *UpdateRequestBody) (err error) {
+	if body.VM == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
+	}
+	if body.VM != nil {
+		if err2 := ValidateVMRequestBody(body.VM); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
+// ValidateStorageRequestBody runs the validations defined on StorageRequestBody
+func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
+	if body.Volume == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
+	}
+	if body.Image == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	}
+	if body.ImageSize == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("image_size", "body"))
+	}
+	return
+}
+
+// ValidateVMRequestBody runs the validations defined on VMRequestBody
+func ValidateVMRequestBody(body *VMRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -179,20 +205,6 @@ func ValidateUpdateRequestBody(body *UpdateRequestBody) (err error) {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
-	}
-	return
-}
-
-// ValidateStorageRequestBody runs the validations defined on StorageRequestBody
-func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
-	if body.Volume == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
-	}
-	if body.Image == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
-	}
-	if body.ImageSize == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image_size", "body"))
 	}
 	return
 }

@@ -51,26 +51,20 @@ type VM struct {
 type UpdateVM struct {
 	// ID of VM to update
 	ID uint64
-	// Name of VM; does not need to be unique
-	Name string
-	// CPU count
-	Cpus uint
-	// Memory (in megabytes)
-	Memory uint
-	// Storage references
-	Storage []*Storage
+	// VM to publish
+	VM *VM
 }
 
 // DeletePayload is the payload type of the spin-registry service delete method.
 type DeletePayload struct {
 	// ID of VM to remove
-	ID *uint64
+	ID uint64
 }
 
 // GetPayload is the payload type of the spin-registry service get method.
 type GetPayload struct {
 	// ID of VM to remove
-	ID *uint64
+	ID uint64
 }
 
 type Storage struct {

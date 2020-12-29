@@ -163,9 +163,7 @@ func (c *Client) BuildDeleteRequest(ctx context.Context, v interface{}) (*http.R
 		if !ok {
 			return nil, goahttp.ErrInvalidType("spin-registry", "delete", "*spinregistry.DeletePayload", v)
 		}
-		if p.ID != nil {
-			id = *p.ID
-		}
+		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteSpinRegistryPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
@@ -217,9 +215,7 @@ func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Requ
 		if !ok {
 			return nil, goahttp.ErrInvalidType("spin-registry", "get", "*spinregistry.GetPayload", v)
 		}
-		if p.ID != nil {
-			id = *p.ID
-		}
+		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetSpinRegistryPath(id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -342,6 +338,42 @@ func marshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *spin
 		Volume:    v.Volume,
 		Image:     v.Image,
 		ImageSize: v.ImageSize,
+	}
+
+	return res
+}
+
+// marshalSpinregistryVMToVMRequestBody builds a value of type *VMRequestBody
+// from a value of type *spinregistry.VM.
+func marshalSpinregistryVMToVMRequestBody(v *spinregistry.VM) *VMRequestBody {
+	res := &VMRequestBody{
+		Name:   v.Name,
+		Cpus:   v.Cpus,
+		Memory: v.Memory,
+	}
+	if v.Storage != nil {
+		res.Storage = make([]*StorageRequestBody, len(v.Storage))
+		for i, val := range v.Storage {
+			res.Storage[i] = marshalSpinregistryStorageToStorageRequestBody(val)
+		}
+	}
+
+	return res
+}
+
+// marshalVMRequestBodyToSpinregistryVM builds a value of type *spinregistry.VM
+// from a value of type *VMRequestBody.
+func marshalVMRequestBodyToSpinregistryVM(v *VMRequestBody) *spinregistry.VM {
+	res := &spinregistry.VM{
+		Name:   v.Name,
+		Cpus:   v.Cpus,
+		Memory: v.Memory,
+	}
+	if v.Storage != nil {
+		res.Storage = make([]*spinregistry.Storage, len(v.Storage))
+		for i, val := range v.Storage {
+			res.Storage[i] = marshalStorageRequestBodyToSpinregistryStorage(val)
+		}
 	}
 
 	return res
