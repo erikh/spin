@@ -96,6 +96,26 @@ func TestDBCRUD(t *testing.T) {
 	if len(ids) != 0 {
 		t.Fatal("vms still available after all have been deleted")
 	}
+
+	ids = []uint64{}
+
+	for i := 0; i < 10; i++ {
+		id, err := db.Create(vm)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		ids = append(ids, id)
+	}
+
+	ids2, err := db.List()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(ids, ids2) {
+		t.Fatal("lists don't match")
+	}
 }
 
 func TestDBCRUDTable(t *testing.T) {
@@ -130,5 +150,4 @@ func TestDBCRUDTable(t *testing.T) {
 			t.Fatalf("[%v]: Was expected to fail and did not", name)
 		}
 	}
-
 }
