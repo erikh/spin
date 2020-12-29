@@ -1,31 +1,36 @@
 package registry
 
-import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-)
+import "errors"
 
-type Config struct {
-	DBFile string
+type Registry struct {
+	db *DB
 }
 
-type DB struct {
-	db *gorm.DB
-}
-
-var migrationTables = []interface{}{}
-
-func New(c Config) (*DB, error) {
-	db, err := gorm.Open(sqlite.Open(c.DBFile), &gorm.Config{})
+func New(dbc DBConfig) (*Registry, error) {
+	db, err := NewDB(dbc)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, table := range migrationTables {
-		if err := db.AutoMigrate(table); err != nil {
-			return nil, err
-		}
-	}
+	return &Registry{db: db}, nil
+}
 
-	return &DB{db: db}, nil
+func (r *Registry) Get(id uint64) (*VM, error) {
+	return nil, errors.New("unimplemented")
+}
+
+func (r *Registry) Create(vm *VM) error {
+	return errors.New("unimplemented")
+}
+
+func (r *Registry) Delete(id uint64) error {
+	return errors.New("unimplemented")
+}
+
+func (r *Registry) Update(id uint64, vm *VM) error {
+	return errors.New("unimplemented")
+}
+
+func (r *Registry) List() ([]uint64, error) {
+	return nil, errors.New("unimplemented")
 }
