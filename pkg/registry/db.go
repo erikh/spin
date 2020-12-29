@@ -87,7 +87,13 @@ func (db *DB) Get(id uint64) (*VM, error) {
 
 func (db *DB) Delete(id uint64) error {
 	return db.db.Update(func(tx *bbolt.Tx) error {
-		tx.Bucket([]byte(vmBucket)).Delete(makeKey(id))
+		bucket := tx.Bucket([]byte(vmBucket))
+		key := makeKey(id)
+		if bucket.Get(key) == nil {
+			return errors.New("doesn't exist")
+		}
+
+		bucket.Delete(makeKey(id))
 		return nil
 	})
 }
@@ -99,7 +105,13 @@ func (db *DB) Update(id uint64, vm *VM) error {
 	}
 
 	return db.db.Update(func(tx *bbolt.Tx) error {
-		return tx.Bucket([]byte(vmBucket)).Put(makeKey(id), content)
+		bucket := tx.Bucket([]byte(vmBucket))
+		key := makeKey(id)
+		if bucket.Get(key) == nil {
+			return errors.New("doesn't exist")
+		}
+
+		return bucket.Put(makeKey(id), content)
 	})
 }
 

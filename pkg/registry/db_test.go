@@ -97,3 +97,38 @@ func TestDBCRUD(t *testing.T) {
 		t.Fatal("vms still available after all have been deleted")
 	}
 }
+
+func TestDBCRUDTable(t *testing.T) {
+	table := map[string]struct {
+		pass bool
+		call func(db *DB) error
+	}{
+		"get non-existent": {
+			call: func(db *DB) error {
+				_, err := db.Get(1)
+				return err
+			},
+		},
+		"delete non-existent": {
+			call: func(db *DB) error {
+				return db.Delete(1)
+			},
+		},
+		"update non-existent": {
+			call: func(db *DB) error {
+				return db.Update(1, &VM{})
+			},
+		},
+	}
+
+	for name, item := range table {
+		db := makeDB(t)
+		err := item.call(db)
+		if err != nil && item.pass {
+			t.Fatalf("[%v]: %v", name, err)
+		} else if !item.pass && err == nil {
+			t.Fatalf("[%v]: Was expected to fail and did not", name)
+		}
+	}
+
+}
