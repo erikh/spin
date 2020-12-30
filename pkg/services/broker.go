@@ -13,8 +13,12 @@ import (
 	"goa.design/goa/v3/middleware"
 )
 
-func Broker(dbpath string) (http.Handler, error) {
-	logger := log.New(os.Stderr, "[spin] ", log.Ltime)
+func Broker(dbpath string, showLog bool) (http.Handler, error) {
+	var logger *log.Logger
+
+	if showLog {
+		logger = log.New(os.Stderr, "[spin-broker] ", log.Ltime)
+	}
 
 	spinBrokerSvc, err := spin.NewSpinBroker(logger, dbpath)
 	if err != nil {
@@ -29,7 +33,9 @@ func Broker(dbpath string) (http.Handler, error) {
 	spinBrokerServer := spinbrokersvr.New(spinBrokerEndpoints, mux, dec, enc, errorHandler(logger), nil)
 	spinbrokersvr.Mount(mux, spinBrokerServer)
 	var handler http.Handler = mux
-	handler = httpmdlwr.Log(middleware.NewLogger(logger))(handler)
+	if showLog {
+		handler = httpmdlwr.Log(middleware.NewLogger(logger))(handler)
+	}
 	handler = httpmdlwr.RequestID()(handler)
 
 	return handler, nil

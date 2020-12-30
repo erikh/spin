@@ -2,7 +2,6 @@ package agent
 
 import (
 	"context"
-	"log"
 	"time"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
@@ -67,9 +66,8 @@ func (a *Agent) Loop(ctx context.Context) error {
 		}
 
 		if err := a.Tick(ctx); err != nil {
-			// FIXME will this actually work
+			// FIXME handle these errors in some more intelligent fashion
 			if err != nil {
-				log.Println(err)
 				time.Sleep(time.Second)
 			}
 		}

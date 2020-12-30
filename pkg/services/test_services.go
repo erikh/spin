@@ -18,7 +18,7 @@ func SetupTestBroker(t *testing.T) string {
 		os.Remove(dbpath.Name())
 	})
 
-	handler, err := Broker(dbpath.Name())
+	handler, err := Broker(dbpath.Name(), false)
 	if err != nil {
 		t.Fatal(err)
 	}

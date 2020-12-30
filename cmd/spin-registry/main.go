@@ -97,7 +97,7 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	handler, err := services.Registry(ctx.String("dbpath"))
+	handler, err := services.Registry(ctx.String("dbpath"), true)
 	if err != nil {
 		return err
 	}

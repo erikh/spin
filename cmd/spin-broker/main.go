@@ -103,7 +103,7 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	handler, err := services.Broker(ctx.String("dbpath"))
+	handler, err := services.Broker(ctx.String("dbpath"), true)
 	if err != nil {
 		return err
 	}

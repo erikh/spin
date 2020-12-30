@@ -15,8 +15,11 @@ import (
 )
 
 // Registry bootstraps a handler suitable for serving a spin-registry
-func Registry(dbpath string) (http.Handler, error) {
-	logger := log.New(os.Stderr, "[spin] ", log.Ltime)
+func Registry(dbpath string, showLog bool) (http.Handler, error) {
+	var logger *log.Logger
+	if showLog {
+		logger = log.New(os.Stderr, "[spin-registry] ", log.Ltime)
+	}
 
 	db, err := registry.NewDB(registry.DBConfig{Filename: dbpath})
 	if err != nil {
@@ -31,7 +34,9 @@ func Registry(dbpath string) (http.Handler, error) {
 	spinRegistryServer := spinregistrysvr.New(spinRegistryEndpoints, mux, dec, enc, errorHandler(logger), nil)
 	spinregistrysvr.Mount(mux, spinRegistryServer)
 	var handler http.Handler = mux
-	handler = httpmdlwr.Log(middleware.NewLogger(logger))(handler)
+	if showLog {
+		handler = httpmdlwr.Log(middleware.NewLogger(logger))(handler)
+	}
 	handler = httpmdlwr.RequestID()(handler)
 
 	return handler, nil
