@@ -94,7 +94,7 @@ func TestBasicDispatch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	status, err = client.Status(context.Background(), pkg)
+	_, err = client.Status(context.Background(), pkg)
 	if err == nil {
 		t.Fatal("No error with unfinished package")
 	}
@@ -143,7 +143,17 @@ func TestAgentLoop(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
-	go a.Loop(ctx)
+	errChan := make(chan error, 1)
+	go func() {
+		errChan <- a.Loop(ctx)
+	}()
+
+	// wait for goroutine
+	select {
+	case err := <-errChan:
+		t.Fatal(err)
+	case <-time.After(100 * time.Millisecond):
+	}
 
 	for i := 0; i < count; i++ {
 		for res := true; res; res = !res {

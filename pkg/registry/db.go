@@ -94,8 +94,7 @@ func (db *DB) Delete(id uint64) error {
 			return errors.New("doesn't exist")
 		}
 
-		bucket.Delete(makeKey(id))
-		return nil
+		return bucket.Delete(makeKey(id))
 	})
 }
 

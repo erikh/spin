@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"github.com/google/uuid"
@@ -348,13 +349,20 @@ func (q *Queue) Insert(value Command) error {
 }
 
 // Next returns the next item in the queue, then removes it from the queue.
-func (q *Queue) Next() (Command, error) {
+func (q *Queue) Next() (c Command, retErr error) {
 	tx, err := q.db.db.Begin(true)
 	if err != nil {
 		return Command{}, err
 	}
 
-	defer tx.Rollback()
+	defer func() {
+		if retErr != nil {
+			err := tx.Rollback()
+			if err != nil {
+				retErr = fmt.Errorf("Trouble rolling back after error (%q): %v", retErr, err)
+			}
+		}
+	}()
 
 	queueBucket := tx.Bucket([]byte(BucketQueue)).Bucket(q.name)
 	cursor := queueBucket.Cursor()
