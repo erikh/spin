@@ -1,4 +1,4 @@
-package registry
+package registryclient
 
 import (
 	"context"

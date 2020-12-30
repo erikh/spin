@@ -121,7 +121,7 @@ func start(ctx *cli.Context) error {
 
 	// Start HTTP server in a separate goroutine.
 	go func() {
-		log.Printf("HTTP server listening on %q", host)
+		log.Printf("Broker listening on %q", host)
 		errc <- srv.ListenAndServe()
 	}()
 

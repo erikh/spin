@@ -13,15 +13,19 @@ test-all: gen
 	go test -v ./... -count 1
 
 clean: 
-	rm -f spin-broker.db
+	rm -f spin-broker.db spin-registry.db
 
 stop-server:
 	pkill spin-broker || :
+	pkill spin-registry || :
 	sleep 1
 
-server: stop-server
+install-local:
 	GOBIN=${PWD}/bin go install -v ./...
+
+server: stop-server install-local 
 	bin/spin-broker start &
+	bin/spin-registry start &
 
 gen:
 	go run goa.design/goa/v3/cmd/goa gen code.hollensbe.org/erikh/spin/design
