@@ -9,9 +9,6 @@ var Storage = Type("Storage", func() {
 	Required("volume", "image", "image_size")
 })
 
-var vmAttrs = func() {
-}
-
 var VM = Type("VM", func() {
 	Attribute("name", String, "Name of VM; does not need to be unique")
 	Attribute("cpus", UInt, "CPU count")
