@@ -13,6 +13,7 @@ type spinRegistry struct {
 	db     *registry.DB
 }
 
+// NewSpinRegistry creates a new spin registry
 func NewSpinRegistry(logger *log.Logger, db *registry.DB) spinregistry.Service {
 	return &spinRegistry{logger, db}
 }
