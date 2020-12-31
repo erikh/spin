@@ -28,7 +28,11 @@ func systemdDir() string {
 	return filepath.Join(dir, systemdUserDir)
 }
 
-func emulationAgent() DispatcherConfig {
+func emulationAgent(dir string) DispatcherConfig {
+	if dir == "" {
+		dir = systemdDir()
+	}
+
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
 			vm, err := commandToVM(c.Parameters["vm"].(map[string]interface{}))
@@ -50,11 +54,11 @@ func emulationAgent() DispatcherConfig {
 
 			name := fmt.Sprintf("spin-%d.service", id)
 
-			if err := os.MkdirAll(systemdDir(), 0700); err != nil {
+			if err := os.MkdirAll(dir, 0700); err != nil {
 				return err
 			}
 
-			fn := filepath.Join(systemdDir(), name)
+			fn := filepath.Join(dir, name)
 			os.Remove(fn)
 
 			f, err := os.Create(fn)
@@ -100,6 +104,6 @@ func commandToVM(vm map[string]interface{}) (*spinregistry.VM, error) {
 	return &ret, nil
 }
 
-func NewEmulationAgent(bc brokerclient.Config) *agent.Agent {
-	return agent.New(bc, ResourceType, Dispatcher(emulationAgent()))
+func NewAgent(bc brokerclient.Config, dir string) *agent.Agent {
+	return agent.New(bc, ResourceType, Dispatcher(emulationAgent(dir)))
 }

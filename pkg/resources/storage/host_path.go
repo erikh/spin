@@ -80,6 +80,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			}
 
 			// FIXME add a debug trap for these shell commands later
+			// NOTE the integer parameters come back from JSON by default as float64s
 			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%.0fG", c.Parameters["image_size"]))
 			return cmd.Run()
 		},

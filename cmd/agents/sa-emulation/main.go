@@ -16,6 +16,14 @@ func main() {
 	app := cli.NewApp()
 	app.Description = "Emulation agent for Spin"
 
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:    "service-directory",
+			Aliases: []string{"d"},
+			Usage:   "The directory where the .service files will be placed",
+		},
+	}
+
 	app.Action = start
 
 	if err := app.Run(os.Args); err != nil {
@@ -25,10 +33,10 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	agent := emulation.NewEmulationAgent(brokerclient.Config{
+	agent := emulation.NewAgent(brokerclient.Config{
 		Host:    "localhost:8080",
 		Timeout: 1,
-	})
+	}, ctx.String("service-directory"))
 
 	cCtx, cancel := context.WithCancel(context.Background())
 	go func() {
