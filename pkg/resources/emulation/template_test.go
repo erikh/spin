@@ -8,22 +8,28 @@ import (
 )
 
 func TestTemplate(t *testing.T) {
-	result, err := runTemplate(templateConfig{
+	for key, tc := range templateInputs {
+		result, err := runTemplate(tc)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if strings.TrimSpace(result) != strings.TrimSpace(templateResults[key]) {
+			t.Fatalf("%q content was not equal:\n%s", key, diff.LineDiff(result, templateResults[key]))
+		}
+	}
+}
+
+var templateInputs = map[string]templateConfig{
+	"one": {
 		ID:      1,
 		Name:    "one",
 		Command: "/bin/qemu-system-x86_64",
 		Args:    []string{"-cpu", "host"},
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if strings.TrimSpace(result) != templates["one"] {
-		t.Fatal("'one' content was not equal", diff.LineDiff(result, templates["one"]))
-	}
+	},
 }
 
-var templates = map[string]string{
+var templateResults = map[string]string{
 	// note that after the execstart there is one significant piece of
 	// whitespace. that's just how the template works out right now.
 	"one": `
@@ -39,10 +45,4 @@ FinalKillSignal=SIGKILL
 
 [Install]
 WantedBy=default.target`,
-}
-
-func init() {
-	for key := range templates {
-		templates[key] = strings.TrimSpace(templates[key])
-	}
 }
