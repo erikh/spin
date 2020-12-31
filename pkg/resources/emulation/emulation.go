@@ -17,8 +17,8 @@ type DispatcherConfig struct {
 	Shutdown     dispatcher.Func
 }
 
-// Dispatcher customizes a dispatcher for the purposes of making a storage
-// dispatcher with a pre-defined storage-compatible API. See DispatcherConfig for more
+// Dispatcher customizes a dispatcher for the purposes of making a emulation
+// dispatcher with a pre-defined emulation-compatible API. See DispatcherConfig for more
 // information.
 func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 	return dispatcher.Table{
