@@ -33,6 +33,10 @@ func emulationAgent(dir string) DispatcherConfig {
 		dir = systemdDir()
 	}
 
+	configFilename := func(id uint64) string {
+		return filepath.Join(dir, fmt.Sprintf("spin-%d.service", id))
+	}
+
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
 			vm, err := commandToVM(c.Parameters["vm"].(map[string]interface{}))
@@ -52,13 +56,12 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			name := fmt.Sprintf("spin-%d.service", id)
-
 			if err := os.MkdirAll(dir, 0700); err != nil {
 				return err
 			}
 
-			fn := filepath.Join(dir, name)
+			fn := configFilename(id)
+
 			os.Remove(fn)
 
 			f, err := os.Create(fn)
@@ -75,7 +78,9 @@ func emulationAgent(dir string) DispatcherConfig {
 			return nil
 		},
 		RemoveConfig: func(c dispatcher.Command) error {
-			return nil
+			id := uint64(c.Parameters["id"].(float64))
+			// FIXME reload systemd
+			return os.Remove(configFilename(id))
 		},
 		Start: func(c dispatcher.Command) error {
 			return nil
