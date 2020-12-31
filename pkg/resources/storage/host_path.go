@@ -79,7 +79,9 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 				return err
 			}
 
-			return exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%sG", c.Parameters["image_size"])).Run()
+			// FIXME add a debug trap for these shell commands later
+			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%.0fG", c.Parameters["image_size"]))
+			return cmd.Run()
 		},
 		DeleteImage: func(c dispatcher.Command) error {
 			path, err := bp(c.Parameters["volume_path"], c.Parameters["image_name"])
