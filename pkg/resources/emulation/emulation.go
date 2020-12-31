@@ -6,7 +6,7 @@ import "code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 // agents.
 const ResourceType = "emulation"
 
-// DispatcherConfig configures the storage Dispatcher() call. It is important
+// DispatcherConfig configures the emulation Dispatcher() call. It is important
 // for those that edit this struct, that the call must be edited too, for
 // uniformity.
 type DispatcherConfig struct {
