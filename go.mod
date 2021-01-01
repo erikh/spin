@@ -4,6 +4,9 @@ go 1.15
 
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
+	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
+	github.com/coreos/go-systemd/v22 v22.1.0
+	github.com/godbus/dbus v4.1.0+incompatible // indirect
 	github.com/google/uuid v1.1.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/urfave/cli/v2 v2.3.0
