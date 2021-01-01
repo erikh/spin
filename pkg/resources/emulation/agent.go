@@ -11,6 +11,7 @@ import (
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"code.hollensbe.org/erikh/spin/pkg/agent"
 	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	"code.hollensbe.org/erikh/spin/pkg/supervisor"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -33,8 +34,12 @@ func emulationAgent(dir string) DispatcherConfig {
 		dir = systemdDir()
 	}
 
+	serviceName := func(id uint64) string {
+		return fmt.Sprintf("spin-%d.service", id)
+	}
+
 	configFilename := func(id uint64) string {
-		return filepath.Join(dir, fmt.Sprintf("spin-%d.service", id))
+		return filepath.Join(dir)
 	}
 
 	return DispatcherConfig{
@@ -74,19 +79,42 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			// FIXME reload systemd
-			return nil
+			s, err := supervisor.New()
+			if err != nil {
+				return err
+			}
+
+			return s.Reload(serviceName(id))
 		},
 		RemoveConfig: func(c dispatcher.Command) error {
 			id := uint64(c.Parameters["id"].(float64))
-			// FIXME reload systemd
-			return os.Remove(configFilename(id))
+			if err := os.Remove(configFilename(id)); err != nil {
+				return err
+			}
+
+			s, err := supervisor.New()
+			if err != nil {
+				return err
+			}
+
+			return s.Reload(serviceName(id))
 		},
 		Start: func(c dispatcher.Command) error {
-			return nil
+			s, err := supervisor.New()
+			if err != nil {
+				return err
+			}
+
+			id := uint64(c.Parameters["id"].(float64))
+			return s.Start(serviceName(id))
 		},
 		Stop: func(c dispatcher.Command) error {
-			return nil
+			s, err := supervisor.New()
+			if err != nil {
+				return err
+			}
+			id := uint64(c.Parameters["id"].(float64))
+			return s.Stop(serviceName(id))
 		},
 		Shutdown: func(c dispatcher.Command) error {
 			return nil

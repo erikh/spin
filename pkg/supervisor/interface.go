@@ -4,7 +4,7 @@ package supervisor
 // of systemd, launchd etc configuration and management.
 type Interface interface {
 	// Review all configuration and start services as necessary
-	Reload() error
+	Reload(string) error
 
 	// Start a service
 	Start(string) error

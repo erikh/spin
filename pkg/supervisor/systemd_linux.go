@@ -13,7 +13,7 @@ type systemd struct {
 
 // New creates a new systemd supervisor
 func New() (Interface, error) {
-	conn, err := dbus.New()
+	conn, err := dbus.NewUserConnection()
 	if err != nil {
 		return nil, err
 	}
@@ -22,8 +22,19 @@ func New() (Interface, error) {
 }
 
 // Review all configuration and start services as necessary
-func (s *systemd) Reload() error {
-	return s.conn.Reload()
+func (s *systemd) Reload(svc string) error {
+	ch := make(chan string, 1)
+	_, err := s.conn.ReloadUnit(svc, "replace", ch)
+	if err != nil {
+		return err
+	}
+
+	switch res := <-ch; res {
+	case "done":
+		return nil
+	default:
+		return fmt.Errorf("systemd start call returned a %q state", res)
+	}
 }
 
 // Start a service
