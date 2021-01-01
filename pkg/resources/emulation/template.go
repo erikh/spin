@@ -14,9 +14,9 @@ Description=Virtual Machine #{{ .ID }}: {{ .Name }}
 [Service]
 Type=simple
 ExecStart={{ .Command }} {{ range $value := .Args }}{{ $value }} {{ end }}
-TimeoutStopSec=30
-KillSignal=SIGCONT
-FinalKillSignal=SIGKILL
+#TimeoutStopSec=30
+#KillSignal=SIGCONT
+#FinalKillSignal=SIGKILL
 
 [Install]
 WantedBy=default.target

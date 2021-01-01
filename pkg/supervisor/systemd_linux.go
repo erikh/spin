@@ -22,26 +22,19 @@ func New() (Interface, error) {
 }
 
 // Review all configuration and start services as necessary
-func (s *systemd) Reload(svc string) error {
-	ch := make(chan string, 1)
-	_, err := s.conn.ReloadUnit(svc, "replace", ch)
-	if err != nil {
-		return err
-	}
-
-	switch res := <-ch; res {
-	case "done":
-		return nil
-	default:
-		return fmt.Errorf("systemd start call returned a %q state", res)
-	}
+func (s *systemd) Reload() error {
+	return s.conn.Reload()
 }
 
 // Start a service
 func (s *systemd) Start(svc string) error {
-	ch := make(chan string, 1)
-	_, err := s.conn.StartUnit(svc, "replace", ch)
+	_, _, err := s.conn.EnableUnitFiles([]string{svc}, false, true)
 	if err != nil {
+		return err
+	}
+
+	ch := make(chan string, 1)
+	if _, err := s.conn.StartUnit(svc, "replace", ch); err != nil {
 		return err
 	}
 
@@ -49,7 +42,7 @@ func (s *systemd) Start(svc string) error {
 	case "done":
 		return nil
 	default:
-		return fmt.Errorf("systemd start call returned a %q state", res)
+		return fmt.Errorf("systemd stop call returned a %q state", res)
 	}
 }
 

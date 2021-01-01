@@ -39,7 +39,7 @@ func emulationAgent(dir string) DispatcherConfig {
 	}
 
 	configFilename := func(id uint64) string {
-		return filepath.Join(dir)
+		return filepath.Join(dir, serviceName(id))
 	}
 
 	return DispatcherConfig{
@@ -61,7 +61,7 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			if err := os.MkdirAll(dir, 0700); err != nil {
+			if err := os.MkdirAll(dir, 0700); err != nil && !os.IsExist(err) {
 				return err
 			}
 
@@ -84,7 +84,7 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			return s.Reload(serviceName(id))
+			return s.Reload()
 		},
 		RemoveConfig: func(c dispatcher.Command) error {
 			id := uint64(c.Parameters["id"].(float64))
@@ -97,7 +97,7 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			return s.Reload(serviceName(id))
+			return s.Reload()
 		},
 		Start: func(c dispatcher.Command) error {
 			s, err := supervisor.New()
