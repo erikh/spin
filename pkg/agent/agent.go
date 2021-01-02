@@ -2,10 +2,12 @@ package agent
 
 import (
 	"context"
+	"log"
 	"time"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // Agent is a struct encapuslating a runner agent that executes tasks for a
@@ -66,8 +68,10 @@ func (a *Agent) Loop(ctx context.Context) error {
 		}
 
 		if err := a.Tick(ctx); err != nil {
-			// FIXME handle these errors in some more intelligent fashion
-			if err != nil {
+			if e, ok := err.(*goa.ServiceError); ok && e.ErrorName() == "record_not_found" {
+				time.Sleep(100 * time.Millisecond)
+			} else if err != nil {
+				log.Println("ERROR:", err)
 				time.Sleep(time.Second)
 			}
 		}

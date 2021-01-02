@@ -32,6 +32,13 @@ func (m *Mock) returnErr() error {
 	return nil
 }
 
+// Reset resets all counters and trackers
+func (m *Mock) Reset() {
+	m.Reloads = 0
+	m.Starts = map[string]uint{}
+	m.Stops = map[string]uint{}
+}
+
 // Reload reviews all configuration and starts services as necessary
 func (m *Mock) Reload() error {
 	if err := m.returnErr(); err != nil {
