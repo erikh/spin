@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"code.hollensbe.org/erikh/spin"
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"code.hollensbe.org/erikh/spin/pkg/agent"
@@ -29,17 +30,13 @@ func systemdDir() string {
 	return filepath.Join(dir, systemdUserDir)
 }
 
-func emulationAgent(dir string) DispatcherConfig {
-	if dir == "" {
-		dir = systemdDir()
-	}
-
+func emulationAgent(ac AgentConfig) DispatcherConfig {
 	serviceName := func(id uint64) string {
 		return fmt.Sprintf("spin-%d.service", id)
 	}
 
 	configFilename := func(id uint64) string {
-		return filepath.Join(dir, serviceName(id))
+		return filepath.Join(ac.SystemDir, serviceName(id))
 	}
 
 	return DispatcherConfig{
@@ -51,7 +48,7 @@ func emulationAgent(dir string) DispatcherConfig {
 
 			id := uint64(c.Parameters["id"].(float64))
 
-			tc, err := vmToTemplateConfig(id, vm)
+			tc, err := vmToTemplateConfig(ac, id, vm)
 			if err != nil {
 				return err
 			}
@@ -61,7 +58,7 @@ func emulationAgent(dir string) DispatcherConfig {
 				return err
 			}
 
-			if err := os.MkdirAll(dir, 0700); err != nil && !os.IsExist(err) {
+			if err := os.MkdirAll(ac.SystemDir, 0700); err != nil && !os.IsExist(err) {
 				return err
 			}
 
@@ -137,10 +134,39 @@ func commandToVM(vm map[string]interface{}) (*spinregistry.VM, error) {
 	return &ret, nil
 }
 
-func NewAgent(bc brokerclient.Config, dir string) (*agent.Agent, error) {
-	if err := os.MkdirAll(MonitorDir, 0700); err != nil {
+// MonitorDir is the directory where the qemu control monitors are kept
+var MonitorDir = filepath.Join(spin.ConfigDir(), "monitors")
+
+type AgentConfig struct {
+	SystemDir    string
+	MonitorDir   string
+	ClientConfig brokerclient.Config
+}
+
+func (ac *AgentConfig) Validate() error {
+	if ac.SystemDir == "" {
+		ac.SystemDir = systemdDir()
+	}
+
+	if ac.MonitorDir == "" {
+		ac.MonitorDir = MonitorDir
+	}
+
+	return nil
+}
+
+func (ac *AgentConfig) monitorPath(id uint64) string {
+	return filepath.Join(ac.MonitorDir, fmt.Sprintf("%d", id))
+}
+
+func NewAgent(ac AgentConfig) (*agent.Agent, error) {
+	if err := ac.Validate(); err != nil {
 		return nil, err
 	}
 
-	return agent.New(bc, ResourceType, Dispatcher(emulationAgent(dir))), nil
+	if err := os.MkdirAll(ac.MonitorDir, 0700); err != nil {
+		return nil, err
+	}
+
+	return agent.New(ac.ClientConfig, ResourceType, Dispatcher(emulationAgent(ac))), nil
 }

@@ -22,6 +22,11 @@ func main() {
 			Aliases: []string{"d"},
 			Usage:   "The directory where the .service files will be placed",
 		},
+		&cli.StringFlag{
+			Name:    "monitor-directory",
+			Aliases: []string{"md"},
+			Usage:   "The directory where the QMP monitor sockets will be placed",
+		},
 	}
 
 	app.Action = start
@@ -33,10 +38,14 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	agent, err := emulation.NewAgent(brokerclient.Config{
-		Host:    "localhost:8080",
-		Timeout: 1,
-	}, ctx.String("service-directory"))
+	agent, err := emulation.NewAgent(emulation.AgentConfig{
+		ClientConfig: brokerclient.Config{
+			Host:    "localhost:8080",
+			Timeout: 1,
+		},
+		SystemDir:  ctx.String("service-directory"),
+		MonitorDir: ctx.String("monitor-directory"),
+	})
 	if err != nil {
 		return err
 	}

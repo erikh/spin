@@ -3,15 +3,10 @@ package emulation
 import (
 	"bytes"
 	"fmt"
-	"path/filepath"
 	"text/template"
 
-	"code.hollensbe.org/erikh/spin"
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 )
-
-// MonitorDir is the directory where the qemu control monitors are kept
-var MonitorDir = filepath.Join(spin.ConfigDir(), "monitors")
 
 const systemdUnit = ` 
 [Unit]
@@ -35,15 +30,11 @@ type templateConfig struct {
 	Args    []string
 }
 
-func monitorPath(id uint64) string {
-	return filepath.Join(MonitorDir, fmt.Sprintf("%d", id))
-}
-
-func vmToTemplateConfig(id uint64, vm *spinregistry.VM) (templateConfig, error) {
+func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templateConfig, error) {
 	args := []string{
 		"-nodefaults",
 		"-chardev",
-		fmt.Sprintf("socket,server,nowait,id=char0,path=%s", monitorPath(id)),
+		fmt.Sprintf("socket,server,nowait,id=char0,path=%s", ac.monitorPath(id)),
 		"-mon",
 		"chardev=char0,mode=control,pretty=on",
 		"-machine",
