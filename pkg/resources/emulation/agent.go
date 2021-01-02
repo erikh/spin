@@ -137,6 +137,10 @@ func commandToVM(vm map[string]interface{}) (*spinregistry.VM, error) {
 	return &ret, nil
 }
 
-func NewAgent(bc brokerclient.Config, dir string) *agent.Agent {
-	return agent.New(bc, ResourceType, Dispatcher(emulationAgent(dir)))
+func NewAgent(bc brokerclient.Config, dir string) (*agent.Agent, error) {
+	if err := os.MkdirAll(MonitorDir, 0700); err != nil {
+		return nil, err
+	}
+
+	return agent.New(bc, ResourceType, Dispatcher(emulationAgent(dir))), nil
 }

@@ -33,10 +33,13 @@ func main() {
 }
 
 func start(ctx *cli.Context) error {
-	agent := emulation.NewAgent(brokerclient.Config{
+	agent, err := emulation.NewAgent(brokerclient.Config{
 		Host:    "localhost:8080",
 		Timeout: 1,
 	}, ctx.String("service-directory"))
+	if err != nil {
+		return err
+	}
 
 	cCtx, cancel := context.WithCancel(context.Background())
 	go func() {

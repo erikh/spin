@@ -7,6 +7,7 @@ var Storage = Type("Storage", func() {
 	Attribute("volume", String, "Volume name, must not include `/`")
 	Attribute("image", String, "Image filename, must not include `/`")
 	Attribute("image_size", UInt, "Image size (in gigabytes)")
+	Attribute("cdrom", Boolean, "Is this image a cdrom?")
 	Required("volume", "image", "image_size")
 })
 

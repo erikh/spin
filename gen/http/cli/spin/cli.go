@@ -34,8 +34,8 @@ spin-registry (create|update|delete|get|list)
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` spin-apiserver add-volume --body '{
-      "path": "Commodi sed et consequatur sunt.",
-      "volume": "Quis at distinctio magni quibusdam reiciendis."
+      "path": "Et consequatur sunt.",
+      "volume": "At distinctio magni quibusdam reiciendis ipsum commodi."
    }'` + "\n" +
 		os.Args[0] + ` spin-broker new` + "\n" +
 		os.Args[0] + ` spin-registry create --body '{
@@ -44,21 +44,25 @@ func UsageExamples() string {
       "name": "Nihil officia aspernatur.",
       "storage": [
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
@@ -411,8 +415,8 @@ Add a volume for image allocation with backing storage, and name it
 
 Example:
     `+os.Args[0]+` spin-apiserver add-volume --body '{
-      "path": "Commodi sed et consequatur sunt.",
-      "volume": "Quis at distinctio magni quibusdam reiciendis."
+      "path": "Et consequatur sunt.",
+      "volume": "At distinctio magni quibusdam reiciendis ipsum commodi."
    }'
 `, os.Args[0])
 }
@@ -648,21 +652,25 @@ Example:
       "name": "Nihil officia aspernatur.",
       "storage": [
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
          },
          {
+            "cdrom": true,
             "image": "In aut vero amet.",
             "image_size": 4230286153146778503,
             "volume": "Voluptatibus est minima cum delectus occaecati."
@@ -682,33 +690,25 @@ Update a VM
 Example:
     `+os.Args[0]+` spin-registry update --body '{
       "vm": {
-         "cpus": 6421225864845588134,
-         "memory": 15540618699971399982,
-         "name": "Et dicta.",
+         "cpus": 11228093715167016376,
+         "memory": 17276208712818042774,
+         "name": "Dicta id sint rerum rerum.",
          "storage": [
             {
+               "cdrom": true,
                "image": "In aut vero amet.",
                "image_size": 4230286153146778503,
                "volume": "Voluptatibus est minima cum delectus occaecati."
             },
             {
-               "image": "In aut vero amet.",
-               "image_size": 4230286153146778503,
-               "volume": "Voluptatibus est minima cum delectus occaecati."
-            },
-            {
-               "image": "In aut vero amet.",
-               "image_size": 4230286153146778503,
-               "volume": "Voluptatibus est minima cum delectus occaecati."
-            },
-            {
+               "cdrom": true,
                "image": "In aut vero amet.",
                "image_size": 4230286153146778503,
                "volume": "Voluptatibus est minima cum delectus occaecati."
             }
          ]
       }
-   }' --id 4466533981782302355
+   }' --id 5284076406166230851
 `, os.Args[0])
 }
 
@@ -719,7 +719,7 @@ Delete a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry delete --id 17276208712818042774
+    `+os.Args[0]+` spin-registry delete --id 2443945690941915128
 `, os.Args[0])
 }
 
@@ -730,7 +730,7 @@ Retrieve a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry get --id 5284076406166230851
+    `+os.Args[0]+` spin-registry get --id 3976908564030419353
 `, os.Args[0])
 }
 

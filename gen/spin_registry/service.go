@@ -74,4 +74,6 @@ type Storage struct {
 	Image string
 	// Image size (in gigabytes)
 	ImageSize uint
+	// Is this image a cdrom?
+	Cdrom *bool
 }

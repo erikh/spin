@@ -22,7 +22,7 @@ func BuildAddVolumePayload(spinApiserverAddVolumeBody string) (*spinapiserver.Ad
 	{
 		err = json.Unmarshal([]byte(spinApiserverAddVolumeBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"path\": \"Commodi sed et consequatur sunt.\",\n      \"volume\": \"Quis at distinctio magni quibusdam reiciendis.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"path\": \"Et consequatur sunt.\",\n      \"volume\": \"At distinctio magni quibusdam reiciendis ipsum commodi.\"\n   }'")
 		}
 	}
 	v := &spinapiserver.AddVolumePayload{

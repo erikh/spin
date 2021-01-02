@@ -53,6 +53,8 @@ type StorageResponseBody struct {
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
 	ImageSize uint `form:"image_size" json:"image_size" xml:"image_size"`
+	// Is this image a cdrom?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
 // StorageRequestBody is used to define fields on request body types.
@@ -63,6 +65,8 @@ type StorageRequestBody struct {
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
 	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	// Is this image a cdrom?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
 // VMRequestBody is used to define fields on request body types.

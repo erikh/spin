@@ -168,7 +168,7 @@ paths:
             type: array
             items:
               type: integer
-              example: 10261283787704931939
+              example: 3157067769597325205
               format: int64
       schemes:
       - http
@@ -463,14 +463,14 @@ definitions:
       path:
         type: string
         description: path to backing storage
-        example: Quo dolore soluta consectetur.
+        example: Quia non nihil vitae nesciunt.
       volume:
         type: string
         description: volume identifier
-        example: Et et occaecati.
+        example: Quo dolore soluta consectetur.
     example:
-      path: Assumenda pariatur.
-      volume: Quia non nihil vitae nesciunt.
+      path: Et nobis quia neque excepturi.
+      volume: Assumenda pariatur.
     required:
     - volume
     - path
@@ -481,20 +481,20 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Et nobis quia neque excepturi.
+        example: Expedita a.
       image_size:
         type: integer
         description: image size in GB
-        example: 13026661461146096768
+        example: 13160086984666010830
         format: int64
       volume:
         type: string
         description: volume identifier
-        example: A aut similique.
+        example: Corrupti ab.
     example:
-      image_name: Ab soluta vel.
-      image_size: 2014425556641484725
-      volume: Qui dolores nihil.
+      image_name: Vel qui vel qui dolores nihil.
+      image_size: 13225308882234053238
+      volume: Soluta quisquam vero sit ratione molestiae.
     required:
     - image_name
     - image_size
@@ -506,14 +506,14 @@ definitions:
       image_name:
         type: string
         description: image name
-        example: Dolorem soluta quisquam vero sit.
+        example: Ut temporibus explicabo.
       volume:
         type: string
         description: volume identifier
-        example: Molestiae asperiores.
+        example: Ab quo et.
     example:
-      image_name: Temporibus explicabo sit ab quo et quis.
-      volume: Nulla numquam rerum asperiores corporis aut enim.
+      image_name: Quidem nulla numquam rerum.
+      volume: Corporis aut enim.
     required:
     - image_name
     - volume
@@ -778,33 +778,29 @@ definitions:
           $ref: '#/definitions/StorageRequestBody'
         description: Storage references
         example:
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
-          image_size: 4230286153146778503
-          volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
-          image_size: 4230286153146778503
-          volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
     example:
-      cpus: 13139907858509298089
-      memory: 5228715432521503348
-      name: Ut voluptas ullam quas aliquam sit quaerat.
+      cpus: 5228715432521503348
+      memory: 3797046233563332530
+      name: Voluptas ullam quas aliquam sit quaerat illo.
       storage:
-      - image: In aut vero amet.
+      - cdrom: true
+        image: In aut vero amet.
         image_size: 4230286153146778503
         volume: Voluptatibus est minima cum delectus occaecati.
-      - image: In aut vero amet.
+      - cdrom: true
+        image: In aut vero amet.
         image_size: 4230286153146778503
         volume: Voluptatibus est minima cum delectus occaecati.
-      - image: In aut vero amet.
-        image_size: 4230286153146778503
-        volume: Voluptatibus est minima cum delectus occaecati.
-      - image: In aut vero amet.
+      - cdrom: true
+        image: In aut vero amet.
         image_size: 4230286153146778503
         volume: Voluptatibus est minima cum delectus occaecati.
     required:
@@ -819,49 +815,52 @@ definitions:
       cpus:
         type: integer
         description: CPU count
-        example: 18411680576569119380
+        example: 16715959138236624400
         format: int64
       memory:
         type: integer
         description: Memory (in megabytes)
-        example: 6242776563299468417
+        example: 6875004001628868721
         format: int64
       name:
         type: string
         description: Name of VM; does not need to be unique
-        example: Libero libero commodi.
+        example: Qui sit nihil.
       storage:
         type: array
         items:
           $ref: '#/definitions/StorageResponseBody'
         description: Storage references
         example:
-        - image: Sapiente temporibus.
-          image_size: 4310599689986484391
-          volume: Voluptas perferendis ea iusto.
-        - image: Sapiente temporibus.
-          image_size: 4310599689986484391
-          volume: Voluptas perferendis ea iusto.
-        - image: Sapiente temporibus.
-          image_size: 4310599689986484391
-          volume: Voluptas perferendis ea iusto.
-        - image: Sapiente temporibus.
-          image_size: 4310599689986484391
-          volume: Voluptas perferendis ea iusto.
+        - cdrom: false
+          image: Non aut minima.
+          image_size: 11766528356471425167
+          volume: Adipisci sapiente.
+        - cdrom: false
+          image: Non aut minima.
+          image_size: 11766528356471425167
+          volume: Adipisci sapiente.
     example:
-      cpus: 11421274656992002837
-      memory: 3157067769597325205
-      name: Eos quibusdam error dolorem ut et.
+      cpus: 13654993227678912479
+      memory: 17170428336381239599
+      name: Quibusdam error dolorem.
       storage:
-      - image: Sapiente temporibus.
-        image_size: 4310599689986484391
-        volume: Voluptas perferendis ea iusto.
-      - image: Sapiente temporibus.
-        image_size: 4310599689986484391
-        volume: Voluptas perferendis ea iusto.
-      - image: Sapiente temporibus.
-        image_size: 4310599689986484391
-        volume: Voluptas perferendis ea iusto.
+      - cdrom: false
+        image: Non aut minima.
+        image_size: 11766528356471425167
+        volume: Adipisci sapiente.
+      - cdrom: false
+        image: Non aut minima.
+        image_size: 11766528356471425167
+        volume: Adipisci sapiente.
+      - cdrom: false
+        image: Non aut minima.
+        image_size: 11766528356471425167
+        volume: Adipisci sapiente.
+      - cdrom: false
+        image: Non aut minima.
+        image_size: 11766528356471425167
+        volume: Adipisci sapiente.
     required:
     - name
     - cpus
@@ -875,20 +874,16 @@ definitions:
         $ref: '#/definitions/VMRequestBody'
     example:
       vm:
-        cpus: 6421225864845588134
-        memory: 15540618699971399982
-        name: Et dicta.
+        cpus: 11228093715167016376
+        memory: 17276208712818042774
+        name: Dicta id sint rerum rerum.
         storage:
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
-          image_size: 4230286153146778503
-          volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
-          image_size: 4230286153146778503
-          volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
     required:
@@ -897,6 +892,10 @@ definitions:
     title: StorageRequestBody
     type: object
     properties:
+      cdrom:
+        type: boolean
+        description: Is this image a cdrom?
+        example: true
       image:
         type: string
         description: Image filename, must not include `/`
@@ -911,9 +910,10 @@ definitions:
         description: Volume name, must not include `/`
         example: Est velit eaque mollitia.
     example:
+      cdrom: true
       image: Qui ea qui omnis qui sit et.
       image_size: 14375469499918085890
-      volume: Omnis quia deleniti.
+      volume: Quia deleniti.
     required:
     - volume
     - image
@@ -922,23 +922,28 @@ definitions:
     title: StorageResponseBody
     type: object
     properties:
+      cdrom:
+        type: boolean
+        description: Is this image a cdrom?
+        example: true
       image:
         type: string
         description: Image filename, must not include `/`
-        example: Sed cum.
+        example: Est totam quasi eligendi quod.
       image_size:
         type: integer
         description: Image size (in gigabytes)
-        example: 1925419452315424525
+        example: 3903287808989323518
         format: int64
       volume:
         type: string
         description: Volume name, must not include `/`
-        example: Est totam quasi eligendi quod.
+        example: Placeat exercitationem.
     example:
+      cdrom: false
       image: Aut ut illum.
       image_size: 12197256539042136090
-      volume: Culpa unde ut.
+      volume: Sequi voluptatem culpa unde ut.
     required:
     - volume
     - image
@@ -950,44 +955,50 @@ definitions:
       cpus:
         type: integer
         description: CPU count
-        example: 11187625645617701008
+        example: 2511609119373908109
         format: int64
       memory:
         type: integer
         description: Memory (in megabytes)
-        example: 3165228496034042905
+        example: 11248686426005096227
         format: int64
       name:
         type: string
         description: Name of VM; does not need to be unique
-        example: Perspiciatis voluptas quia voluptatem adipisci et.
+        example: Voluptas quia.
       storage:
         type: array
         items:
           $ref: '#/definitions/StorageRequestBody'
         description: Storage references
         example:
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
-        - image: In aut vero amet.
+        - cdrom: true
+          image: In aut vero amet.
           image_size: 4230286153146778503
           volume: Voluptatibus est minima cum delectus occaecati.
     example:
-      cpus: 18230181160547742892
-      memory: 11718520038058316817
-      name: Modi aspernatur.
+      cpus: 15365139497019499343
+      memory: 17502222407095417592
+      name: Quas ea.
       storage:
-      - image: In aut vero amet.
+      - cdrom: true
+        image: In aut vero amet.
         image_size: 4230286153146778503
         volume: Voluptatibus est minima cum delectus occaecati.
-      - image: In aut vero amet.
+      - cdrom: true
+        image: In aut vero amet.
         image_size: 4230286153146778503
         volume: Voluptatibus est minima cum delectus occaecati.
     required:

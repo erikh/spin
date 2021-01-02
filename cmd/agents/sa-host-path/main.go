@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	"code.hollensbe.org/erikh/spin/pkg/resources/storage"
+	"github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sys/unix"
 )
@@ -16,11 +18,16 @@ func main() {
 	app := cli.NewApp()
 	app.Description = "Host-path agent for Spin"
 
+	home, err := homedir.Dir()
+	if err != nil {
+		panic(err)
+	}
+
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:    "root-path",
 			Aliases: []string{"p"},
-			Value:   "/tmp/host-path-test",
+			Value:   filepath.Join(home, ".config/spin/images"),
 		},
 	}
 

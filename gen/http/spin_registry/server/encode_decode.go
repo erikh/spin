@@ -200,6 +200,7 @@ func unmarshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *sp
 		Volume:    *v.Volume,
 		Image:     *v.Image,
 		ImageSize: *v.ImageSize,
+		Cdrom:     v.Cdrom,
 	}
 
 	return res
@@ -228,6 +229,7 @@ func marshalSpinregistryStorageToStorageResponseBody(v *spinregistry.Storage) *S
 		Volume:    v.Volume,
 		Image:     v.Image,
 		ImageSize: v.ImageSize,
+		Cdrom:     v.Cdrom,
 	}
 
 	return res
