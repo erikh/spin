@@ -76,12 +76,7 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 				return err
 			}
 
-			s, err := supervisor.New()
-			if err != nil {
-				return err
-			}
-
-			return s.Reload()
+			return ac.Supervisor.Reload()
 		},
 		RemoveConfig: func(c dispatcher.Command) error {
 			id := uint64(c.Parameters["id"].(float64))
@@ -89,29 +84,15 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 				return err
 			}
 
-			s, err := supervisor.New()
-			if err != nil {
-				return err
-			}
-
-			return s.Reload()
+			return ac.Supervisor.Reload()
 		},
 		Start: func(c dispatcher.Command) error {
-			s, err := supervisor.New()
-			if err != nil {
-				return err
-			}
-
 			id := uint64(c.Parameters["id"].(float64))
-			return s.Start(serviceName(id))
+			return ac.Supervisor.Start(serviceName(id))
 		},
 		Stop: func(c dispatcher.Command) error {
-			s, err := supervisor.New()
-			if err != nil {
-				return err
-			}
 			id := uint64(c.Parameters["id"].(float64))
-			return s.Stop(serviceName(id))
+			return ac.Supervisor.Stop(serviceName(id))
 		},
 		Shutdown: func(c dispatcher.Command) error {
 			return nil
@@ -141,6 +122,7 @@ type AgentConfig struct {
 	SystemDir    string
 	MonitorDir   string
 	ClientConfig brokerclient.Config
+	Supervisor   supervisor.Interface
 }
 
 func (ac *AgentConfig) Validate() error {
@@ -150,6 +132,14 @@ func (ac *AgentConfig) Validate() error {
 
 	if ac.MonitorDir == "" {
 		ac.MonitorDir = MonitorDir
+	}
+
+	if ac.Supervisor == nil {
+		var err error
+		ac.Supervisor, err = supervisor.New()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
