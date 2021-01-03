@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	"github.com/mitchellh/go-homedir"
 )
 
 const systemdUnit = ` 
@@ -15,6 +16,7 @@ Description=Virtual Machine #{{ .ID }}: {{ .Name }}
 [Service]
 Type=simple
 ExecStart={{ .Command }} {{ range $value := .Args }}{{ $value }} {{ end }}
+ExecStop={{ .SpinQMP }} shutdown {{ .Home }}/.config/spin/monitors/{{ .ID }}
 TimeoutStopSec=30
 KillSignal=SIGCONT
 FinalKillSignal=SIGKILL
@@ -28,6 +30,8 @@ type templateConfig struct {
 	Name    string
 	Command string
 	Args    []string
+	SpinQMP string
+	Home    string
 }
 
 func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templateConfig, error) {
@@ -67,11 +71,18 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templat
 		}
 	}
 
+	dir, err := homedir.Dir()
+	if err != nil {
+		return templateConfig{}, err
+	}
+
 	tc := templateConfig{
 		ID:      id,
 		Name:    vm.Name,
 		Command: qemuPath,
 		Args:    args,
+		SpinQMP: spinQMPBin,
+		Home:    dir,
 	}
 
 	return tc, nil

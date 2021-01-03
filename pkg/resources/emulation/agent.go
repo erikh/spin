@@ -18,6 +18,8 @@ import (
 const (
 	systemdUserDir = ".config/systemd/user"
 	qemuPath       = "/bin/qemu-system-x86_64"
+	// FIXME change this
+	spinQMPBin = "/home/erikh/bin/spin-qmp"
 )
 
 func systemdDir() string {

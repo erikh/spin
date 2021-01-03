@@ -54,7 +54,9 @@ func (a *Agent) Tick(ctx context.Context) error {
 		sr = &s
 	}
 
-	return a.client.Complete(ctx, nr.UUID, err == nil, sr)
+	// try to ensure the message gets delivered by not using the context passed;
+	// which may have been cancelled while this was running.
+	return a.client.Complete(context.Background(), nr.UUID, err == nil, sr)
 }
 
 // Loop runs the full loop which will wait at appropriate times to avoid
