@@ -18,22 +18,22 @@ func NewSpinRegistry(logger *log.Logger, db *registry.DB) spinregistry.Service {
 	return &spinRegistry{logger, db}
 }
 
-func (s *spinRegistry) Create(ctx context.Context, p *spinregistry.VM) (uint64, error) {
+func (s *spinRegistry) VMCreate(ctx context.Context, p *spinregistry.VM) (uint64, error) {
 	return s.db.Create(p)
 }
 
-func (s *spinRegistry) Update(ctx context.Context, p *spinregistry.UpdateVM) error {
+func (s *spinRegistry) VMUpdate(ctx context.Context, p *spinregistry.UpdateVM) error {
 	return s.db.Update(p.ID, p.VM)
 }
 
-func (s *spinRegistry) Delete(ctx context.Context, p *spinregistry.DeletePayload) error {
+func (s *spinRegistry) VMDelete(ctx context.Context, p *spinregistry.VMDeletePayload) error {
 	return s.db.Delete(p.ID)
 }
 
-func (s *spinRegistry) Get(ctx context.Context, p *spinregistry.GetPayload) (*spinregistry.VM, error) {
+func (s *spinRegistry) VMGet(ctx context.Context, p *spinregistry.VMGetPayload) (*spinregistry.VM, error) {
 	return s.db.Get(p.ID)
 }
 
-func (s *spinRegistry) List(ctx context.Context) ([]uint64, error) {
+func (s *spinRegistry) VMList(ctx context.Context) ([]uint64, error) {
 	return s.db.List()
 }

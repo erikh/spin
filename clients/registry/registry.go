@@ -37,8 +37,8 @@ func New(cc Config) *Client {
 }
 
 // Create creates a new vm.
-func (c *Client) Create(ctx context.Context, vm *spinregistry.VM) (uint64, error) {
-	pkg, err := c.client.Create()(ctx, vm)
+func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.VM) (uint64, error) {
+	pkg, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
 	}
@@ -47,20 +47,20 @@ func (c *Client) Create(ctx context.Context, vm *spinregistry.VM) (uint64, error
 }
 
 // Update updates a vm by id.
-func (c *Client) Update(ctx context.Context, id uint64, vm *spinregistry.VM) error {
-	_, err := c.client.Update()(ctx, &spinregistry.UpdateVM{ID: id, VM: vm})
+func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinregistry.VM) error {
+	_, err := c.client.VMUpdate()(ctx, &spinregistry.UpdateVM{ID: id, VM: vm})
 	return err
 }
 
 // Delete deletes a vm by id.
-func (c *Client) Delete(ctx context.Context, id uint64) error {
-	_, err := c.client.Delete()(ctx, &spinregistry.DeletePayload{ID: id})
+func (c *Client) VMDelete(ctx context.Context, id uint64) error {
+	_, err := c.client.VMDelete()(ctx, &spinregistry.VMDeletePayload{ID: id})
 	return err
 }
 
 // Get retrieves a vm by id.
 func (c *Client) Get(ctx context.Context, id uint64) (*spinregistry.VM, error) {
-	vm, err := c.client.Get()(ctx, &spinregistry.GetPayload{ID: id})
+	vm, err := c.client.VMGet()(ctx, &spinregistry.VMGetPayload{ID: id})
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +69,8 @@ func (c *Client) Get(ctx context.Context, id uint64) (*spinregistry.VM, error) {
 }
 
 // List retrieves all IDs of all VMs.
-func (c *Client) List(ctx context.Context) ([]uint64, error) {
-	res, err := c.client.List()(ctx, nil)
+func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
+	res, err := c.client.VMList()(ctx, nil)
 	if err != nil {
 		return nil, err
 	}

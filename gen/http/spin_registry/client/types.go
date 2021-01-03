@@ -12,9 +12,9 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// CreateRequestBody is the type of the "spin-registry" service "create"
+// VMCreateRequestBody is the type of the "spin-registry" service "vm/create"
 // endpoint HTTP request body.
-type CreateRequestBody struct {
+type VMCreateRequestBody struct {
 	// Name of VM; does not need to be unique
 	Name string `form:"name" json:"name" xml:"name"`
 	// CPU count
@@ -25,16 +25,16 @@ type CreateRequestBody struct {
 	Storage []*StorageRequestBody `form:"storage" json:"storage" xml:"storage"`
 }
 
-// UpdateRequestBody is the type of the "spin-registry" service "update"
+// VMUpdateRequestBody is the type of the "spin-registry" service "vm/update"
 // endpoint HTTP request body.
-type UpdateRequestBody struct {
+type VMUpdateRequestBody struct {
 	// VM to publish
 	VM *VMRequestBody `form:"vm" json:"vm" xml:"vm"`
 }
 
-// GetResponseBody is the type of the "spin-registry" service "get" endpoint
-// HTTP response body.
-type GetResponseBody struct {
+// VMGetResponseBody is the type of the "spin-registry" service "vm/get"
+// endpoint HTTP response body.
+type VMGetResponseBody struct {
 	// Name of VM; does not need to be unique
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// CPU count
@@ -81,10 +81,10 @@ type StorageResponseBody struct {
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
-// NewCreateRequestBody builds the HTTP request body from the payload of the
-// "create" endpoint of the "spin-registry" service.
-func NewCreateRequestBody(p *spinregistry.VM) *CreateRequestBody {
-	body := &CreateRequestBody{
+// NewVMCreateRequestBody builds the HTTP request body from the payload of the
+// "vm/create" endpoint of the "spin-registry" service.
+func NewVMCreateRequestBody(p *spinregistry.VM) *VMCreateRequestBody {
+	body := &VMCreateRequestBody{
 		Name:   p.Name,
 		Cpus:   p.Cpus,
 		Memory: p.Memory,
@@ -98,19 +98,19 @@ func NewCreateRequestBody(p *spinregistry.VM) *CreateRequestBody {
 	return body
 }
 
-// NewUpdateRequestBody builds the HTTP request body from the payload of the
-// "update" endpoint of the "spin-registry" service.
-func NewUpdateRequestBody(p *spinregistry.UpdateVM) *UpdateRequestBody {
-	body := &UpdateRequestBody{}
+// NewVMUpdateRequestBody builds the HTTP request body from the payload of the
+// "vm/update" endpoint of the "spin-registry" service.
+func NewVMUpdateRequestBody(p *spinregistry.UpdateVM) *VMUpdateRequestBody {
+	body := &VMUpdateRequestBody{}
 	if p.VM != nil {
 		body.VM = marshalSpinregistryVMToVMRequestBody(p.VM)
 	}
 	return body
 }
 
-// NewGetVMOK builds a "spin-registry" service "get" endpoint result from a
-// HTTP "OK" response.
-func NewGetVMOK(body *GetResponseBody) *spinregistry.VM {
+// NewVMGetVMOK builds a "spin-registry" service "vm/get" endpoint result from
+// a HTTP "OK" response.
+func NewVMGetVMOK(body *VMGetResponseBody) *spinregistry.VM {
 	v := &spinregistry.VM{
 		Name:   *body.Name,
 		Cpus:   *body.Cpus,
@@ -124,8 +124,8 @@ func NewGetVMOK(body *GetResponseBody) *spinregistry.VM {
 	return v
 }
 
-// ValidateGetResponseBody runs the validations defined on GetResponseBody
-func ValidateGetResponseBody(body *GetResponseBody) (err error) {
+// ValidateVMGetResponseBody runs the validations defined on Vm/GetResponseBody
+func ValidateVMGetResponseBody(body *VMGetResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

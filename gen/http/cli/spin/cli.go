@@ -27,7 +27,7 @@ import (
 func UsageCommands() string {
 	return `spin-apiserver (add-volume|remove-volume|info-volume|create-image-on-volume|delete-image-on-volume|resize-image-on-volume|info-image-on-volume|move-image)
 spin-broker (new|add|enqueue|status|next|complete)
-spin-registry (create|update|delete|get|list)
+spin-registry (vm-/create|vm-/update|vm-/delete|vm-/get|vm-/list)
 `
 }
 
@@ -38,7 +38,7 @@ func UsageExamples() string {
       "volume": "Non deleniti consequuntur qui doloremque."
    }'` + "\n" +
 		os.Args[0] + ` spin-broker new` + "\n" +
-		os.Args[0] + ` spin-registry create --body '{
+		os.Args[0] + ` spin-registry vm-/create --body '{
       "cpus": 6421225864845588134,
       "memory": 15540618699971399982,
       "name": "Et dicta.",
@@ -131,20 +131,20 @@ func ParseEndpoint(
 
 		spinRegistryFlags = flag.NewFlagSet("spin-registry", flag.ContinueOnError)
 
-		spinRegistryCreateFlags    = flag.NewFlagSet("create", flag.ExitOnError)
-		spinRegistryCreateBodyFlag = spinRegistryCreateFlags.String("body", "REQUIRED", "")
+		spinRegistryVMCreateFlags    = flag.NewFlagSet("vm-/create", flag.ExitOnError)
+		spinRegistryVMCreateBodyFlag = spinRegistryVMCreateFlags.String("body", "REQUIRED", "")
 
-		spinRegistryUpdateFlags    = flag.NewFlagSet("update", flag.ExitOnError)
-		spinRegistryUpdateBodyFlag = spinRegistryUpdateFlags.String("body", "REQUIRED", "")
-		spinRegistryUpdateIDFlag   = spinRegistryUpdateFlags.String("id", "REQUIRED", "ID of VM to update")
+		spinRegistryVMUpdateFlags    = flag.NewFlagSet("vm-/update", flag.ExitOnError)
+		spinRegistryVMUpdateBodyFlag = spinRegistryVMUpdateFlags.String("body", "REQUIRED", "")
+		spinRegistryVMUpdateIDFlag   = spinRegistryVMUpdateFlags.String("id", "REQUIRED", "ID of VM to update")
 
-		spinRegistryDeleteFlags  = flag.NewFlagSet("delete", flag.ExitOnError)
-		spinRegistryDeleteIDFlag = spinRegistryDeleteFlags.String("id", "REQUIRED", "ID of VM to remove")
+		spinRegistryVMDeleteFlags  = flag.NewFlagSet("vm-/delete", flag.ExitOnError)
+		spinRegistryVMDeleteIDFlag = spinRegistryVMDeleteFlags.String("id", "REQUIRED", "ID of VM to remove")
 
-		spinRegistryGetFlags  = flag.NewFlagSet("get", flag.ExitOnError)
-		spinRegistryGetIDFlag = spinRegistryGetFlags.String("id", "REQUIRED", "ID of VM to remove")
+		spinRegistryVMGetFlags  = flag.NewFlagSet("vm-/get", flag.ExitOnError)
+		spinRegistryVMGetIDFlag = spinRegistryVMGetFlags.String("id", "REQUIRED", "ID of VM to remove")
 
-		spinRegistryListFlags = flag.NewFlagSet("list", flag.ExitOnError)
+		spinRegistryVMListFlags = flag.NewFlagSet("vm-/list", flag.ExitOnError)
 	)
 	spinApiserverFlags.Usage = spinApiserverUsage
 	spinApiserverAddVolumeFlags.Usage = spinApiserverAddVolumeUsage
@@ -165,11 +165,11 @@ func ParseEndpoint(
 	spinBrokerCompleteFlags.Usage = spinBrokerCompleteUsage
 
 	spinRegistryFlags.Usage = spinRegistryUsage
-	spinRegistryCreateFlags.Usage = spinRegistryCreateUsage
-	spinRegistryUpdateFlags.Usage = spinRegistryUpdateUsage
-	spinRegistryDeleteFlags.Usage = spinRegistryDeleteUsage
-	spinRegistryGetFlags.Usage = spinRegistryGetUsage
-	spinRegistryListFlags.Usage = spinRegistryListUsage
+	spinRegistryVMCreateFlags.Usage = spinRegistryVMCreateUsage
+	spinRegistryVMUpdateFlags.Usage = spinRegistryVMUpdateUsage
+	spinRegistryVMDeleteFlags.Usage = spinRegistryVMDeleteUsage
+	spinRegistryVMGetFlags.Usage = spinRegistryVMGetUsage
+	spinRegistryVMListFlags.Usage = spinRegistryVMListUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -259,20 +259,20 @@ func ParseEndpoint(
 
 		case "spin-registry":
 			switch epn {
-			case "create":
-				epf = spinRegistryCreateFlags
+			case "vm-/create":
+				epf = spinRegistryVMCreateFlags
 
-			case "update":
-				epf = spinRegistryUpdateFlags
+			case "vm-/update":
+				epf = spinRegistryVMUpdateFlags
 
-			case "delete":
-				epf = spinRegistryDeleteFlags
+			case "vm-/delete":
+				epf = spinRegistryVMDeleteFlags
 
-			case "get":
-				epf = spinRegistryGetFlags
+			case "vm-/get":
+				epf = spinRegistryVMGetFlags
 
-			case "list":
-				epf = spinRegistryListFlags
+			case "vm-/list":
+				epf = spinRegistryVMListFlags
 
 			}
 
@@ -349,20 +349,20 @@ func ParseEndpoint(
 		case "spin-registry":
 			c := spinregistryc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
-			case "create":
-				endpoint = c.Create()
-				data, err = spinregistryc.BuildCreatePayload(*spinRegistryCreateBodyFlag)
-			case "update":
-				endpoint = c.Update()
-				data, err = spinregistryc.BuildUpdatePayload(*spinRegistryUpdateBodyFlag, *spinRegistryUpdateIDFlag)
-			case "delete":
-				endpoint = c.Delete()
-				data, err = spinregistryc.BuildDeletePayload(*spinRegistryDeleteIDFlag)
-			case "get":
-				endpoint = c.Get()
-				data, err = spinregistryc.BuildGetPayload(*spinRegistryGetIDFlag)
-			case "list":
-				endpoint = c.List()
+			case "vm-/create":
+				endpoint = c.VMCreate()
+				data, err = spinregistryc.BuildVMCreatePayload(*spinRegistryVMCreateBodyFlag)
+			case "vm-/update":
+				endpoint = c.VMUpdate()
+				data, err = spinregistryc.BuildVMUpdatePayload(*spinRegistryVMUpdateBodyFlag, *spinRegistryVMUpdateIDFlag)
+			case "vm-/delete":
+				endpoint = c.VMDelete()
+				data, err = spinregistryc.BuildVMDeletePayload(*spinRegistryVMDeleteIDFlag)
+			case "vm-/get":
+				endpoint = c.VMGet()
+				data, err = spinregistryc.BuildVMGetPayload(*spinRegistryVMGetIDFlag)
+			case "vm-/list":
+				endpoint = c.VMList()
 				data = nil
 			}
 		}
@@ -607,24 +607,24 @@ Usage:
     %s [globalflags] spin-registry COMMAND [flags]
 
 COMMAND:
-    create: Create a VM
-    update: Update a VM
-    delete: Delete a VM by ID
-    get: Retrieve a VM by ID
-    list: Retrieve all VM IDs
+    vm-/create: Create a VM
+    vm-/update: Update a VM
+    vm-/delete: Delete a VM by ID
+    vm-/get: Retrieve a VM by ID
+    vm-/list: Retrieve all VM IDs
 
 Additional help:
     %s spin-registry COMMAND --help
 `, os.Args[0], os.Args[0])
 }
-func spinRegistryCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry create -body JSON
+func spinRegistryVMCreateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/create -body JSON
 
 Create a VM
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry create --body '{
+    `+os.Args[0]+` spin-registry vm-/create --body '{
       "cpus": 6421225864845588134,
       "memory": 15540618699971399982,
       "name": "Et dicta.",
@@ -658,15 +658,15 @@ Example:
 `, os.Args[0])
 }
 
-func spinRegistryUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry update -body JSON -id UINT64
+func spinRegistryVMUpdateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/update -body JSON -id UINT64
 
 Update a VM
     -body JSON: 
     -id UINT64: ID of VM to update
 
 Example:
-    `+os.Args[0]+` spin-registry update --body '{
+    `+os.Args[0]+` spin-registry vm-/update --body '{
       "vm": {
          "cpus": 8415388083871949362,
          "memory": 15948619849308310515,
@@ -696,34 +696,34 @@ Example:
 `, os.Args[0])
 }
 
-func spinRegistryDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry delete -id UINT64
+func spinRegistryVMDeleteUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/delete -id UINT64
 
 Delete a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry delete --id 6259074207733349285
+    `+os.Args[0]+` spin-registry vm-/delete --id 6259074207733349285
 `, os.Args[0])
 }
 
-func spinRegistryGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry get -id UINT64
+func spinRegistryVMGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/get -id UINT64
 
 Retrieve a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry get --id 5430522408910716022
+    `+os.Args[0]+` spin-registry vm-/get --id 5430522408910716022
 `, os.Args[0])
 }
 
-func spinRegistryListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry list
+func spinRegistryVMListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/list
 
 Retrieve all VM IDs
 
 Example:
-    `+os.Args[0]+` spin-registry list
+    `+os.Args[0]+` spin-registry vm-/list
 `, os.Args[0])
 }

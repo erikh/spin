@@ -16,13 +16,13 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// BuildCreatePayload builds the payload for the spin-registry create endpoint
-// from CLI flags.
-func BuildCreatePayload(spinRegistryCreateBody string) (*spinregistry.VM, error) {
+// BuildVMCreatePayload builds the payload for the spin-registry vm/create
+// endpoint from CLI flags.
+func BuildVMCreatePayload(spinRegistryVMCreateBody string) (*spinregistry.VM, error) {
 	var err error
-	var body CreateRequestBody
+	var body VMCreateRequestBody
 	{
-		err = json.Unmarshal([]byte(spinRegistryCreateBody), &body)
+		err = json.Unmarshal([]byte(spinRegistryVMCreateBody), &body)
 		if err != nil {
 			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 6421225864845588134,\n      \"memory\": 15540618699971399982,\n      \"name\": \"Et dicta.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         }\n      ]\n   }'")
 		}
@@ -48,13 +48,13 @@ func BuildCreatePayload(spinRegistryCreateBody string) (*spinregistry.VM, error)
 	return v, nil
 }
 
-// BuildUpdatePayload builds the payload for the spin-registry update endpoint
-// from CLI flags.
-func BuildUpdatePayload(spinRegistryUpdateBody string, spinRegistryUpdateID string) (*spinregistry.UpdateVM, error) {
+// BuildVMUpdatePayload builds the payload for the spin-registry vm/update
+// endpoint from CLI flags.
+func BuildVMUpdatePayload(spinRegistryVMUpdateBody string, spinRegistryVMUpdateID string) (*spinregistry.UpdateVM, error) {
 	var err error
-	var body UpdateRequestBody
+	var body VMUpdateRequestBody
 	{
-		err = json.Unmarshal([]byte(spinRegistryUpdateBody), &body)
+		err = json.Unmarshal([]byte(spinRegistryVMUpdateBody), &body)
 		if err != nil {
 			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 8415388083871949362,\n         \"memory\": 15948619849308310515,\n         \"name\": \"Et qui fugit quis dignissimos qui.\",\n         \"storage\": [\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            }\n         ]\n      }\n   }'")
 		}
@@ -72,7 +72,7 @@ func BuildUpdatePayload(spinRegistryUpdateBody string, spinRegistryUpdateID stri
 	}
 	var id uint64
 	{
-		id, err = strconv.ParseUint(spinRegistryUpdateID, 10, 64)
+		id, err = strconv.ParseUint(spinRegistryVMUpdateID, 10, 64)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for id, must be UINT64")
 		}
@@ -86,35 +86,35 @@ func BuildUpdatePayload(spinRegistryUpdateBody string, spinRegistryUpdateID stri
 	return v, nil
 }
 
-// BuildDeletePayload builds the payload for the spin-registry delete endpoint
-// from CLI flags.
-func BuildDeletePayload(spinRegistryDeleteID string) (*spinregistry.DeletePayload, error) {
+// BuildVMDeletePayload builds the payload for the spin-registry vm/delete
+// endpoint from CLI flags.
+func BuildVMDeletePayload(spinRegistryVMDeleteID string) (*spinregistry.VMDeletePayload, error) {
 	var err error
 	var id uint64
 	{
-		id, err = strconv.ParseUint(spinRegistryDeleteID, 10, 64)
+		id, err = strconv.ParseUint(spinRegistryVMDeleteID, 10, 64)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for id, must be UINT64")
 		}
 	}
-	v := &spinregistry.DeletePayload{}
+	v := &spinregistry.VMDeletePayload{}
 	v.ID = id
 
 	return v, nil
 }
 
-// BuildGetPayload builds the payload for the spin-registry get endpoint from
-// CLI flags.
-func BuildGetPayload(spinRegistryGetID string) (*spinregistry.GetPayload, error) {
+// BuildVMGetPayload builds the payload for the spin-registry vm/get endpoint
+// from CLI flags.
+func BuildVMGetPayload(spinRegistryVMGetID string) (*spinregistry.VMGetPayload, error) {
 	var err error
 	var id uint64
 	{
-		id, err = strconv.ParseUint(spinRegistryGetID, 10, 64)
+		id, err = strconv.ParseUint(spinRegistryVMGetID, 10, 64)
 		if err != nil {
 			return nil, fmt.Errorf("invalid value for id, must be UINT64")
 		}
 	}
-	v := &spinregistry.GetPayload{}
+	v := &spinregistry.VMGetPayload{}
 	v.ID = id
 
 	return v, nil

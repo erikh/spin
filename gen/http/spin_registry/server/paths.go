@@ -11,27 +11,27 @@ import (
 	"fmt"
 )
 
-// CreateSpinRegistryPath returns the URL path to the spin-registry service create HTTP endpoint.
-func CreateSpinRegistryPath() string {
-	return "/create"
+// VMCreateSpinRegistryPath returns the URL path to the spin-registry service vm/create HTTP endpoint.
+func VMCreateSpinRegistryPath() string {
+	return "/vm/create"
 }
 
-// UpdateSpinRegistryPath returns the URL path to the spin-registry service update HTTP endpoint.
-func UpdateSpinRegistryPath(id uint64) string {
-	return fmt.Sprintf("/update/%v", id)
+// VMUpdateSpinRegistryPath returns the URL path to the spin-registry service vm/update HTTP endpoint.
+func VMUpdateSpinRegistryPath(id uint64) string {
+	return fmt.Sprintf("/vm/update/%v", id)
 }
 
-// DeleteSpinRegistryPath returns the URL path to the spin-registry service delete HTTP endpoint.
-func DeleteSpinRegistryPath(id uint64) string {
-	return fmt.Sprintf("/delete/%v", id)
+// VMDeleteSpinRegistryPath returns the URL path to the spin-registry service vm/delete HTTP endpoint.
+func VMDeleteSpinRegistryPath(id uint64) string {
+	return fmt.Sprintf("/vm/delete/%v", id)
 }
 
-// GetSpinRegistryPath returns the URL path to the spin-registry service get HTTP endpoint.
-func GetSpinRegistryPath(id uint64) string {
-	return fmt.Sprintf("/get/%v", id)
+// VMGetSpinRegistryPath returns the URL path to the spin-registry service vm/get HTTP endpoint.
+func VMGetSpinRegistryPath(id uint64) string {
+	return fmt.Sprintf("/vm/get/%v", id)
 }
 
-// ListSpinRegistryPath returns the URL path to the spin-registry service list HTTP endpoint.
-func ListSpinRegistryPath() string {
-	return "/list"
+// VMListSpinRegistryPath returns the URL path to the spin-registry service vm/list HTTP endpoint.
+func VMListSpinRegistryPath() string {
+	return "/vm/list"
 }

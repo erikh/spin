@@ -15,74 +15,74 @@ import (
 
 // Endpoints wraps the "spin-registry" service endpoints.
 type Endpoints struct {
-	Create goa.Endpoint
-	Update goa.Endpoint
-	Delete goa.Endpoint
-	Get    goa.Endpoint
-	List   goa.Endpoint
+	VMCreate goa.Endpoint
+	VMUpdate goa.Endpoint
+	VMDelete goa.Endpoint
+	VMGet    goa.Endpoint
+	VMList   goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "spin-registry" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		Create: NewCreateEndpoint(s),
-		Update: NewUpdateEndpoint(s),
-		Delete: NewDeleteEndpoint(s),
-		Get:    NewGetEndpoint(s),
-		List:   NewListEndpoint(s),
+		VMCreate: NewVMCreateEndpoint(s),
+		VMUpdate: NewVMUpdateEndpoint(s),
+		VMDelete: NewVMDeleteEndpoint(s),
+		VMGet:    NewVMGetEndpoint(s),
+		VMList:   NewVMListEndpoint(s),
 	}
 }
 
 // Use applies the given middleware to all the "spin-registry" service
 // endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
-	e.Create = m(e.Create)
-	e.Update = m(e.Update)
-	e.Delete = m(e.Delete)
-	e.Get = m(e.Get)
-	e.List = m(e.List)
+	e.VMCreate = m(e.VMCreate)
+	e.VMUpdate = m(e.VMUpdate)
+	e.VMDelete = m(e.VMDelete)
+	e.VMGet = m(e.VMGet)
+	e.VMList = m(e.VMList)
 }
 
-// NewCreateEndpoint returns an endpoint function that calls the method
-// "create" of service "spin-registry".
-func NewCreateEndpoint(s Service) goa.Endpoint {
+// NewVMCreateEndpoint returns an endpoint function that calls the method
+// "vm/create" of service "spin-registry".
+func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VM)
-		return s.Create(ctx, p)
+		return s.VMCreate(ctx, p)
 	}
 }
 
-// NewUpdateEndpoint returns an endpoint function that calls the method
-// "update" of service "spin-registry".
-func NewUpdateEndpoint(s Service) goa.Endpoint {
+// NewVMUpdateEndpoint returns an endpoint function that calls the method
+// "vm/update" of service "spin-registry".
+func NewVMUpdateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*UpdateVM)
-		return nil, s.Update(ctx, p)
+		return nil, s.VMUpdate(ctx, p)
 	}
 }
 
-// NewDeleteEndpoint returns an endpoint function that calls the method
-// "delete" of service "spin-registry".
-func NewDeleteEndpoint(s Service) goa.Endpoint {
+// NewVMDeleteEndpoint returns an endpoint function that calls the method
+// "vm/delete" of service "spin-registry".
+func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*DeletePayload)
-		return nil, s.Delete(ctx, p)
+		p := req.(*VMDeletePayload)
+		return nil, s.VMDelete(ctx, p)
 	}
 }
 
-// NewGetEndpoint returns an endpoint function that calls the method "get" of
-// service "spin-registry".
-func NewGetEndpoint(s Service) goa.Endpoint {
+// NewVMGetEndpoint returns an endpoint function that calls the method "vm/get"
+// of service "spin-registry".
+func NewVMGetEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*GetPayload)
-		return s.Get(ctx, p)
+		p := req.(*VMGetPayload)
+		return s.VMGet(ctx, p)
 	}
 }
 
-// NewListEndpoint returns an endpoint function that calls the method "list" of
-// service "spin-registry".
-func NewListEndpoint(s Service) goa.Endpoint {
+// NewVMListEndpoint returns an endpoint function that calls the method
+// "vm/list" of service "spin-registry".
+func NewVMListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		return s.List(ctx)
+		return s.VMList(ctx)
 	}
 }

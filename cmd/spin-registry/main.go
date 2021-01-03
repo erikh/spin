@@ -157,7 +157,7 @@ func messageCreate(ctx *cli.Context) error {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
 	}
 
-	id, err := getClient(ctx).Create(context.Background(), &vm)
+	id, err := getClient(ctx).VMCreate(context.Background(), &vm)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func messageUpdate(ctx *cli.Context) error {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
 	}
 
-	return getClient(ctx).Update(context.Background(), id, &vm)
+	return getClient(ctx).VMUpdate(context.Background(), id, &vm)
 }
 
 func messageDelete(ctx *cli.Context) error {
@@ -187,7 +187,7 @@ func messageDelete(ctx *cli.Context) error {
 		return err
 	}
 
-	return getClient(ctx).Delete(context.Background(), id)
+	return getClient(ctx).VMDelete(context.Background(), id)
 }
 
 func messageGet(ctx *cli.Context) error {
@@ -205,7 +205,7 @@ func messageGet(ctx *cli.Context) error {
 }
 
 func messageList(ctx *cli.Context) error {
-	ids, err := getClient(ctx).List(context.Background())
+	ids, err := getClient(ctx).VMList(context.Background())
 	if err != nil {
 		return err
 	}

@@ -17,20 +17,23 @@ import (
 
 // Client lists the spin-registry service endpoint HTTP clients.
 type Client struct {
-	// Create Doer is the HTTP client used to make requests to the create endpoint.
-	CreateDoer goahttp.Doer
+	// VMCreate Doer is the HTTP client used to make requests to the vm/create
+	// endpoint.
+	VMCreateDoer goahttp.Doer
 
-	// Update Doer is the HTTP client used to make requests to the update endpoint.
-	UpdateDoer goahttp.Doer
+	// VMUpdate Doer is the HTTP client used to make requests to the vm/update
+	// endpoint.
+	VMUpdateDoer goahttp.Doer
 
-	// Delete Doer is the HTTP client used to make requests to the delete endpoint.
-	DeleteDoer goahttp.Doer
+	// VMDelete Doer is the HTTP client used to make requests to the vm/delete
+	// endpoint.
+	VMDeleteDoer goahttp.Doer
 
-	// Get Doer is the HTTP client used to make requests to the get endpoint.
-	GetDoer goahttp.Doer
+	// VMGet Doer is the HTTP client used to make requests to the vm/get endpoint.
+	VMGetDoer goahttp.Doer
 
-	// List Doer is the HTTP client used to make requests to the list endpoint.
-	ListDoer goahttp.Doer
+	// VMList Doer is the HTTP client used to make requests to the vm/list endpoint.
+	VMListDoer goahttp.Doer
 
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
@@ -53,11 +56,11 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		CreateDoer:          doer,
-		UpdateDoer:          doer,
-		DeleteDoer:          doer,
-		GetDoer:             doer,
-		ListDoer:            doer,
+		VMCreateDoer:        doer,
+		VMUpdateDoer:        doer,
+		VMDeleteDoer:        doer,
+		VMGetDoer:           doer,
+		VMListDoer:          doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -66,15 +69,15 @@ func NewClient(
 	}
 }
 
-// Create returns an endpoint that makes HTTP requests to the spin-registry
-// service create server.
-func (c *Client) Create() goa.Endpoint {
+// VMCreate returns an endpoint that makes HTTP requests to the spin-registry
+// service vm/create server.
+func (c *Client) VMCreate() goa.Endpoint {
 	var (
-		encodeRequest  = EncodeCreateRequest(c.encoder)
-		decodeResponse = DecodeCreateResponse(c.decoder, c.RestoreResponseBody)
+		encodeRequest  = EncodeVMCreateRequest(c.encoder)
+		decodeResponse = DecodeVMCreateResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildCreateRequest(ctx, v)
+		req, err := c.BuildVMCreateRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
@@ -82,23 +85,23 @@ func (c *Client) Create() goa.Endpoint {
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.CreateDoer.Do(req)
+		resp, err := c.VMCreateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "create", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm/create", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
-// Update returns an endpoint that makes HTTP requests to the spin-registry
-// service update server.
-func (c *Client) Update() goa.Endpoint {
+// VMUpdate returns an endpoint that makes HTTP requests to the spin-registry
+// service vm/update server.
+func (c *Client) VMUpdate() goa.Endpoint {
 	var (
-		encodeRequest  = EncodeUpdateRequest(c.encoder)
-		decodeResponse = DecodeUpdateResponse(c.decoder, c.RestoreResponseBody)
+		encodeRequest  = EncodeVMUpdateRequest(c.encoder)
+		decodeResponse = DecodeVMUpdateResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildUpdateRequest(ctx, v)
+		req, err := c.BuildVMUpdateRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
@@ -106,66 +109,66 @@ func (c *Client) Update() goa.Endpoint {
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.UpdateDoer.Do(req)
+		resp, err := c.VMUpdateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "update", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm/update", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
-// Delete returns an endpoint that makes HTTP requests to the spin-registry
-// service delete server.
-func (c *Client) Delete() goa.Endpoint {
+// VMDelete returns an endpoint that makes HTTP requests to the spin-registry
+// service vm/delete server.
+func (c *Client) VMDelete() goa.Endpoint {
 	var (
-		decodeResponse = DecodeDeleteResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeVMDeleteResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildDeleteRequest(ctx, v)
+		req, err := c.BuildVMDeleteRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.DeleteDoer.Do(req)
+		resp, err := c.VMDeleteDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "delete", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm/delete", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
-// Get returns an endpoint that makes HTTP requests to the spin-registry
-// service get server.
-func (c *Client) Get() goa.Endpoint {
+// VMGet returns an endpoint that makes HTTP requests to the spin-registry
+// service vm/get server.
+func (c *Client) VMGet() goa.Endpoint {
 	var (
-		decodeResponse = DecodeGetResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeVMGetResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildGetRequest(ctx, v)
+		req, err := c.BuildVMGetRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.GetDoer.Do(req)
+		resp, err := c.VMGetDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "get", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm/get", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
-// List returns an endpoint that makes HTTP requests to the spin-registry
-// service list server.
-func (c *Client) List() goa.Endpoint {
+// VMList returns an endpoint that makes HTTP requests to the spin-registry
+// service vm/list server.
+func (c *Client) VMList() goa.Endpoint {
 	var (
-		decodeResponse = DecodeListResponse(c.decoder, c.RestoreResponseBody)
+		decodeResponse = DecodeVMListResponse(c.decoder, c.RestoreResponseBody)
 	)
 	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildListRequest(ctx, v)
+		req, err := c.BuildVMListRequest(ctx, v)
 		if err != nil {
 			return nil, err
 		}
-		resp, err := c.ListDoer.Do(req)
+		resp, err := c.VMListDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "list", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm/list", err)
 		}
 		return decodeResponse(resp)
 	}

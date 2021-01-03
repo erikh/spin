@@ -18,13 +18,13 @@ import (
 	goahttp "goa.design/goa/v3/http"
 )
 
-// BuildCreateRequest instantiates a HTTP request object with method and path
-// set to call the "spin-registry" service "create" endpoint
-func (c *Client) BuildCreateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateSpinRegistryPath()}
+// BuildVMCreateRequest instantiates a HTTP request object with method and path
+// set to call the "spin-registry" service "vm/create" endpoint
+func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMCreateSpinRegistryPath()}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-registry", "create", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-registry", "vm/create", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -33,26 +33,26 @@ func (c *Client) BuildCreateRequest(ctx context.Context, v interface{}) (*http.R
 	return req, nil
 }
 
-// EncodeCreateRequest returns an encoder for requests sent to the
-// spin-registry create server.
-func EncodeCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+// EncodeVMCreateRequest returns an encoder for requests sent to the
+// spin-registry vm/create server.
+func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
 		p, ok := v.(*spinregistry.VM)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-registry", "create", "*spinregistry.VM", v)
+			return goahttp.ErrInvalidType("spin-registry", "vm/create", "*spinregistry.VM", v)
 		}
-		body := NewCreateRequestBody(p)
+		body := NewVMCreateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("spin-registry", "create", err)
+			return goahttp.ErrEncodingError("spin-registry", "vm/create", err)
 		}
 		return nil
 	}
 }
 
-// DecodeCreateResponse returns a decoder for responses returned by the
-// spin-registry create endpoint. restoreBody controls whether the response
+// DecodeVMCreateResponse returns a decoder for responses returned by the
+// spin-registry vm/create endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
-func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeVMCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -74,33 +74,33 @@ func DecodeCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("spin-registry", "create", err)
+				return nil, goahttp.ErrDecodingError("spin-registry", "vm/create", err)
 			}
 			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-registry", "create", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm/create", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildUpdateRequest instantiates a HTTP request object with method and path
-// set to call the "spin-registry" service "update" endpoint
-func (c *Client) BuildUpdateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildVMUpdateRequest instantiates a HTTP request object with method and path
+// set to call the "spin-registry" service "vm/update" endpoint
+func (c *Client) BuildVMUpdateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
 	)
 	{
 		p, ok := v.(*spinregistry.UpdateVM)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-registry", "update", "*spinregistry.UpdateVM", v)
+			return nil, goahttp.ErrInvalidType("spin-registry", "vm/update", "*spinregistry.UpdateVM", v)
 		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: UpdateSpinRegistryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMUpdateSpinRegistryPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-registry", "update", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-registry", "vm/update", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -109,26 +109,26 @@ func (c *Client) BuildUpdateRequest(ctx context.Context, v interface{}) (*http.R
 	return req, nil
 }
 
-// EncodeUpdateRequest returns an encoder for requests sent to the
-// spin-registry update server.
-func EncodeUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+// EncodeVMUpdateRequest returns an encoder for requests sent to the
+// spin-registry vm/update server.
+func EncodeVMUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
 		p, ok := v.(*spinregistry.UpdateVM)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-registry", "update", "*spinregistry.UpdateVM", v)
+			return goahttp.ErrInvalidType("spin-registry", "vm/update", "*spinregistry.UpdateVM", v)
 		}
-		body := NewUpdateRequestBody(p)
+		body := NewVMUpdateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("spin-registry", "update", err)
+			return goahttp.ErrEncodingError("spin-registry", "vm/update", err)
 		}
 		return nil
 	}
 }
 
-// DecodeUpdateResponse returns a decoder for responses returned by the
-// spin-registry update endpoint. restoreBody controls whether the response
+// DecodeVMUpdateResponse returns a decoder for responses returned by the
+// spin-registry vm/update endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
-func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeVMUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -147,28 +147,28 @@ func DecodeUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-registry", "update", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm/update", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildDeleteRequest instantiates a HTTP request object with method and path
-// set to call the "spin-registry" service "delete" endpoint
-func (c *Client) BuildDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildVMDeleteRequest instantiates a HTTP request object with method and path
+// set to call the "spin-registry" service "vm/delete" endpoint
+func (c *Client) BuildVMDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
 	)
 	{
-		p, ok := v.(*spinregistry.DeletePayload)
+		p, ok := v.(*spinregistry.VMDeletePayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-registry", "delete", "*spinregistry.DeletePayload", v)
+			return nil, goahttp.ErrInvalidType("spin-registry", "vm/delete", "*spinregistry.VMDeletePayload", v)
 		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: DeleteSpinRegistryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMDeleteSpinRegistryPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-registry", "delete", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-registry", "vm/delete", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -177,10 +177,10 @@ func (c *Client) BuildDeleteRequest(ctx context.Context, v interface{}) (*http.R
 	return req, nil
 }
 
-// DecodeDeleteResponse returns a decoder for responses returned by the
-// spin-registry delete endpoint. restoreBody controls whether the response
+// DecodeVMDeleteResponse returns a decoder for responses returned by the
+// spin-registry vm/delete endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
-func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+func DecodeVMDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -199,28 +199,28 @@ func DecodeDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-registry", "delete", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm/delete", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildGetRequest instantiates a HTTP request object with method and path set
-// to call the "spin-registry" service "get" endpoint
-func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+// BuildVMGetRequest instantiates a HTTP request object with method and path
+// set to call the "spin-registry" service "vm/get" endpoint
+func (c *Client) BuildVMGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
 	)
 	{
-		p, ok := v.(*spinregistry.GetPayload)
+		p, ok := v.(*spinregistry.VMGetPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-registry", "get", "*spinregistry.GetPayload", v)
+			return nil, goahttp.ErrInvalidType("spin-registry", "vm/get", "*spinregistry.VMGetPayload", v)
 		}
 		id = p.ID
 	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: GetSpinRegistryPath(id)}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMGetSpinRegistryPath(id)}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-registry", "get", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-registry", "vm/get", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -229,10 +229,10 @@ func (c *Client) BuildGetRequest(ctx context.Context, v interface{}) (*http.Requ
 	return req, nil
 }
 
-// DecodeGetResponse returns a decoder for responses returned by the
-// spin-registry get endpoint. restoreBody controls whether the response body
-// should be restored after having been read.
-func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+// DecodeVMGetResponse returns a decoder for responses returned by the
+// spin-registry vm/get endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -249,33 +249,33 @@ func DecodeGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body GetResponseBody
+				body VMGetResponseBody
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("spin-registry", "get", err)
+				return nil, goahttp.ErrDecodingError("spin-registry", "vm/get", err)
 			}
-			err = ValidateGetResponseBody(&body)
+			err = ValidateVMGetResponseBody(&body)
 			if err != nil {
-				return nil, goahttp.ErrValidationError("spin-registry", "get", err)
+				return nil, goahttp.ErrValidationError("spin-registry", "vm/get", err)
 			}
-			res := NewGetVMOK(&body)
+			res := NewVMGetVMOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-registry", "get", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm/get", resp.StatusCode, string(body))
 		}
 	}
 }
 
-// BuildListRequest instantiates a HTTP request object with method and path set
-// to call the "spin-registry" service "list" endpoint
-func (c *Client) BuildListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ListSpinRegistryPath()}
+// BuildVMListRequest instantiates a HTTP request object with method and path
+// set to call the "spin-registry" service "vm/list" endpoint
+func (c *Client) BuildVMListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMListSpinRegistryPath()}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-registry", "list", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-registry", "vm/list", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -284,10 +284,10 @@ func (c *Client) BuildListRequest(ctx context.Context, v interface{}) (*http.Req
 	return req, nil
 }
 
-// DecodeListResponse returns a decoder for responses returned by the
-// spin-registry list endpoint. restoreBody controls whether the response body
-// should be restored after having been read.
-func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+// DecodeVMListResponse returns a decoder for responses returned by the
+// spin-registry vm/list endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+func DecodeVMListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
 		if restoreBody {
 			b, err := ioutil.ReadAll(resp.Body)
@@ -309,12 +309,12 @@ func DecodeListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBod
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("spin-registry", "list", err)
+				return nil, goahttp.ErrDecodingError("spin-registry", "vm/list", err)
 			}
 			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-registry", "list", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm/list", resp.StatusCode, string(body))
 		}
 	}
 }

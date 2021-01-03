@@ -18,12 +18,12 @@ import (
 
 // Server lists the spin-registry service endpoint HTTP handlers.
 type Server struct {
-	Mounts []*MountPoint
-	Create http.Handler
-	Update http.Handler
-	Delete http.Handler
-	Get    http.Handler
-	List   http.Handler
+	Mounts   []*MountPoint
+	VMCreate http.Handler
+	VMUpdate http.Handler
+	VMDelete http.Handler
+	VMGet    http.Handler
+	VMList   http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -59,17 +59,17 @@ func New(
 ) *Server {
 	return &Server{
 		Mounts: []*MountPoint{
-			{"Create", "POST", "/create"},
-			{"Update", "POST", "/update/{id}"},
-			{"Delete", "POST", "/delete/{id}"},
-			{"Get", "GET", "/get/{id}"},
-			{"List", "GET", "/list"},
+			{"VMCreate", "POST", "/vm/create"},
+			{"VMUpdate", "POST", "/vm/update/{id}"},
+			{"VMDelete", "POST", "/vm/delete/{id}"},
+			{"VMGet", "GET", "/vm/get/{id}"},
+			{"VMList", "GET", "/vm/list"},
 		},
-		Create: NewCreateHandler(e.Create, mux, decoder, encoder, errhandler, formatter),
-		Update: NewUpdateHandler(e.Update, mux, decoder, encoder, errhandler, formatter),
-		Delete: NewDeleteHandler(e.Delete, mux, decoder, encoder, errhandler, formatter),
-		Get:    NewGetHandler(e.Get, mux, decoder, encoder, errhandler, formatter),
-		List:   NewListHandler(e.List, mux, decoder, encoder, errhandler, formatter),
+		VMCreate: NewVMCreateHandler(e.VMCreate, mux, decoder, encoder, errhandler, formatter),
+		VMUpdate: NewVMUpdateHandler(e.VMUpdate, mux, decoder, encoder, errhandler, formatter),
+		VMDelete: NewVMDeleteHandler(e.VMDelete, mux, decoder, encoder, errhandler, formatter),
+		VMGet:    NewVMGetHandler(e.VMGet, mux, decoder, encoder, errhandler, formatter),
+		VMList:   NewVMListHandler(e.VMList, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -78,37 +78,37 @@ func (s *Server) Service() string { return "spin-registry" }
 
 // Use wraps the server handlers with the given middleware.
 func (s *Server) Use(m func(http.Handler) http.Handler) {
-	s.Create = m(s.Create)
-	s.Update = m(s.Update)
-	s.Delete = m(s.Delete)
-	s.Get = m(s.Get)
-	s.List = m(s.List)
+	s.VMCreate = m(s.VMCreate)
+	s.VMUpdate = m(s.VMUpdate)
+	s.VMDelete = m(s.VMDelete)
+	s.VMGet = m(s.VMGet)
+	s.VMList = m(s.VMList)
 }
 
 // Mount configures the mux to serve the spin-registry endpoints.
 func Mount(mux goahttp.Muxer, h *Server) {
-	MountCreateHandler(mux, h.Create)
-	MountUpdateHandler(mux, h.Update)
-	MountDeleteHandler(mux, h.Delete)
-	MountGetHandler(mux, h.Get)
-	MountListHandler(mux, h.List)
+	MountVMCreateHandler(mux, h.VMCreate)
+	MountVMUpdateHandler(mux, h.VMUpdate)
+	MountVMDeleteHandler(mux, h.VMDelete)
+	MountVMGetHandler(mux, h.VMGet)
+	MountVMListHandler(mux, h.VMList)
 }
 
-// MountCreateHandler configures the mux to serve the "spin-registry" service
-// "create" endpoint.
-func MountCreateHandler(mux goahttp.Muxer, h http.Handler) {
+// MountVMCreateHandler configures the mux to serve the "spin-registry" service
+// "vm/create" endpoint.
+func MountVMCreateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/create", f)
+	mux.Handle("POST", "/vm/create", f)
 }
 
-// NewCreateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "create" endpoint.
-func NewCreateHandler(
+// NewVMCreateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-registry" service "vm/create" endpoint.
+func NewVMCreateHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -117,13 +117,13 @@ func NewCreateHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeCreateRequest(mux, decoder)
-		encodeResponse = EncodeCreateResponse(encoder)
+		decodeRequest  = DecodeVMCreateRequest(mux, decoder)
+		encodeResponse = EncodeVMCreateResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "create")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm/create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -145,21 +145,21 @@ func NewCreateHandler(
 	})
 }
 
-// MountUpdateHandler configures the mux to serve the "spin-registry" service
-// "update" endpoint.
-func MountUpdateHandler(mux goahttp.Muxer, h http.Handler) {
+// MountVMUpdateHandler configures the mux to serve the "spin-registry" service
+// "vm/update" endpoint.
+func MountVMUpdateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/update/{id}", f)
+	mux.Handle("POST", "/vm/update/{id}", f)
 }
 
-// NewUpdateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "update" endpoint.
-func NewUpdateHandler(
+// NewVMUpdateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-registry" service "vm/update" endpoint.
+func NewVMUpdateHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -168,13 +168,13 @@ func NewUpdateHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeUpdateRequest(mux, decoder)
-		encodeResponse = EncodeUpdateResponse(encoder)
+		decodeRequest  = DecodeVMUpdateRequest(mux, decoder)
+		encodeResponse = EncodeVMUpdateResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "update")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm/update")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -196,21 +196,21 @@ func NewUpdateHandler(
 	})
 }
 
-// MountDeleteHandler configures the mux to serve the "spin-registry" service
-// "delete" endpoint.
-func MountDeleteHandler(mux goahttp.Muxer, h http.Handler) {
+// MountVMDeleteHandler configures the mux to serve the "spin-registry" service
+// "vm/delete" endpoint.
+func MountVMDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/delete/{id}", f)
+	mux.Handle("POST", "/vm/delete/{id}", f)
 }
 
-// NewDeleteHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "delete" endpoint.
-func NewDeleteHandler(
+// NewVMDeleteHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-registry" service "vm/delete" endpoint.
+func NewVMDeleteHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -219,13 +219,13 @@ func NewDeleteHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeDeleteRequest(mux, decoder)
-		encodeResponse = EncodeDeleteResponse(encoder)
+		decodeRequest  = DecodeVMDeleteRequest(mux, decoder)
+		encodeResponse = EncodeVMDeleteResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "delete")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm/delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -247,21 +247,21 @@ func NewDeleteHandler(
 	})
 }
 
-// MountGetHandler configures the mux to serve the "spin-registry" service
-// "get" endpoint.
-func MountGetHandler(mux goahttp.Muxer, h http.Handler) {
+// MountVMGetHandler configures the mux to serve the "spin-registry" service
+// "vm/get" endpoint.
+func MountVMGetHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/get/{id}", f)
+	mux.Handle("GET", "/vm/get/{id}", f)
 }
 
-// NewGetHandler creates a HTTP handler which loads the HTTP request and calls
-// the "spin-registry" service "get" endpoint.
-func NewGetHandler(
+// NewVMGetHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-registry" service "vm/get" endpoint.
+func NewVMGetHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -270,13 +270,13 @@ func NewGetHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		decodeRequest  = DecodeGetRequest(mux, decoder)
-		encodeResponse = EncodeGetResponse(encoder)
+		decodeRequest  = DecodeVMGetRequest(mux, decoder)
+		encodeResponse = EncodeVMGetResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "get")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm/get")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -298,21 +298,21 @@ func NewGetHandler(
 	})
 }
 
-// MountListHandler configures the mux to serve the "spin-registry" service
-// "list" endpoint.
-func MountListHandler(mux goahttp.Muxer, h http.Handler) {
+// MountVMListHandler configures the mux to serve the "spin-registry" service
+// "vm/list" endpoint.
+func MountVMListHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
 		f = func(w http.ResponseWriter, r *http.Request) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("GET", "/list", f)
+	mux.Handle("GET", "/vm/list", f)
 }
 
-// NewListHandler creates a HTTP handler which loads the HTTP request and calls
-// the "spin-registry" service "list" endpoint.
-func NewListHandler(
+// NewVMListHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-registry" service "vm/list" endpoint.
+func NewVMListHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
 	decoder func(*http.Request) goahttp.Decoder,
@@ -321,12 +321,12 @@ func NewListHandler(
 	formatter func(err error) goahttp.Statuser,
 ) http.Handler {
 	var (
-		encodeResponse = EncodeListResponse(encoder)
+		encodeResponse = EncodeVMListResponse(encoder)
 		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "list")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm/list")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		var err error
 		res, err := endpoint(ctx, nil)

@@ -18,9 +18,9 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// EncodeCreateResponse returns an encoder for responses returned by the
-// spin-registry create endpoint.
-func EncodeCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeVMCreateResponse returns an encoder for responses returned by the
+// spin-registry vm/create endpoint.
+func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(uint64)
 		enc := encoder(ctx, w)
@@ -30,12 +30,12 @@ func EncodeCreateResponse(encoder func(context.Context, http.ResponseWriter) goa
 	}
 }
 
-// DecodeCreateRequest returns a decoder for requests sent to the spin-registry
-// create endpoint.
-func DecodeCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeVMCreateRequest returns a decoder for requests sent to the
+// spin-registry vm/create endpoint.
+func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body CreateRequestBody
+			body VMCreateRequestBody
 			err  error
 		)
 		err = decoder(r).Decode(&body)
@@ -45,31 +45,31 @@ func DecodeCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
-		err = ValidateCreateRequestBody(&body)
+		err = ValidateVMCreateRequestBody(&body)
 		if err != nil {
 			return nil, err
 		}
-		payload := NewCreateVM(&body)
+		payload := NewVMCreateVM(&body)
 
 		return payload, nil
 	}
 }
 
-// EncodeUpdateResponse returns an encoder for responses returned by the
-// spin-registry update endpoint.
-func EncodeUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeVMUpdateResponse returns an encoder for responses returned by the
+// spin-registry vm/update endpoint.
+func EncodeVMUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
 		return nil
 	}
 }
 
-// DecodeUpdateRequest returns a decoder for requests sent to the spin-registry
-// update endpoint.
-func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeVMUpdateRequest returns a decoder for requests sent to the
+// spin-registry vm/update endpoint.
+func DecodeVMUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body UpdateRequestBody
+			body VMUpdateRequestBody
 			err  error
 		)
 		err = decoder(r).Decode(&body)
@@ -79,7 +79,7 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
-		err = ValidateUpdateRequestBody(&body)
+		err = ValidateVMUpdateRequestBody(&body)
 		if err != nil {
 			return nil, err
 		}
@@ -100,24 +100,24 @@ func DecodeUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		if err != nil {
 			return nil, err
 		}
-		payload := NewUpdateVM(&body, id)
+		payload := NewVMUpdateUpdateVM(&body, id)
 
 		return payload, nil
 	}
 }
 
-// EncodeDeleteResponse returns an encoder for responses returned by the
-// spin-registry delete endpoint.
-func EncodeDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeVMDeleteResponse returns an encoder for responses returned by the
+// spin-registry vm/delete endpoint.
+func EncodeVMDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
 		return nil
 	}
 }
 
-// DecodeDeleteRequest returns a decoder for requests sent to the spin-registry
-// delete endpoint.
-func DecodeDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeVMDeleteRequest returns a decoder for requests sent to the
+// spin-registry vm/delete endpoint.
+func DecodeVMDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			id  uint64
@@ -136,27 +136,27 @@ func DecodeDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 		if err != nil {
 			return nil, err
 		}
-		payload := NewDeletePayload(id)
+		payload := NewVMDeletePayload(id)
 
 		return payload, nil
 	}
 }
 
-// EncodeGetResponse returns an encoder for responses returned by the
-// spin-registry get endpoint.
-func EncodeGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeVMGetResponse returns an encoder for responses returned by the
+// spin-registry vm/get endpoint.
+func EncodeVMGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(*spinregistry.VM)
 		enc := encoder(ctx, w)
-		body := NewGetResponseBody(res)
+		body := NewVMGetResponseBody(res)
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
 }
 
-// DecodeGetRequest returns a decoder for requests sent to the spin-registry
-// get endpoint.
-func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+// DecodeVMGetRequest returns a decoder for requests sent to the spin-registry
+// vm/get endpoint.
+func DecodeVMGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
 			id  uint64
@@ -175,15 +175,15 @@ func DecodeGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 		if err != nil {
 			return nil, err
 		}
-		payload := NewGetPayload(id)
+		payload := NewVMGetPayload(id)
 
 		return payload, nil
 	}
 }
 
-// EncodeListResponse returns an encoder for responses returned by the
-// spin-registry list endpoint.
-func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+// EncodeVMListResponse returns an encoder for responses returned by the
+// spin-registry vm/list endpoint.
+func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.([]uint64)
 		enc := encoder(ctx, w)

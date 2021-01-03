@@ -14,15 +14,15 @@ import (
 // Keeper of the VMs
 type Service interface {
 	// Create a VM
-	Create(context.Context, *VM) (res uint64, err error)
+	VMCreate(context.Context, *VM) (res uint64, err error)
 	// Update a VM
-	Update(context.Context, *UpdateVM) (err error)
+	VMUpdate(context.Context, *UpdateVM) (err error)
 	// Delete a VM by ID
-	Delete(context.Context, *DeletePayload) (err error)
+	VMDelete(context.Context, *VMDeletePayload) (err error)
 	// Retrieve a VM by ID
-	Get(context.Context, *GetPayload) (res *VM, err error)
+	VMGet(context.Context, *VMGetPayload) (res *VM, err error)
 	// Retrieve all VM IDs
-	List(context.Context) (res []uint64, err error)
+	VMList(context.Context) (res []uint64, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -33,9 +33,9 @@ const ServiceName = "spin-registry"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"create", "update", "delete", "get", "list"}
+var MethodNames = [5]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list"}
 
-// VM is the payload type of the spin-registry service create method.
+// VM is the payload type of the spin-registry service vm/create method.
 type VM struct {
 	// Name of VM; does not need to be unique
 	Name string
@@ -47,7 +47,7 @@ type VM struct {
 	Storage []*Storage
 }
 
-// UpdateVM is the payload type of the spin-registry service update method.
+// UpdateVM is the payload type of the spin-registry service vm/update method.
 type UpdateVM struct {
 	// ID of VM to update
 	ID uint64
@@ -55,14 +55,15 @@ type UpdateVM struct {
 	VM *VM
 }
 
-// DeletePayload is the payload type of the spin-registry service delete method.
-type DeletePayload struct {
+// VMDeletePayload is the payload type of the spin-registry service vm/delete
+// method.
+type VMDeletePayload struct {
 	// ID of VM to remove
 	ID uint64
 }
 
-// GetPayload is the payload type of the spin-registry service get method.
-type GetPayload struct {
+// VMGetPayload is the payload type of the spin-registry service vm/get method.
+type VMGetPayload struct {
 	// ID of VM to remove
 	ID uint64
 }

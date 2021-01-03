@@ -12,9 +12,9 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// CreateRequestBody is the type of the "spin-registry" service "create"
+// VMCreateRequestBody is the type of the "spin-registry" service "vm/create"
 // endpoint HTTP request body.
-type CreateRequestBody struct {
+type VMCreateRequestBody struct {
 	// Name of VM; does not need to be unique
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// CPU count
@@ -25,16 +25,16 @@ type CreateRequestBody struct {
 	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
-// UpdateRequestBody is the type of the "spin-registry" service "update"
+// VMUpdateRequestBody is the type of the "spin-registry" service "vm/update"
 // endpoint HTTP request body.
-type UpdateRequestBody struct {
+type VMUpdateRequestBody struct {
 	// VM to publish
 	VM *VMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
 }
 
-// GetResponseBody is the type of the "spin-registry" service "get" endpoint
-// HTTP response body.
-type GetResponseBody struct {
+// VMGetResponseBody is the type of the "spin-registry" service "vm/get"
+// endpoint HTTP response body.
+type VMGetResponseBody struct {
 	// Name of VM; does not need to be unique
 	Name string `form:"name" json:"name" xml:"name"`
 	// CPU count
@@ -81,10 +81,10 @@ type VMRequestBody struct {
 	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
-// NewGetResponseBody builds the HTTP response body from the result of the
-// "get" endpoint of the "spin-registry" service.
-func NewGetResponseBody(res *spinregistry.VM) *GetResponseBody {
-	body := &GetResponseBody{
+// NewVMGetResponseBody builds the HTTP response body from the result of the
+// "vm/get" endpoint of the "spin-registry" service.
+func NewVMGetResponseBody(res *spinregistry.VM) *VMGetResponseBody {
+	body := &VMGetResponseBody{
 		Name:   res.Name,
 		Cpus:   res.Cpus,
 		Memory: res.Memory,
@@ -98,8 +98,8 @@ func NewGetResponseBody(res *spinregistry.VM) *GetResponseBody {
 	return body
 }
 
-// NewCreateVM builds a spin-registry service create endpoint payload.
-func NewCreateVM(body *CreateRequestBody) *spinregistry.VM {
+// NewVMCreateVM builds a spin-registry service vm/create endpoint payload.
+func NewVMCreateVM(body *VMCreateRequestBody) *spinregistry.VM {
 	v := &spinregistry.VM{
 		Name:   *body.Name,
 		Cpus:   *body.Cpus,
@@ -113,8 +113,9 @@ func NewCreateVM(body *CreateRequestBody) *spinregistry.VM {
 	return v
 }
 
-// NewUpdateVM builds a spin-registry service update endpoint payload.
-func NewUpdateVM(body *UpdateRequestBody, id uint64) *spinregistry.UpdateVM {
+// NewVMUpdateUpdateVM builds a spin-registry service vm/update endpoint
+// payload.
+func NewVMUpdateUpdateVM(body *VMUpdateRequestBody, id uint64) *spinregistry.UpdateVM {
 	v := &spinregistry.UpdateVM{}
 	v.VM = unmarshalVMRequestBodyToSpinregistryVM(body.VM)
 	v.ID = id
@@ -122,24 +123,25 @@ func NewUpdateVM(body *UpdateRequestBody, id uint64) *spinregistry.UpdateVM {
 	return v
 }
 
-// NewDeletePayload builds a spin-registry service delete endpoint payload.
-func NewDeletePayload(id uint64) *spinregistry.DeletePayload {
-	v := &spinregistry.DeletePayload{}
+// NewVMDeletePayload builds a spin-registry service vm/delete endpoint payload.
+func NewVMDeletePayload(id uint64) *spinregistry.VMDeletePayload {
+	v := &spinregistry.VMDeletePayload{}
 	v.ID = id
 
 	return v
 }
 
-// NewGetPayload builds a spin-registry service get endpoint payload.
-func NewGetPayload(id uint64) *spinregistry.GetPayload {
-	v := &spinregistry.GetPayload{}
+// NewVMGetPayload builds a spin-registry service vm/get endpoint payload.
+func NewVMGetPayload(id uint64) *spinregistry.VMGetPayload {
+	v := &spinregistry.VMGetPayload{}
 	v.ID = id
 
 	return v
 }
 
-// ValidateCreateRequestBody runs the validations defined on CreateRequestBody
-func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
+// ValidateVMCreateRequestBody runs the validations defined on
+// Vm/CreateRequestBody
+func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -162,8 +164,9 @@ func ValidateCreateRequestBody(body *CreateRequestBody) (err error) {
 	return
 }
 
-// ValidateUpdateRequestBody runs the validations defined on UpdateRequestBody
-func ValidateUpdateRequestBody(body *UpdateRequestBody) (err error) {
+// ValidateVMUpdateRequestBody runs the validations defined on
+// Vm/UpdateRequestBody
+func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 	if body.VM == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
 	}

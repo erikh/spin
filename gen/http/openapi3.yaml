@@ -65,69 +65,6 @@ paths:
       responses:
         "200":
           description: OK response.
-  /create:
-    post:
-      tags:
-      - spin-registry
-      summary: create spin-registry
-      description: Create a VM
-      operationId: spin-registry#create
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateRequestBody'
-            example:
-              cpus: 6421225864845588134
-              memory: 15540618699971399982
-              name: Et dicta.
-              storage:
-              - cdrom: true
-                image: Labore voluptas perferendis ea iusto adipisci.
-                image_size: 8351098711286704476
-                volume: Porro eius officiis.
-              - cdrom: true
-                image: Labore voluptas perferendis ea iusto adipisci.
-                image_size: 8351098711286704476
-                volume: Porro eius officiis.
-              - cdrom: true
-                image: Labore voluptas perferendis ea iusto adipisci.
-                image_size: 8351098711286704476
-                volume: Porro eius officiis.
-              - cdrom: true
-                image: Labore voluptas perferendis ea iusto adipisci.
-                image_size: 8351098711286704476
-                volume: Porro eius officiis.
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                type: integer
-                example: 16362411709500106300
-              example: 2512325580815260819
-  /delete/{id}:
-    post:
-      tags:
-      - spin-registry
-      summary: delete spin-registry
-      description: Delete a VM by ID
-      operationId: spin-registry#delete
-      parameters:
-      - name: id
-        in: path
-        description: ID of VM to remove
-        required: true
-        schema:
-          type: integer
-          description: ID of VM to remove
-          example: 11668286013169426617
-        example: 9880125098995389704
-      responses:
-        "200":
-          description: OK response.
   /enqueue/{id}:
     post:
       tags:
@@ -165,67 +102,6 @@ paths:
               - Quae voluptas.
               - Omnis enim.
               - Aut omnis reprehenderit dolorum.
-  /get/{id}:
-    get:
-      tags:
-      - spin-registry
-      summary: get spin-registry
-      description: Retrieve a VM by ID
-      operationId: spin-registry#get
-      parameters:
-      - name: id
-        in: path
-        description: ID of VM to remove
-        required: true
-        schema:
-          type: integer
-          description: ID of VM to remove
-          example: 2802152491193061350
-        example: 10567433384525527512
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateRequestBody'
-              example:
-                cpus: 13026661461146096768
-                memory: 9696665001313275905
-                name: Et nobis quia neque excepturi.
-                storage:
-                - cdrom: true
-                  image: Adipisci quia non nihil vitae nesciunt minima.
-                  image_size: 15107782813490131477
-                  volume: Occaecati qui quo dolore soluta.
-                - cdrom: true
-                  image: Adipisci quia non nihil vitae nesciunt minima.
-                  image_size: 15107782813490131477
-                  volume: Occaecati qui quo dolore soluta.
-  /list:
-    get:
-      tags:
-      - spin-registry
-      summary: list spin-registry
-      description: Retrieve all VM IDs
-      operationId: spin-registry#list
-      responses:
-        "200":
-          description: OK response.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: integer
-                  example: 11055455870090139273
-                example:
-                - 13340586693210379934
-                - 9553536164741503689
-                - 5537594582892317809
-              example:
-              - 9155960044571113458
-              - 2240185166773016435
   /new:
     post:
       tags:
@@ -488,13 +364,137 @@ paths:
       responses:
         "200":
           description: OK response.
-  /update/{id}:
+  /vm/create:
     post:
       tags:
       - spin-registry
-      summary: update spin-registry
+      summary: vm/create spin-registry
+      description: Create a VM
+      operationId: spin-registry#vm/create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VMCreateRequestBody'
+            example:
+              cpus: 6421225864845588134
+              memory: 15540618699971399982
+              name: Et dicta.
+              storage:
+              - cdrom: true
+                image: Labore voluptas perferendis ea iusto adipisci.
+                image_size: 8351098711286704476
+                volume: Porro eius officiis.
+              - cdrom: true
+                image: Labore voluptas perferendis ea iusto adipisci.
+                image_size: 8351098711286704476
+                volume: Porro eius officiis.
+              - cdrom: true
+                image: Labore voluptas perferendis ea iusto adipisci.
+                image_size: 8351098711286704476
+                volume: Porro eius officiis.
+              - cdrom: true
+                image: Labore voluptas perferendis ea iusto adipisci.
+                image_size: 8351098711286704476
+                volume: Porro eius officiis.
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: integer
+                example: 16362411709500106300
+              example: 2512325580815260819
+  /vm/delete/{id}:
+    post:
+      tags:
+      - spin-registry
+      summary: vm/delete spin-registry
+      description: Delete a VM by ID
+      operationId: spin-registry#vm/delete
+      parameters:
+      - name: id
+        in: path
+        description: ID of VM to remove
+        required: true
+        schema:
+          type: integer
+          description: ID of VM to remove
+          example: 11668286013169426617
+        example: 9880125098995389704
+      responses:
+        "200":
+          description: OK response.
+  /vm/get/{id}:
+    get:
+      tags:
+      - spin-registry
+      summary: vm/get spin-registry
+      description: Retrieve a VM by ID
+      operationId: spin-registry#vm/get
+      parameters:
+      - name: id
+        in: path
+        description: ID of VM to remove
+        required: true
+        schema:
+          type: integer
+          description: ID of VM to remove
+          example: 2802152491193061350
+        example: 10567433384525527512
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VMCreateRequestBody'
+              example:
+                cpus: 13026661461146096768
+                memory: 9696665001313275905
+                name: Et nobis quia neque excepturi.
+                storage:
+                - cdrom: true
+                  image: Adipisci quia non nihil vitae nesciunt minima.
+                  image_size: 15107782813490131477
+                  volume: Occaecati qui quo dolore soluta.
+                - cdrom: true
+                  image: Adipisci quia non nihil vitae nesciunt minima.
+                  image_size: 15107782813490131477
+                  volume: Occaecati qui quo dolore soluta.
+  /vm/list:
+    get:
+      tags:
+      - spin-registry
+      summary: vm/list spin-registry
+      description: Retrieve all VM IDs
+      operationId: spin-registry#vm/list
+      responses:
+        "200":
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  example: 11055455870090139273
+                example:
+                - 13340586693210379934
+                - 9553536164741503689
+                - 5537594582892317809
+              example:
+              - 9155960044571113458
+              - 2240185166773016435
+  /vm/update/{id}:
+    post:
+      tags:
+      - spin-registry
+      summary: vm/update spin-registry
       description: Update a VM
-      operationId: spin-registry#update
+      operationId: spin-registry#vm/update
       parameters:
       - name: id
         in: path
@@ -510,7 +510,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateRequestBody'
+              $ref: '#/components/schemas/VMUpdateRequestBody'
             example:
               vm:
                 cpus: 8415388083871949362
@@ -622,61 +622,6 @@ components:
       - image_name
       - image_size
       - volume
-    CreateRequestBody:
-      type: object
-      properties:
-        cpus:
-          type: integer
-          description: CPU count
-          example: 5359207589197276763
-        memory:
-          type: integer
-          description: Memory (in megabytes)
-          example: 8274532669424810060
-        name:
-          type: string
-          description: Name of VM; does not need to be unique
-          example: Ut sed fugiat.
-        storage:
-          type: array
-          items:
-            $ref: '#/components/schemas/Storage'
-          description: Storage references
-          example:
-          - cdrom: true
-            image: Labore voluptas perferendis ea iusto adipisci.
-            image_size: 8351098711286704476
-            volume: Porro eius officiis.
-          - cdrom: true
-            image: Labore voluptas perferendis ea iusto adipisci.
-            image_size: 8351098711286704476
-            volume: Porro eius officiis.
-      example:
-        cpus: 7636634391002491891
-        memory: 388112316628318573
-        name: Commodi nihil error ipsum minima fugit vero.
-        storage:
-        - cdrom: true
-          image: Labore voluptas perferendis ea iusto adipisci.
-          image_size: 8351098711286704476
-          volume: Porro eius officiis.
-        - cdrom: true
-          image: Labore voluptas perferendis ea iusto adipisci.
-          image_size: 8351098711286704476
-          volume: Porro eius officiis.
-        - cdrom: true
-          image: Labore voluptas perferendis ea iusto adipisci.
-          image_size: 8351098711286704476
-          volume: Porro eius officiis.
-        - cdrom: true
-          image: Labore voluptas perferendis ea iusto adipisci.
-          image_size: 8351098711286704476
-          volume: Porro eius officiis.
-      required:
-      - name
-      - cpus
-      - memory
-      - storage
     DeleteImageOnVolumeRequestBody:
       type: object
       properties:
@@ -836,11 +781,66 @@ components:
       required:
       - volume
       - image
-    UpdateRequestBody:
+    VMCreateRequestBody:
+      type: object
+      properties:
+        cpus:
+          type: integer
+          description: CPU count
+          example: 5359207589197276763
+        memory:
+          type: integer
+          description: Memory (in megabytes)
+          example: 8274532669424810060
+        name:
+          type: string
+          description: Name of VM; does not need to be unique
+          example: Ut sed fugiat.
+        storage:
+          type: array
+          items:
+            $ref: '#/components/schemas/Storage'
+          description: Storage references
+          example:
+          - cdrom: true
+            image: Labore voluptas perferendis ea iusto adipisci.
+            image_size: 8351098711286704476
+            volume: Porro eius officiis.
+          - cdrom: true
+            image: Labore voluptas perferendis ea iusto adipisci.
+            image_size: 8351098711286704476
+            volume: Porro eius officiis.
+      example:
+        cpus: 7636634391002491891
+        memory: 388112316628318573
+        name: Commodi nihil error ipsum minima fugit vero.
+        storage:
+        - cdrom: true
+          image: Labore voluptas perferendis ea iusto adipisci.
+          image_size: 8351098711286704476
+          volume: Porro eius officiis.
+        - cdrom: true
+          image: Labore voluptas perferendis ea iusto adipisci.
+          image_size: 8351098711286704476
+          volume: Porro eius officiis.
+        - cdrom: true
+          image: Labore voluptas perferendis ea iusto adipisci.
+          image_size: 8351098711286704476
+          volume: Porro eius officiis.
+        - cdrom: true
+          image: Labore voluptas perferendis ea iusto adipisci.
+          image_size: 8351098711286704476
+          volume: Porro eius officiis.
+      required:
+      - name
+      - cpus
+      - memory
+      - storage
+    VMUpdateRequestBody:
       type: object
       properties:
         vm:
-          $ref: '#/components/schemas/CreateRequestBody'
+          $ref: '#/components/schemas/VMCreateRequestBody'
       example:
         vm:
           cpus: 8415388083871949362

@@ -5,28 +5,28 @@ import . "goa.design/goa/v3/dsl" // nolint
 var _ = Service("spin-registry", func() {
 	Description("Keeper of the VMs")
 
-	Method("create", func() {
+	Method("vm/create", func() {
 		Description("Create a VM")
 		Payload(VM)
 		Result(UInt64)
 
 		HTTP(func() {
-			POST("/create")
+			POST("/vm/create")
 			Response(StatusOK)
 		})
 	})
 
-	Method("update", func() {
+	Method("vm/update", func() {
 		Description("Update a VM")
 		Payload(UpdateVM)
 
 		HTTP(func() {
-			POST("/update/{id}")
+			POST("/vm/update/{id}")
 			Response(StatusOK)
 		})
 	})
 
-	Method("delete", func() {
+	Method("vm/delete", func() {
 		Description("Delete a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
@@ -34,12 +34,12 @@ var _ = Service("spin-registry", func() {
 		})
 
 		HTTP(func() {
-			POST("/delete/{id}")
+			POST("/vm/delete/{id}")
 			Response(StatusOK)
 		})
 	})
 
-	Method("get", func() {
+	Method("vm/get", func() {
 		Description("Retrieve a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
@@ -48,17 +48,17 @@ var _ = Service("spin-registry", func() {
 		Result(VM)
 
 		HTTP(func() {
-			GET("/get/{id}")
+			GET("/vm/get/{id}")
 			Response(StatusOK)
 		})
 	})
 
-	Method("list", func() {
+	Method("vm/list", func() {
 		Description("Retrieve all VM IDs")
 		Result(ArrayOf(UInt64))
 
 		HTTP(func() {
-			GET("/list")
+			GET("/vm/list")
 			Response(StatusOK)
 		})
 	})

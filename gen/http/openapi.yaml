@@ -62,50 +62,6 @@ paths:
           description: OK response.
       schemes:
       - http
-  /create:
-    post:
-      tags:
-      - spin-registry
-      summary: create spin-registry
-      description: Create a VM
-      operationId: spin-registry#create
-      parameters:
-      - name: CreateRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinRegistryCreateRequestBody'
-          required:
-          - name
-          - cpus
-          - memory
-          - storage
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            type: integer
-            format: int64
-      schemes:
-      - http
-  /delete/{id}:
-    post:
-      tags:
-      - spin-registry
-      summary: delete spin-registry
-      description: Delete a VM by ID
-      operationId: spin-registry#delete
-      parameters:
-      - name: id
-        in: path
-        description: ID of VM to remove
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
   /enqueue/{id}:
     post:
       tags:
@@ -127,49 +83,6 @@ paths:
             items:
               type: string
               example: Illo ratione totam.
-      schemes:
-      - http
-  /get/{id}:
-    get:
-      tags:
-      - spin-registry
-      summary: get spin-registry
-      description: Retrieve a VM by ID
-      operationId: spin-registry#get
-      parameters:
-      - name: id
-        in: path
-        description: ID of VM to remove
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/SpinRegistryGetResponseBody'
-            required:
-            - name
-            - cpus
-            - memory
-            - storage
-      schemes:
-      - http
-  /list:
-    get:
-      tags:
-      - spin-registry
-      summary: list spin-registry
-      description: Retrieve all VM IDs
-      operationId: spin-registry#list
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            type: array
-            items:
-              type: integer
-              example: 13238334249407294809
-              format: int64
       schemes:
       - http
   /new:
@@ -407,24 +320,111 @@ paths:
           description: OK response.
       schemes:
       - http
-  /update/{id}:
+  /vm/create:
     post:
       tags:
       - spin-registry
-      summary: update spin-registry
+      summary: vm/create spin-registry
+      description: Create a VM
+      operationId: spin-registry#vm/create
+      parameters:
+      - name: Vm/CreateRequestBody
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/SpinRegistryVMCreateRequestBody'
+          required:
+          - name
+          - cpus
+          - memory
+          - storage
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: integer
+            format: int64
+      schemes:
+      - http
+  /vm/delete/{id}:
+    post:
+      tags:
+      - spin-registry
+      summary: vm/delete spin-registry
+      description: Delete a VM by ID
+      operationId: spin-registry#vm/delete
+      parameters:
+      - name: id
+        in: path
+        description: ID of VM to remove
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK response.
+      schemes:
+      - http
+  /vm/get/{id}:
+    get:
+      tags:
+      - spin-registry
+      summary: vm/get spin-registry
+      description: Retrieve a VM by ID
+      operationId: spin-registry#vm/get
+      parameters:
+      - name: id
+        in: path
+        description: ID of VM to remove
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/SpinRegistryVMGetResponseBody'
+            required:
+            - name
+            - cpus
+            - memory
+            - storage
+      schemes:
+      - http
+  /vm/list:
+    get:
+      tags:
+      - spin-registry
+      summary: vm/list spin-registry
+      description: Retrieve all VM IDs
+      operationId: spin-registry#vm/list
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            type: array
+            items:
+              type: integer
+              example: 13238334249407294809
+              format: int64
+      schemes:
+      - http
+  /vm/update/{id}:
+    post:
+      tags:
+      - spin-registry
+      summary: vm/update spin-registry
       description: Update a VM
-      operationId: spin-registry#update
+      operationId: spin-registry#vm/update
       parameters:
       - name: id
         in: path
         description: ID of VM to update
         required: true
         type: integer
-      - name: UpdateRequestBody
+      - name: Vm/UpdateRequestBody
         in: body
         required: true
         schema:
-          $ref: '#/definitions/SpinRegistryUpdateRequestBody'
+          $ref: '#/definitions/SpinRegistryVMUpdateRequestBody'
           required:
           - vm
       responses:
@@ -736,8 +736,8 @@ definitions:
       status: false
     required:
     - status
-  SpinRegistryCreateRequestBody:
-    title: SpinRegistryCreateRequestBody
+  SpinRegistryVMCreateRequestBody:
+    title: SpinRegistryVMCreateRequestBody
     type: object
     properties:
       cpus:
@@ -794,8 +794,8 @@ definitions:
     - cpus
     - memory
     - storage
-  SpinRegistryGetResponseBody:
-    title: SpinRegistryGetResponseBody
+  SpinRegistryVMGetResponseBody:
+    title: SpinRegistryVMGetResponseBody
     type: object
     properties:
       cpus:
@@ -860,8 +860,8 @@ definitions:
     - cpus
     - memory
     - storage
-  SpinRegistryUpdateRequestBody:
-    title: SpinRegistryUpdateRequestBody
+  SpinRegistryVMUpdateRequestBody:
+    title: SpinRegistryVMUpdateRequestBody
     type: object
     properties:
       vm:
