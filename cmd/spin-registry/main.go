@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -14,7 +13,6 @@ import (
 	"time"
 
 	registryclient "code.hollensbe.org/erikh/spin/clients/registry"
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"code.hollensbe.org/erikh/spin/pkg/services"
 	"github.com/urfave/cli/v2"
 )
@@ -52,39 +50,46 @@ func main() {
 			Description: "Message the registry",
 			Subcommands: []*cli.Command{
 				{
-					Name:        "create",
-					Usage:       "Create a new VM, accepting JSON over STDIN. Returns a uint64 ID.",
-					Description: "Create a new VM, accepting JSON over STDIN. Returns a uint64 ID.",
-					ArgsUsage:   " ",
-					Action:      messageCreate,
-				},
-				{
-					Name:        "update",
-					Usage:       "Update a VM, accepting JSON over STDIN and the ID to update as a parameter. Returns a uint64 ID.",
-					Description: "Update a VM, accepting JSON over STDIN and the ID to update as a parameter. Returns a uint64 ID.",
-					ArgsUsage:   "[id]",
-					Action:      messageUpdate,
-				},
-				{
-					Name:        "delete",
-					Usage:       "Delete a VM, accepting an ID as a parameter.",
-					Description: "Delete a VM, accepting an ID as a parameter.",
-					ArgsUsage:   "[id]",
-					Action:      messageDelete,
-				},
-				{
-					Name:        "get",
-					Usage:       "Get a VM, accepting an ID as a parameter. Returns a JSON document describing the VM.",
-					Description: "Get a VM, accepting an ID as a parameter. Returns a JSON document describing the VM.",
-					ArgsUsage:   "[id]",
-					Action:      messageGet,
-				},
-				{
-					Name:        "list",
-					Usage:       "List the IDs of all VMs.",
-					Description: "List the IDs of all VMs.",
-					ArgsUsage:   " ",
-					Action:      messageList,
+					Name:        "vm",
+					Usage:       "Send a message to the VM subsystem",
+					Description: "Send a message to the VM subsystem",
+					Subcommands: []*cli.Command{
+						{
+							Name:        "create",
+							Usage:       "Create a new VM, accepting JSON over STDIN. Returns a uint64 ID.",
+							Description: "Create a new VM, accepting JSON over STDIN. Returns a uint64 ID.",
+							ArgsUsage:   " ",
+							Action:      messageVMCreate,
+						},
+						{
+							Name:        "update",
+							Usage:       "Update a VM, accepting JSON over STDIN and the ID to update as a parameter. Returns a uint64 ID.",
+							Description: "Update a VM, accepting JSON over STDIN and the ID to update as a parameter. Returns a uint64 ID.",
+							ArgsUsage:   "[id]",
+							Action:      messageVMUpdate,
+						},
+						{
+							Name:        "delete",
+							Usage:       "Delete a VM, accepting an ID as a parameter.",
+							Description: "Delete a VM, accepting an ID as a parameter.",
+							ArgsUsage:   "[id]",
+							Action:      messageVMDelete,
+						},
+						{
+							Name:        "get",
+							Usage:       "Get a VM, accepting an ID as a parameter. Returns a JSON document describing the VM.",
+							Description: "Get a VM, accepting an ID as a parameter. Returns a JSON document describing the VM.",
+							ArgsUsage:   "[id]",
+							Action:      messageVMGet,
+						},
+						{
+							Name:        "list",
+							Usage:       "List the IDs of all VMs.",
+							Description: "List the IDs of all VMs.",
+							ArgsUsage:   " ",
+							Action:      messageVMList,
+						},
+					},
 				},
 			},
 		},
@@ -148,71 +153,4 @@ func getID(ctx *cli.Context) (uint64, error) {
 	}
 
 	return id, nil
-}
-
-func messageCreate(ctx *cli.Context) error {
-	var vm spinregistry.VM
-
-	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
-		return fmt.Errorf("Error decoding JSON document: %v", err)
-	}
-
-	id, err := getClient(ctx).VMCreate(context.Background(), &vm)
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(id)
-	return nil
-}
-
-func messageUpdate(ctx *cli.Context) error {
-	id, err := getID(ctx)
-	if err != nil {
-		return err
-	}
-
-	var vm spinregistry.VM
-
-	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
-		return fmt.Errorf("Error decoding JSON document: %v", err)
-	}
-
-	return getClient(ctx).VMUpdate(context.Background(), id, &vm)
-}
-
-func messageDelete(ctx *cli.Context) error {
-	id, err := getID(ctx)
-	if err != nil {
-		return err
-	}
-
-	return getClient(ctx).VMDelete(context.Background(), id)
-}
-
-func messageGet(ctx *cli.Context) error {
-	id, err := getID(ctx)
-	if err != nil {
-		return err
-	}
-
-	vm, err := getClient(ctx).VMGet(context.Background(), id)
-	if err != nil {
-		return err
-	}
-
-	return json.NewEncoder(os.Stdout).Encode(vm)
-}
-
-func messageList(ctx *cli.Context) error {
-	ids, err := getClient(ctx).VMList(context.Background())
-	if err != nil {
-		return err
-	}
-
-	for _, id := range ids {
-		fmt.Println(id)
-	}
-
-	return nil
 }
