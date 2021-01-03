@@ -26,23 +26,56 @@ spin-broker has the following properties:
 ## Toying with the host-path agent
 
 `make server` then run this script; the files/directories will appear in
-`/tmp/host-path-test`
+`~/.config/spin` and can be safely deleted after this is done running.
 
 ```bash
-#!bash
+#!env bash
 
-set -e
+set -xe
+
+pkill sa-host-path || :
+pkill sa-emulation || :
 
 go run ./cmd/agents/sa-host-path &
+go run ./cmd/agents/sa-emulation &
 
 pkg=$(go run ./cmd/spin-broker message new)
 
 go run ./cmd/spin-broker message add "${pkg}" storage add_volume path=test
-go run ./cmd/spin-broker message add "${pkg}" storage create_image volume_path=test image_name=test.img image_size=50
+go run ./cmd/spin-broker message add "${pkg}" storage create_image volume_path=test image_name=test.raw image_size=50
+go run ./cmd/spin-broker message add "${pkg}" emulation write_config id=1 'vm={
+  "Name": "vm",
+  "Cpus": 8,
+  "Memory": 8192,
+  "Storage": [
+    {
+      "Volume": "test",
+      "Image": "/home/erikh/.config/spin/images/test/test.raw",
+      "ImageSize": 50
+    },
+    {
+      "Volume": "test",
+      "Image": "/home/erikh/vm-images/isos/manjaro-architect-20.0.3-200607-linux56.iso",
+      "ImageSize": 50,
+      "Cdrom": true
+    }
+  ]
+}'
+go run ./cmd/spin-broker message add "${pkg}" emulation start id=1
+go run ./cmd/spin-broker message enqueue "${pkg}"
+
+sleep 15
+
+go run ./cmd/spin-broker message status "${pkg}"
+
+pkg=$(go run ./cmd/spin-broker message new)
+go run ./cmd/spin-broker message add "${pkg}" emulation stop id=1
 go run ./cmd/spin-broker message enqueue "${pkg}"
 
 sleep 1
-pkill sa-host-path
+
+pkill sa-host-path || :
+pkill sa-emulation || :
 
 go run ./cmd/spin-broker message status "${pkg}"
 ```
