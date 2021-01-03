@@ -77,3 +77,25 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 
 	return res.([]uint64), nil
 }
+
+// StorageVolumeCreate creates a volume by name.
+func (c *Client) StorageVolumeCreate(ctx context.Context, name string) error {
+	_, err := c.client.StorageVolumesCreate()(ctx, &spinregistry.StorageVolumesCreatePayload{Name: name})
+	return err
+}
+
+// StorageVolumeDelete deletes a volume by name.
+func (c *Client) StorageVolumeDelete(ctx context.Context, name string) error {
+	_, err := c.client.StorageVolumesDelete()(ctx, &spinregistry.StorageVolumesDeletePayload{Name: name})
+	return err
+}
+
+// StorageVolumeList lists all volumes by name.
+func (c *Client) StorageVolumeList(ctx context.Context) ([]string, error) {
+	list, err := c.client.StorageVolumesList()(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return list.([]string), nil
+}

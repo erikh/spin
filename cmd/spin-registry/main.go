@@ -50,6 +50,41 @@ func main() {
 			Description: "Message the registry",
 			Subcommands: []*cli.Command{
 				{
+					Name:        "storage",
+					Usage:       "Send a message to the storage subsystem",
+					Description: "Send a message to the storage subsystem",
+					Subcommands: []*cli.Command{
+						{
+							Name:        "volume",
+							Usage:       "Work with storage volumes",
+							Description: "Work with storage volumes",
+							Subcommands: []*cli.Command{
+								{
+									Name:        "create",
+									Usage:       "Create a new storage volume",
+									Description: "Create a new storage volume",
+									ArgsUsage:   "[name]",
+									Action:      messageStorageVolumeCreate,
+								},
+								{
+									Name:        "delete",
+									Usage:       "Delete an existing storage volume",
+									Description: "Delete an existing storage volume",
+									ArgsUsage:   "[name]",
+									Action:      messageStorageVolumeDelete,
+								},
+								{
+									Name:        "list",
+									Usage:       "List volumes",
+									Description: "List volumes",
+									ArgsUsage:   " ",
+									Action:      messageStorageVolumeList,
+								},
+							},
+						},
+					},
+				},
+				{
 					Name:        "vm",
 					Usage:       "Send a message to the VM subsystem",
 					Description: "Send a message to the VM subsystem",
