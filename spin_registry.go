@@ -49,3 +49,19 @@ func (s *spinRegistry) StorageVolumesDelete(ctx context.Context, p *spinregistry
 func (s *spinRegistry) StorageVolumesList(ctx context.Context) ([]string, error) {
 	return s.db.StorageVolumeList()
 }
+
+func (s *spinRegistry) StorageImagesList(ctx context.Context, p *spinregistry.StorageImagesListPayload) ([]string, error) {
+	return s.db.StorageImageList(p.VolumeName)
+}
+
+func (s *spinRegistry) StorageImagesCreate(ctx context.Context, p *spinregistry.Storage) error {
+	return s.db.StorageImageCreate(p)
+}
+
+func (s *spinRegistry) StorageImagesDelete(ctx context.Context, p *spinregistry.StorageImagesDeletePayload) error {
+	return s.db.StorageImageDelete(p.VolumeName, p.ImageName)
+}
+
+func (s *spinRegistry) StorageImagesGet(ctx context.Context, p *spinregistry.StorageImagesGetPayload) (*spinregistry.Storage, error) {
+	return s.db.StorageImageGet(p.VolumeName, p.ImageName)
+}

@@ -77,6 +77,7 @@ var _ = Service("spin-registry", func() {
 
 	Method("storage/volumes/list", func() {
 		Description("list all volumes")
+
 		Result(ArrayOf(String))
 
 		HTTP(func() {
@@ -87,6 +88,7 @@ var _ = Service("spin-registry", func() {
 
 	Method("storage/volumes/create", func() {
 		Description("create a new volume")
+
 		Payload(func() {
 			Attribute("name", String, "name of volume")
 			Required("name")
@@ -100,6 +102,7 @@ var _ = Service("spin-registry", func() {
 
 	Method("storage/volumes/delete", func() {
 		Description("delete an existing volume")
+
 		Payload(func() {
 			Attribute("name", String, "name of volume")
 			Required("name")
@@ -107,6 +110,65 @@ var _ = Service("spin-registry", func() {
 
 		HTTP(func() {
 			POST("/storage/volumes/delete")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/images/list", func() {
+		Description("list all images by volume")
+
+		Payload(func() {
+			Attribute("volume_name", String, "name of volume to list images for")
+			Required("volume_name")
+		})
+
+		Result(ArrayOf(String))
+
+		HTTP(func() {
+			GET("/storage/images/list")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/images/create", func() {
+		Description("add an image definition to the registry")
+
+		Payload(Storage)
+
+		HTTP(func() {
+			POST("/storage/images/create")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/images/delete", func() {
+		Description("remove an image definition from the registry")
+
+		Payload(func() {
+			Attribute("volume_name", String, "name of volume")
+			Attribute("image_name", String, "name of image")
+			Required("volume_name", "image_name")
+		})
+
+		HTTP(func() {
+			POST("/storage/images/delete")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/images/get", func() {
+		Description("retrieves an image definition from the registry")
+
+		Payload(func() {
+			Attribute("volume_name", String, "name of volume")
+			Attribute("image_name", String, "name of image")
+			Required("volume_name", "image_name")
+		})
+
+		Result(Storage)
+
+		HTTP(func() {
+			GET("/storage/images/get")
 			Response(StatusOK)
 		})
 	})

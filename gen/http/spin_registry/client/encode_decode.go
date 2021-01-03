@@ -488,6 +488,263 @@ func DecodeStorageVolumesDeleteResponse(decoder func(*http.Response) goahttp.Dec
 	}
 }
 
+// BuildStorageImagesListRequest instantiates a HTTP request object with method
+// and path set to call the "spin-registry" service "storage/images/list"
+// endpoint
+func (c *Client) BuildStorageImagesListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageImagesListSpinRegistryPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/images/list", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageImagesListRequest returns an encoder for requests sent to the
+// spin-registry storage/images/list server.
+func EncodeStorageImagesListRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.StorageImagesListPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/images/list", "*spinregistry.StorageImagesListPayload", v)
+		}
+		body := NewStorageImagesListRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/images/list", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageImagesListResponse returns a decoder for responses returned by
+// the spin-registry storage/images/list endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+func DecodeStorageImagesListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body []string
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-registry", "storage/images/list", err)
+			}
+			return body, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/images/list", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildStorageImagesCreateRequest instantiates a HTTP request object with
+// method and path set to call the "spin-registry" service
+// "storage/images/create" endpoint
+func (c *Client) BuildStorageImagesCreateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageImagesCreateSpinRegistryPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/images/create", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageImagesCreateRequest returns an encoder for requests sent to the
+// spin-registry storage/images/create server.
+func EncodeStorageImagesCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.Storage)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/images/create", "*spinregistry.Storage", v)
+		}
+		body := NewStorageImagesCreateRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/images/create", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageImagesCreateResponse returns a decoder for responses returned
+// by the spin-registry storage/images/create endpoint. restoreBody controls
+// whether the response body should be restored after having been read.
+func DecodeStorageImagesCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/images/create", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildStorageImagesDeleteRequest instantiates a HTTP request object with
+// method and path set to call the "spin-registry" service
+// "storage/images/delete" endpoint
+func (c *Client) BuildStorageImagesDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageImagesDeleteSpinRegistryPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/images/delete", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageImagesDeleteRequest returns an encoder for requests sent to the
+// spin-registry storage/images/delete server.
+func EncodeStorageImagesDeleteRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.StorageImagesDeletePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/images/delete", "*spinregistry.StorageImagesDeletePayload", v)
+		}
+		body := NewStorageImagesDeleteRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/images/delete", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageImagesDeleteResponse returns a decoder for responses returned
+// by the spin-registry storage/images/delete endpoint. restoreBody controls
+// whether the response body should be restored after having been read.
+func DecodeStorageImagesDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/images/delete", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildStorageImagesGetRequest instantiates a HTTP request object with method
+// and path set to call the "spin-registry" service "storage/images/get"
+// endpoint
+func (c *Client) BuildStorageImagesGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageImagesGetSpinRegistryPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/images/get", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageImagesGetRequest returns an encoder for requests sent to the
+// spin-registry storage/images/get server.
+func EncodeStorageImagesGetRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.StorageImagesGetPayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/images/get", "*spinregistry.StorageImagesGetPayload", v)
+		}
+		body := NewStorageImagesGetRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/images/get", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageImagesGetResponse returns a decoder for responses returned by
+// the spin-registry storage/images/get endpoint. restoreBody controls whether
+// the response body should be restored after having been read.
+func DecodeStorageImagesGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body StorageImagesGetResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-registry", "storage/images/get", err)
+			}
+			err = ValidateStorageImagesGetResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("spin-registry", "storage/images/get", err)
+			}
+			res := NewStorageImagesGetStorageOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/images/get", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // marshalSpinregistryStorageToStorageRequestBody builds a value of type
 // *StorageRequestBody from a value of type *spinregistry.Storage.
 func marshalSpinregistryStorageToStorageRequestBody(v *spinregistry.Storage) *StorageRequestBody {

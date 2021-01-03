@@ -50,3 +50,23 @@ func StorageVolumesCreateSpinRegistryPath() string {
 func StorageVolumesDeleteSpinRegistryPath() string {
 	return "/storage/volumes/delete"
 }
+
+// StorageImagesListSpinRegistryPath returns the URL path to the spin-registry service storage/images/list HTTP endpoint.
+func StorageImagesListSpinRegistryPath() string {
+	return "/storage/images/list"
+}
+
+// StorageImagesCreateSpinRegistryPath returns the URL path to the spin-registry service storage/images/create HTTP endpoint.
+func StorageImagesCreateSpinRegistryPath() string {
+	return "/storage/images/create"
+}
+
+// StorageImagesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage/images/delete HTTP endpoint.
+func StorageImagesDeleteSpinRegistryPath() string {
+	return "/storage/images/delete"
+}
+
+// StorageImagesGetSpinRegistryPath returns the URL path to the spin-registry service storage/images/get HTTP endpoint.
+func StorageImagesGetSpinRegistryPath() string {
+	return "/storage/images/get"
+}

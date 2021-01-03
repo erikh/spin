@@ -47,6 +47,22 @@ type Client struct {
 	// storage/volumes/delete endpoint.
 	StorageVolumesDeleteDoer goahttp.Doer
 
+	// StorageImagesList Doer is the HTTP client used to make requests to the
+	// storage/images/list endpoint.
+	StorageImagesListDoer goahttp.Doer
+
+	// StorageImagesCreate Doer is the HTTP client used to make requests to the
+	// storage/images/create endpoint.
+	StorageImagesCreateDoer goahttp.Doer
+
+	// StorageImagesDelete Doer is the HTTP client used to make requests to the
+	// storage/images/delete endpoint.
+	StorageImagesDeleteDoer goahttp.Doer
+
+	// StorageImagesGet Doer is the HTTP client used to make requests to the
+	// storage/images/get endpoint.
+	StorageImagesGetDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -76,6 +92,10 @@ func NewClient(
 		StorageVolumesListDoer:   doer,
 		StorageVolumesCreateDoer: doer,
 		StorageVolumesDeleteDoer: doer,
+		StorageImagesListDoer:    doer,
+		StorageImagesCreateDoer:  doer,
+		StorageImagesDeleteDoer:  doer,
+		StorageImagesGetDoer:     doer,
 		RestoreResponseBody:      restoreBody,
 		scheme:                   scheme,
 		host:                     host,
@@ -251,6 +271,102 @@ func (c *Client) StorageVolumesDelete() goa.Endpoint {
 		resp, err := c.StorageVolumesDeleteDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/delete", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageImagesList returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/images/list server.
+func (c *Client) StorageImagesList() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageImagesListRequest(c.encoder)
+		decodeResponse = DecodeStorageImagesListResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageImagesListRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageImagesListDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/list", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageImagesCreate returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/images/create server.
+func (c *Client) StorageImagesCreate() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageImagesCreateRequest(c.encoder)
+		decodeResponse = DecodeStorageImagesCreateResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageImagesCreateRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageImagesCreateDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/create", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageImagesDelete returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/images/delete server.
+func (c *Client) StorageImagesDelete() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageImagesDeleteRequest(c.encoder)
+		decodeResponse = DecodeStorageImagesDeleteResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageImagesDeleteRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageImagesDeleteDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/delete", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageImagesGet returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/images/get server.
+func (c *Client) StorageImagesGet() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageImagesGetRequest(c.encoder)
+		decodeResponse = DecodeStorageImagesGetResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageImagesGetRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageImagesGetDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/get", err)
 		}
 		return decodeResponse(resp)
 	}

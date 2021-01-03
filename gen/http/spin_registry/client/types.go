@@ -46,6 +46,44 @@ type StorageVolumesDeleteRequestBody struct {
 	Name string `form:"name" json:"name" xml:"name"`
 }
 
+// StorageImagesListRequestBody is the type of the "spin-registry" service
+// "storage/images/list" endpoint HTTP request body.
+type StorageImagesListRequestBody struct {
+	// name of volume to list images for
+	VolumeName string `form:"volume_name" json:"volume_name" xml:"volume_name"`
+}
+
+// StorageImagesCreateRequestBody is the type of the "spin-registry" service
+// "storage/images/create" endpoint HTTP request body.
+type StorageImagesCreateRequestBody struct {
+	// Volume name, must not include `/`
+	Volume string `form:"volume" json:"volume" xml:"volume"`
+	// Image filename, must not include `/`
+	Image string `form:"image" json:"image" xml:"image"`
+	// Image size (in gigabytes)
+	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	// Is this image a cdrom?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+}
+
+// StorageImagesDeleteRequestBody is the type of the "spin-registry" service
+// "storage/images/delete" endpoint HTTP request body.
+type StorageImagesDeleteRequestBody struct {
+	// name of volume
+	VolumeName string `form:"volume_name" json:"volume_name" xml:"volume_name"`
+	// name of image
+	ImageName string `form:"image_name" json:"image_name" xml:"image_name"`
+}
+
+// StorageImagesGetRequestBody is the type of the "spin-registry" service
+// "storage/images/get" endpoint HTTP request body.
+type StorageImagesGetRequestBody struct {
+	// name of volume
+	VolumeName string `form:"volume_name" json:"volume_name" xml:"volume_name"`
+	// name of image
+	ImageName string `form:"image_name" json:"image_name" xml:"image_name"`
+}
+
 // VMGetResponseBody is the type of the "spin-registry" service "vm/get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
@@ -57,6 +95,19 @@ type VMGetResponseBody struct {
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
 	// Storage references
 	Storage []*StorageResponseBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
+}
+
+// StorageImagesGetResponseBody is the type of the "spin-registry" service
+// "storage/images/get" endpoint HTTP response body.
+type StorageImagesGetResponseBody struct {
+	// Volume name, must not include `/`
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
+	// Image filename, must not include `/`
+	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
+	// Image size (in gigabytes)
+	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	// Is this image a cdrom?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
 // StorageRequestBody is used to define fields on request body types.
@@ -142,6 +193,49 @@ func NewStorageVolumesDeleteRequestBody(p *spinregistry.StorageVolumesDeletePayl
 	return body
 }
 
+// NewStorageImagesListRequestBody builds the HTTP request body from the
+// payload of the "storage/images/list" endpoint of the "spin-registry" service.
+func NewStorageImagesListRequestBody(p *spinregistry.StorageImagesListPayload) *StorageImagesListRequestBody {
+	body := &StorageImagesListRequestBody{
+		VolumeName: p.VolumeName,
+	}
+	return body
+}
+
+// NewStorageImagesCreateRequestBody builds the HTTP request body from the
+// payload of the "storage/images/create" endpoint of the "spin-registry"
+// service.
+func NewStorageImagesCreateRequestBody(p *spinregistry.Storage) *StorageImagesCreateRequestBody {
+	body := &StorageImagesCreateRequestBody{
+		Volume:    p.Volume,
+		Image:     p.Image,
+		ImageSize: p.ImageSize,
+		Cdrom:     p.Cdrom,
+	}
+	return body
+}
+
+// NewStorageImagesDeleteRequestBody builds the HTTP request body from the
+// payload of the "storage/images/delete" endpoint of the "spin-registry"
+// service.
+func NewStorageImagesDeleteRequestBody(p *spinregistry.StorageImagesDeletePayload) *StorageImagesDeleteRequestBody {
+	body := &StorageImagesDeleteRequestBody{
+		VolumeName: p.VolumeName,
+		ImageName:  p.ImageName,
+	}
+	return body
+}
+
+// NewStorageImagesGetRequestBody builds the HTTP request body from the payload
+// of the "storage/images/get" endpoint of the "spin-registry" service.
+func NewStorageImagesGetRequestBody(p *spinregistry.StorageImagesGetPayload) *StorageImagesGetRequestBody {
+	body := &StorageImagesGetRequestBody{
+		VolumeName: p.VolumeName,
+		ImageName:  p.ImageName,
+	}
+	return body
+}
+
 // NewVMGetVMOK builds a "spin-registry" service "vm/get" endpoint result from
 // a HTTP "OK" response.
 func NewVMGetVMOK(body *VMGetResponseBody) *spinregistry.VM {
@@ -153,6 +247,19 @@ func NewVMGetVMOK(body *VMGetResponseBody) *spinregistry.VM {
 	v.Storage = make([]*spinregistry.Storage, len(body.Storage))
 	for i, val := range body.Storage {
 		v.Storage[i] = unmarshalStorageResponseBodyToSpinregistryStorage(val)
+	}
+
+	return v
+}
+
+// NewStorageImagesGetStorageOK builds a "spin-registry" service
+// "storage/images/get" endpoint result from a HTTP "OK" response.
+func NewStorageImagesGetStorageOK(body *StorageImagesGetResponseBody) *spinregistry.Storage {
+	v := &spinregistry.Storage{
+		Volume:    *body.Volume,
+		Image:     *body.Image,
+		ImageSize: body.ImageSize,
+		Cdrom:     body.Cdrom,
 	}
 
 	return v
@@ -178,6 +285,18 @@ func ValidateVMGetResponseBody(body *VMGetResponseBody) (err error) {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
+	}
+	return
+}
+
+// ValidateStorageImagesGetResponseBody runs the validations defined on
+// Storage/Images/GetResponseBody
+func ValidateStorageImagesGetResponseBody(body *StorageImagesGetResponseBody) (err error) {
+	if body.Volume == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
+	}
+	if body.Image == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
 	}
 	return
 }

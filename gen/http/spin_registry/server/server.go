@@ -27,6 +27,10 @@ type Server struct {
 	StorageVolumesList   http.Handler
 	StorageVolumesCreate http.Handler
 	StorageVolumesDelete http.Handler
+	StorageImagesList    http.Handler
+	StorageImagesCreate  http.Handler
+	StorageImagesDelete  http.Handler
+	StorageImagesGet     http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -70,6 +74,10 @@ func New(
 			{"StorageVolumesList", "GET", "/storage/volumes/list"},
 			{"StorageVolumesCreate", "POST", "/storage/volumes/create"},
 			{"StorageVolumesDelete", "POST", "/storage/volumes/delete"},
+			{"StorageImagesList", "GET", "/storage/images/list"},
+			{"StorageImagesCreate", "POST", "/storage/images/create"},
+			{"StorageImagesDelete", "POST", "/storage/images/delete"},
+			{"StorageImagesGet", "GET", "/storage/images/get"},
 		},
 		VMCreate:             NewVMCreateHandler(e.VMCreate, mux, decoder, encoder, errhandler, formatter),
 		VMUpdate:             NewVMUpdateHandler(e.VMUpdate, mux, decoder, encoder, errhandler, formatter),
@@ -79,6 +87,10 @@ func New(
 		StorageVolumesList:   NewStorageVolumesListHandler(e.StorageVolumesList, mux, decoder, encoder, errhandler, formatter),
 		StorageVolumesCreate: NewStorageVolumesCreateHandler(e.StorageVolumesCreate, mux, decoder, encoder, errhandler, formatter),
 		StorageVolumesDelete: NewStorageVolumesDeleteHandler(e.StorageVolumesDelete, mux, decoder, encoder, errhandler, formatter),
+		StorageImagesList:    NewStorageImagesListHandler(e.StorageImagesList, mux, decoder, encoder, errhandler, formatter),
+		StorageImagesCreate:  NewStorageImagesCreateHandler(e.StorageImagesCreate, mux, decoder, encoder, errhandler, formatter),
+		StorageImagesDelete:  NewStorageImagesDeleteHandler(e.StorageImagesDelete, mux, decoder, encoder, errhandler, formatter),
+		StorageImagesGet:     NewStorageImagesGetHandler(e.StorageImagesGet, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -95,6 +107,10 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.StorageVolumesList = m(s.StorageVolumesList)
 	s.StorageVolumesCreate = m(s.StorageVolumesCreate)
 	s.StorageVolumesDelete = m(s.StorageVolumesDelete)
+	s.StorageImagesList = m(s.StorageImagesList)
+	s.StorageImagesCreate = m(s.StorageImagesCreate)
+	s.StorageImagesDelete = m(s.StorageImagesDelete)
+	s.StorageImagesGet = m(s.StorageImagesGet)
 }
 
 // Mount configures the mux to serve the spin-registry endpoints.
@@ -107,6 +123,10 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountStorageVolumesListHandler(mux, h.StorageVolumesList)
 	MountStorageVolumesCreateHandler(mux, h.StorageVolumesCreate)
 	MountStorageVolumesDeleteHandler(mux, h.StorageVolumesDelete)
+	MountStorageImagesListHandler(mux, h.StorageImagesList)
+	MountStorageImagesCreateHandler(mux, h.StorageImagesCreate)
+	MountStorageImagesDeleteHandler(mux, h.StorageImagesDelete)
+	MountStorageImagesGetHandler(mux, h.StorageImagesGet)
 }
 
 // MountVMCreateHandler configures the mux to serve the "spin-registry" service
@@ -485,6 +505,212 @@ func NewStorageVolumesDeleteHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/delete")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageImagesListHandler configures the mux to serve the
+// "spin-registry" service "storage/images/list" endpoint.
+func MountStorageImagesListHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/storage/images/list", f)
+}
+
+// NewStorageImagesListHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/images/list" endpoint.
+func NewStorageImagesListHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageImagesListRequest(mux, decoder)
+		encodeResponse = EncodeStorageImagesListResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/list")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageImagesCreateHandler configures the mux to serve the
+// "spin-registry" service "storage/images/create" endpoint.
+func MountStorageImagesCreateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/storage/images/create", f)
+}
+
+// NewStorageImagesCreateHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/images/create"
+// endpoint.
+func NewStorageImagesCreateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageImagesCreateRequest(mux, decoder)
+		encodeResponse = EncodeStorageImagesCreateResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/create")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageImagesDeleteHandler configures the mux to serve the
+// "spin-registry" service "storage/images/delete" endpoint.
+func MountStorageImagesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/storage/images/delete", f)
+}
+
+// NewStorageImagesDeleteHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/images/delete"
+// endpoint.
+func NewStorageImagesDeleteHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageImagesDeleteRequest(mux, decoder)
+		encodeResponse = EncodeStorageImagesDeleteResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/delete")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageImagesGetHandler configures the mux to serve the "spin-registry"
+// service "storage/images/get" endpoint.
+func MountStorageImagesGetHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/storage/images/get", f)
+}
+
+// NewStorageImagesGetHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/images/get" endpoint.
+func NewStorageImagesGetHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageImagesGetRequest(mux, decoder)
+		encodeResponse = EncodeStorageImagesGetResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/get")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {

@@ -29,6 +29,14 @@ type Service interface {
 	StorageVolumesCreate(context.Context, *StorageVolumesCreatePayload) (err error)
 	// delete an existing volume
 	StorageVolumesDelete(context.Context, *StorageVolumesDeletePayload) (err error)
+	// list all images by volume
+	StorageImagesList(context.Context, *StorageImagesListPayload) (res []string, err error)
+	// add an image definition to the registry
+	StorageImagesCreate(context.Context, *Storage) (err error)
+	// remove an image definition from the registry
+	StorageImagesDelete(context.Context, *StorageImagesDeletePayload) (err error)
+	// retrieves an image definition from the registry
+	StorageImagesGet(context.Context, *StorageImagesGetPayload) (res *Storage, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -39,7 +47,7 @@ const ServiceName = "spin-registry"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [8]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list", "storage/volumes/list", "storage/volumes/create", "storage/volumes/delete"}
+var MethodNames = [12]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list", "storage/volumes/list", "storage/volumes/create", "storage/volumes/delete", "storage/images/list", "storage/images/create", "storage/images/delete", "storage/images/get"}
 
 // VM is the payload type of the spin-registry service vm/create method.
 type VM struct {
@@ -88,6 +96,15 @@ type StorageVolumesDeletePayload struct {
 	Name string
 }
 
+// StorageImagesListPayload is the payload type of the spin-registry service
+// storage/images/list method.
+type StorageImagesListPayload struct {
+	// name of volume to list images for
+	VolumeName string
+}
+
+// Storage is the payload type of the spin-registry service
+// storage/images/create method.
 type Storage struct {
 	// Volume name, must not include `/`
 	Volume string
@@ -97,4 +114,22 @@ type Storage struct {
 	ImageSize *uint
 	// Is this image a cdrom?
 	Cdrom *bool
+}
+
+// StorageImagesDeletePayload is the payload type of the spin-registry service
+// storage/images/delete method.
+type StorageImagesDeletePayload struct {
+	// name of volume
+	VolumeName string
+	// name of image
+	ImageName string
+}
+
+// StorageImagesGetPayload is the payload type of the spin-registry service
+// storage/images/get method.
+type StorageImagesGetPayload struct {
+	// name of volume
+	VolumeName string
+	// name of image
+	ImageName string
 }
