@@ -196,7 +196,7 @@ func messageGet(ctx *cli.Context) error {
 		return err
 	}
 
-	vm, err := getClient(ctx).Get(context.Background(), id)
+	vm, err := getClient(ctx).VMGet(context.Background(), id)
 	if err != nil {
 		return err
 	}

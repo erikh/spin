@@ -1,5 +1,6 @@
 linters:                                                                                                                                                                                                                                       
   enable:                                                                                                                                                                                                                                      
+    - golint
     - goimports                                                                                                                                                                                                                                
     - scopelint                                                                                                                                                                                                                                
     - gocyclo                                                                                                                                                                                                                                  
