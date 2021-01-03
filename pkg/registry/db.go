@@ -9,10 +9,12 @@ import (
 	"go.etcd.io/bbolt"
 )
 
+// DBConfig is the configuration of the database.
 type DBConfig struct {
 	Filename string
 }
 
+// DB is the handle into the registry database.
 type DB struct {
 	db *bbolt.DB
 }
@@ -21,6 +23,7 @@ const vmBucket = "vms"
 
 var makeBuckets = []string{vmBucket}
 
+// NewDB creates a new *DB based on a DBConfig.
 func NewDB(c DBConfig) (*DB, error) {
 	db, err := bbolt.Open(c.Filename, 0600, &bbolt.Options{FreelistType: bbolt.FreelistMapType})
 	if err != nil {
@@ -48,6 +51,7 @@ func decodeKey(key []byte) uint64 {
 	return binary.BigEndian.Uint64(key)
 }
 
+// Create creates a vm and returns its id, which is auto-generated.
 func (db *DB) Create(vm *spinregistry.VM) (uint64, error) {
 	content, err := json.Marshal(vm)
 	if err != nil {
@@ -71,6 +75,7 @@ func (db *DB) Create(vm *spinregistry.VM) (uint64, error) {
 	return id, err
 }
 
+// Get retrieves the vm at the id specified.
 func (db *DB) Get(id uint64) (*spinregistry.VM, error) {
 	var vm spinregistry.VM
 
@@ -86,6 +91,7 @@ func (db *DB) Get(id uint64) (*spinregistry.VM, error) {
 	})
 }
 
+// Delete removes the vm at the id specified.
 func (db *DB) Delete(id uint64) error {
 	return db.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(vmBucket))
@@ -98,6 +104,7 @@ func (db *DB) Delete(id uint64) error {
 	})
 }
 
+// Update replaces the id with the new vm definition.
 func (db *DB) Update(id uint64, vm *spinregistry.VM) error {
 	content, err := json.Marshal(vm)
 	if err != nil {
@@ -115,6 +122,7 @@ func (db *DB) Update(id uint64, vm *spinregistry.VM) error {
 	})
 }
 
+// List returns a list of all stored vm ids.
 func (db *DB) List() ([]uint64, error) {
 	var ids []uint64
 

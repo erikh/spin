@@ -101,6 +101,8 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 	}
 }
 
+// NewHostPathAgent creates a new host-path agent. rootPath is the root of all
+// volumes; and the client configuration is used to talk to the broker.
 func NewHostPathAgent(rootPath string, cc brokerclient.Config) *agent.Agent {
 	return agent.New(cc, ResourceType, Dispatcher(hostPathDispatcher(rootPath)))
 }

@@ -8,6 +8,8 @@ import (
 	"testing"
 )
 
+// SetupTestBroker configures a test broker for use. Returns the host:port
+// where it is residing.
 func SetupTestBroker(t *testing.T) string {
 	dbpath, err := ioutil.TempFile("", "")
 	if err != nil {

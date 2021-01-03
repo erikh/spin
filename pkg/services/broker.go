@@ -13,6 +13,7 @@ import (
 	"goa.design/goa/v3/middleware"
 )
 
+// Broker returns a http.Handler representing a spin-broker.
 func Broker(dbpath string, showLog bool) (http.Handler, error) {
 	var logger *log.Logger
 

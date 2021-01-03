@@ -100,6 +100,7 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 // MonitorDir is the directory where the qemu control monitors are kept
 var MonitorDir = filepath.Join(spin.ConfigDir(), "monitors")
 
+// AgentConfig is the configuration struct for the constructor.
 type AgentConfig struct {
 	SystemDir    string
 	MonitorDir   string
@@ -107,6 +108,8 @@ type AgentConfig struct {
 	Supervisor   supervisor.Interface
 }
 
+// Validate the configuration. Yields error on any, also sets default values if
+// required.
 func (ac *AgentConfig) Validate() error {
 	if ac.SystemDir == "" {
 		ac.SystemDir = systemdDir()
@@ -131,6 +134,8 @@ func (ac *AgentConfig) monitorPath(id uint64) string {
 	return filepath.Join(ac.MonitorDir, fmt.Sprintf("%d", id))
 }
 
+// NewAgent creates an agent; the configuration is validated and errors are
+// returned if they occur.
 func NewAgent(ac AgentConfig) (*agent.Agent, error) {
 	if err := ac.Validate(); err != nil {
 		return nil, err
