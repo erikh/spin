@@ -22,7 +22,7 @@ type AddRequestBody struct {
 	// Action name
 	Action *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
 	// Action parameters
-	Parameters map[string]json.RawMessage `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
@@ -43,6 +43,8 @@ type StatusResponseBody struct {
 	Status bool `form:"status" json:"status" xml:"status"`
 	// Failure reason (if any)
 	Reason *string `form:"reason,omitempty" json:"reason,omitempty" xml:"reason,omitempty"`
+	// Failure causer as UUID (if any)
+	Causer *string `form:"causer,omitempty" json:"causer,omitempty" xml:"causer,omitempty"`
 }
 
 // NextResponseBody is the type of the "spin-broker" service "next" endpoint
@@ -100,6 +102,7 @@ func NewStatusResponseBody(res *spinbroker.StatusResult) *StatusResponseBody {
 	body := &StatusResponseBody{
 		Status: res.Status,
 		Reason: res.Reason,
+		Causer: res.Causer,
 	}
 	return body
 }
@@ -158,7 +161,7 @@ func NewAddPayload(body *AddRequestBody, id string) *spinbroker.AddPayload {
 		Action:   *body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make(map[string]json.RawMessage, len(body.Parameters))
+		v.Parameters = make(map[string]interface{}, len(body.Parameters))
 		for key, val := range body.Parameters {
 			tk := key
 			tv := val

@@ -1,7 +1,6 @@
 package broker
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"code.hollensbe.org/erikh/spin/pkg/testutil"
 )
 
@@ -44,7 +44,7 @@ func TestNext(t *testing.T) {
 	}
 
 	for i := 0; i < 10000; i++ {
-		value := Command{Action: testutil.RandomString(30, 5)}
+		value := Command{Command: dispatcher.Command{Action: testutil.RandomString(30, 5)}}
 		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
@@ -75,7 +75,7 @@ func TestNextParallel(t *testing.T) {
 	}
 
 	for i := 0; i < 10000; i++ {
-		value := Command{Action: testutil.RandomString(30, 5)}
+		value := Command{Command: dispatcher.Command{Action: testutil.RandomString(30, 5)}}
 		if err := queue.Insert(value); err != nil {
 			t.Fatal(err)
 		}
@@ -141,7 +141,7 @@ func TestNextParallelMultiQueue(t *testing.T) {
 	}
 
 	for i := 0; i < 100000; i++ {
-		value := Command{Action: testutil.RandomString(30, 5)}
+		value := Command{Command: dispatcher.Command{Action: testutil.RandomString(30, 5)}}
 		if err := queues[i%concurrency].Insert(value); err != nil {
 			t.Fatal(err)
 		}
@@ -205,9 +205,11 @@ func TestPackage(t *testing.T) {
 
 		for i := 0; i < 100; i++ {
 			c := Command{
-				Resource:   resources[i],
-				Action:     testutil.RandomString(30, 5),
-				Parameters: map[string]json.RawMessage{testutil.RandomString(30, 5): []byte(`"` + testutil.RandomString(30, 5) + `"`)},
+				Command: dispatcher.Command{
+					Resource: resources[i],
+					Action:   testutil.RandomString(30, 5),
+				},
+				Parameters: map[string]interface{}{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
 			err := pkg.Add(&c)
@@ -307,9 +309,11 @@ func TestQueueDependencies(t *testing.T) {
 			resource := resources[i%resourceCount]
 
 			c := Command{
-				Resource:   resource,
-				Action:     testutil.RandomString(30, 5),
-				Parameters: map[string]json.RawMessage{testutil.RandomString(30, 5): []byte(`"` + testutil.RandomString(30, 5) + `"`)},
+				Command: dispatcher.Command{
+					Resource: resource,
+					Action:   testutil.RandomString(30, 5),
+				},
+				Parameters: map[string]interface{}{testutil.RandomString(30, 5): testutil.RandomString(30, 5)},
 			}
 
 			if lastCommand.UUID != "" {

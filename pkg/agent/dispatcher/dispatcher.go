@@ -25,7 +25,7 @@ type Command struct {
 	UUID         string
 	Resource     string
 	Action       string
-	Parameters   map[string]json.RawMessage
+	Parameters   map[string]json.RawMessage `json:"-"`
 	parameters   map[string]interface{}
 	Dependencies []string
 }

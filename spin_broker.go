@@ -2,9 +2,11 @@ package spin
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
 	"code.hollensbe.org/erikh/spin/pkg/broker"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -41,8 +43,10 @@ func (s *spinBrokersrvc) Add(ctx context.Context, p *spinbroker.AddPayload) (str
 	}
 
 	cmd := &broker.Command{
-		Resource:   p.Resource,
-		Action:     p.Action,
+		Command: dispatcher.Command{
+			Resource: p.Resource,
+			Action:   p.Action,
+		},
 		Parameters: p.Parameters,
 	}
 	if err := pkg.Add(cmd); err != nil {
@@ -81,7 +85,7 @@ func (s *spinBrokersrvc) Status(ctx context.Context, p *spinbroker.StatusPayload
 
 	if err := pkg.Finished(); err != nil {
 		if e, ok := err.(broker.ErrorStatus); ok {
-			return &spinbroker.StatusResult{Reason: &e.Reason}, nil
+			return &spinbroker.StatusResult{Reason: &e.Reason, Causer: &e.Causer}, nil
 		} else if err == broker.ErrRecordNotFound {
 			return nil, &goa.ServiceError{
 				Name: "record_not_found",
@@ -113,11 +117,21 @@ func (s *spinBrokersrvc) Next(ctx context.Context, p *spinbroker.NextPayload) (*
 		return nil, err
 	}
 
+	params := map[string]json.RawMessage{}
+
+	for key, val := range c.Parameters {
+		var err error
+		params[key], err = json.Marshal(val)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &spinbroker.NextResult{
 		UUID:       c.UUID,
 		Resource:   c.Resource,
 		Action:     c.Action,
-		Parameters: c.Parameters,
+		Parameters: params,
 	}, nil
 }
 

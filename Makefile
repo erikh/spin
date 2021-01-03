@@ -16,8 +16,9 @@ clean:
 	rm -f spin-broker.db spin-registry.db
 
 stop-server:
-	pkill spin-broker || :
+	pkill sa- || :
 	pkill spin-registry || :
+	pkill spin-broker || :
 	sleep 1
 
 install-local:

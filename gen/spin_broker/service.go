@@ -50,7 +50,7 @@ type AddPayload struct {
 	// Action name
 	Action string
 	// Action parameters
-	Parameters map[string]json.RawMessage
+	Parameters map[string]interface{}
 }
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.
@@ -71,6 +71,8 @@ type StatusResult struct {
 	Status bool
 	// Failure reason (if any)
 	Reason *string
+	// Failure causer as UUID (if any)
+	Causer *string
 }
 
 // NextPayload is the payload type of the spin-broker service next method.

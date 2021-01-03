@@ -75,10 +75,11 @@ type status struct {
 // other golang errors.
 type ErrorStatus struct {
 	Reason string
+	Causer string // UUID of causer
 }
 
 func (es ErrorStatus) Error() string {
-	return es.Reason
+	return fmt.Sprintf("[%s]: %v", es.Causer, es.Reason)
 }
 
 // CommandStatus returns the status of the Command UUID as an error if faulty,
@@ -97,7 +98,7 @@ func (db *DB) CommandStatus(uuid string) error {
 		}
 
 		if !s.Status {
-			return ErrorStatus{s.Reason}
+			return ErrorStatus{Causer: uuid, Reason: s.Reason}
 		}
 
 		return nil
@@ -199,7 +200,10 @@ func (db *DB) NewPackage() (*Package, error) {
 // calls are made to yield the commands for the resource, the command is
 // processed, FinishCommand is called to finish the command, then statuses are
 // polled and eventually yielded.
-type Command dispatcher.Command
+type Command struct {
+	dispatcher.Command `json:",inline"`
+	Parameters         map[string]interface{} `json:"parameters"`
+}
 
 // UUID returns the Package UUID.
 func (p *Package) UUID() string {

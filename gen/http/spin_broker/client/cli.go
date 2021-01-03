@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Mollitia natus temporibus fugit occaecati ipsum qui.\",\n      \"parameters\": {\n         \"Aut molestiae deleniti ad dolorem.\": \"Rerum quam adipisci est incidunt sequi.\"\n      },\n      \"resource\": \"Possimus velit quod sit.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Maxime aut non.\",\n      \"parameters\": {\n         \"Et maiores ut voluptatem sed.\": \"Consectetur et.\",\n         \"Nostrum commodi error omnis quis quia.\": \"Ratione et ex tempore ipsum in.\"\n      },\n      \"resource\": \"Quam adipisci est incidunt sequi.\"\n   }'")
 		}
 	}
 	var id string
@@ -34,7 +34,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 		Action:   body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make(map[string]json.RawMessage, len(body.Parameters))
+		v.Parameters = make(map[string]interface{}, len(body.Parameters))
 		for key, val := range body.Parameters {
 			tk := key
 			tv := val
@@ -93,7 +93,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Quas tempora nisi aperiam occaecati deserunt qui.\",\n      \"status\": false,\n      \"status_reason\": \"Esse reprehenderit qui molestias eum voluptatem.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Esse labore voluptas.\",\n      \"status\": true,\n      \"status_reason\": \"Iusto adipisci sapiente temporibus.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

@@ -158,7 +158,7 @@ func messageAdd(ctx *cli.Context) error {
 	pkg := ctx.Args().Get(0)
 	resource := ctx.Args().Get(1)
 	action := ctx.Args().Get(2)
-	parameters := map[string]json.RawMessage{}
+	parameters := map[string]interface{}{}
 
 	if pkg == "" || resource == "" || action == "" {
 		return errors.New("invalid parameters. try --help")
@@ -170,7 +170,13 @@ func messageAdd(ctx *cli.Context) error {
 			return errors.New("invalid key=value parameters")
 		}
 
-		parameters[param[0]] = json.RawMessage(param[1])
+		var value interface{}
+
+		if err := json.Unmarshal([]byte(param[1]), &value); err != nil {
+			parameters[param[0]] = param[1]
+		} else {
+			parameters[param[0]] = value
+		}
 	}
 
 	cc := brokerclient.Config{
@@ -243,7 +249,7 @@ func messageStatus(ctx *cli.Context) error {
 	}
 
 	if !status.Status {
-		fmt.Printf("Error during processing: %v\n", *status.Reason)
+		fmt.Printf("Error during processing: %v (causer: %v)\n", *status.Reason, *status.Causer)
 		os.Exit(1)
 	}
 

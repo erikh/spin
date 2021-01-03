@@ -2,7 +2,6 @@ package emulation
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"os"
@@ -171,16 +170,6 @@ type command struct {
 	Parameters map[string]interface{}
 }
 
-func (c command) params() map[string]json.RawMessage {
-	params := map[string]json.RawMessage{}
-	for key, value := range c.Parameters {
-		content, _ := json.Marshal(value)
-		params[key] = content
-	}
-
-	return params
-}
-
 func sendMessages(ctx context.Context, t *testing.T, client *brokerclient.Client, commands []command) string {
 	pkg, err := client.New(ctx)
 	if err != nil {
@@ -192,7 +181,7 @@ func sendMessages(ctx context.Context, t *testing.T, client *brokerclient.Client
 			ID:         pkg,
 			Resource:   ResourceType,
 			Action:     command.Action,
-			Parameters: command.params(),
+			Parameters: command.Parameters,
 		})
 		if err != nil {
 			t.Fatal(err)
