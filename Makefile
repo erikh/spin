@@ -21,6 +21,9 @@ stop-server:
 	pkill spin-broker || :
 	sleep 1
 
+install:
+	go install -v ./...
+
 install-local:
 	GOBIN=${PWD}/bin go install -v ./...
 
