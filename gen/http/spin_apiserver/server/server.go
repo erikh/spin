@@ -21,7 +21,6 @@ type Server struct {
 	Mounts              []*MountPoint
 	AddVolume           http.Handler
 	RemoveVolume        http.Handler
-	LabelVolume         http.Handler
 	InfoVolume          http.Handler
 	CreateImageOnVolume http.Handler
 	DeleteImageOnVolume http.Handler
@@ -65,7 +64,6 @@ func New(
 		Mounts: []*MountPoint{
 			{"AddVolume", "POST", "/storage/volume/add"},
 			{"RemoveVolume", "POST", "/storage/volume/remove/{volume}"},
-			{"LabelVolume", "POST", "/storage/volume/label/{volume}/{label}"},
 			{"InfoVolume", "GET", "/storage/volume/info/{volume}"},
 			{"CreateImageOnVolume", "POST", "/storage/volume/image/create"},
 			{"DeleteImageOnVolume", "POST", "/storage/volume/image/delete"},
@@ -75,7 +73,6 @@ func New(
 		},
 		AddVolume:           NewAddVolumeHandler(e.AddVolume, mux, decoder, encoder, errhandler, formatter),
 		RemoveVolume:        NewRemoveVolumeHandler(e.RemoveVolume, mux, decoder, encoder, errhandler, formatter),
-		LabelVolume:         NewLabelVolumeHandler(e.LabelVolume, mux, decoder, encoder, errhandler, formatter),
 		InfoVolume:          NewInfoVolumeHandler(e.InfoVolume, mux, decoder, encoder, errhandler, formatter),
 		CreateImageOnVolume: NewCreateImageOnVolumeHandler(e.CreateImageOnVolume, mux, decoder, encoder, errhandler, formatter),
 		DeleteImageOnVolume: NewDeleteImageOnVolumeHandler(e.DeleteImageOnVolume, mux, decoder, encoder, errhandler, formatter),
@@ -92,7 +89,6 @@ func (s *Server) Service() string { return "spin-apiserver" }
 func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.AddVolume = m(s.AddVolume)
 	s.RemoveVolume = m(s.RemoveVolume)
-	s.LabelVolume = m(s.LabelVolume)
 	s.InfoVolume = m(s.InfoVolume)
 	s.CreateImageOnVolume = m(s.CreateImageOnVolume)
 	s.DeleteImageOnVolume = m(s.DeleteImageOnVolume)
@@ -105,7 +101,6 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountAddVolumeHandler(mux, h.AddVolume)
 	MountRemoveVolumeHandler(mux, h.RemoveVolume)
-	MountLabelVolumeHandler(mux, h.LabelVolume)
 	MountInfoVolumeHandler(mux, h.InfoVolume)
 	MountCreateImageOnVolumeHandler(mux, h.CreateImageOnVolume)
 	MountDeleteImageOnVolumeHandler(mux, h.DeleteImageOnVolume)
@@ -195,57 +190,6 @@ func NewRemoveVolumeHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "remove_volume")
-		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
-		payload, err := decodeRequest(r)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		res, err := endpoint(ctx, payload)
-		if err != nil {
-			if err := encodeError(ctx, w, err); err != nil {
-				errhandler(ctx, w, err)
-			}
-			return
-		}
-		if err := encodeResponse(ctx, w, res); err != nil {
-			errhandler(ctx, w, err)
-		}
-	})
-}
-
-// MountLabelVolumeHandler configures the mux to serve the "spin-apiserver"
-// service "label_volume" endpoint.
-func MountLabelVolumeHandler(mux goahttp.Muxer, h http.Handler) {
-	f, ok := h.(http.HandlerFunc)
-	if !ok {
-		f = func(w http.ResponseWriter, r *http.Request) {
-			h.ServeHTTP(w, r)
-		}
-	}
-	mux.Handle("POST", "/storage/volume/label/{volume}/{label}", f)
-}
-
-// NewLabelVolumeHandler creates a HTTP handler which loads the HTTP request
-// and calls the "spin-apiserver" service "label_volume" endpoint.
-func NewLabelVolumeHandler(
-	endpoint goa.Endpoint,
-	mux goahttp.Muxer,
-	decoder func(*http.Request) goahttp.Decoder,
-	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
-	errhandler func(context.Context, http.ResponseWriter, error),
-	formatter func(err error) goahttp.Statuser,
-) http.Handler {
-	var (
-		decodeRequest  = DecodeLabelVolumeRequest(mux, decoder)
-		encodeResponse = EncodeLabelVolumeResponse(encoder)
-		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
-	)
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "label_volume")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {

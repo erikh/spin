@@ -30,12 +30,6 @@ func (s *spinApiserversrvc) RemoveVolume(ctx context.Context, p *spinapiserver.R
 	return
 }
 
-// Apply a label to a volume.
-func (s *spinApiserversrvc) LabelVolume(ctx context.Context, p *spinapiserver.LabelVolumePayload) (err error) {
-	s.logger.Print("spinApiserver.label_volume")
-	return
-}
-
 // Get information on a volume
 func (s *spinApiserversrvc) InfoVolume(ctx context.Context, p *spinapiserver.InfoVolumePayload) (err error) {
 	s.logger.Print("spinApiserver.info_volume")

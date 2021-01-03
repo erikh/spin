@@ -17,7 +17,6 @@ import (
 type Endpoints struct {
 	AddVolume           goa.Endpoint
 	RemoveVolume        goa.Endpoint
-	LabelVolume         goa.Endpoint
 	InfoVolume          goa.Endpoint
 	CreateImageOnVolume goa.Endpoint
 	DeleteImageOnVolume goa.Endpoint
@@ -32,7 +31,6 @@ func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
 		AddVolume:           NewAddVolumeEndpoint(s),
 		RemoveVolume:        NewRemoveVolumeEndpoint(s),
-		LabelVolume:         NewLabelVolumeEndpoint(s),
 		InfoVolume:          NewInfoVolumeEndpoint(s),
 		CreateImageOnVolume: NewCreateImageOnVolumeEndpoint(s),
 		DeleteImageOnVolume: NewDeleteImageOnVolumeEndpoint(s),
@@ -47,7 +45,6 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.AddVolume = m(e.AddVolume)
 	e.RemoveVolume = m(e.RemoveVolume)
-	e.LabelVolume = m(e.LabelVolume)
 	e.InfoVolume = m(e.InfoVolume)
 	e.CreateImageOnVolume = m(e.CreateImageOnVolume)
 	e.DeleteImageOnVolume = m(e.DeleteImageOnVolume)
@@ -71,15 +68,6 @@ func NewRemoveVolumeEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*RemoveVolumePayload)
 		return nil, s.RemoveVolume(ctx, p)
-	}
-}
-
-// NewLabelVolumeEndpoint returns an endpoint function that calls the method
-// "label_volume" of service "spin-apiserver".
-func NewLabelVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*LabelVolumePayload)
-		return nil, s.LabelVolume(ctx, p)
 	}
 }
 

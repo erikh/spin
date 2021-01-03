@@ -17,7 +17,6 @@ import (
 type Client struct {
 	AddVolumeEndpoint           goa.Endpoint
 	RemoveVolumeEndpoint        goa.Endpoint
-	LabelVolumeEndpoint         goa.Endpoint
 	InfoVolumeEndpoint          goa.Endpoint
 	CreateImageOnVolumeEndpoint goa.Endpoint
 	DeleteImageOnVolumeEndpoint goa.Endpoint
@@ -27,11 +26,10 @@ type Client struct {
 }
 
 // NewClient initializes a "spin-apiserver" service client given the endpoints.
-func NewClient(addVolume, removeVolume, labelVolume, infoVolume, createImageOnVolume, deleteImageOnVolume, resizeImageOnVolume, infoImageOnVolume, moveImage goa.Endpoint) *Client {
+func NewClient(addVolume, removeVolume, infoVolume, createImageOnVolume, deleteImageOnVolume, resizeImageOnVolume, infoImageOnVolume, moveImage goa.Endpoint) *Client {
 	return &Client{
 		AddVolumeEndpoint:           addVolume,
 		RemoveVolumeEndpoint:        removeVolume,
-		LabelVolumeEndpoint:         labelVolume,
 		InfoVolumeEndpoint:          infoVolume,
 		CreateImageOnVolumeEndpoint: createImageOnVolume,
 		DeleteImageOnVolumeEndpoint: deleteImageOnVolume,
@@ -51,13 +49,6 @@ func (c *Client) AddVolume(ctx context.Context, p *AddVolumePayload) (err error)
 // service.
 func (c *Client) RemoveVolume(ctx context.Context, p *RemoveVolumePayload) (err error) {
 	_, err = c.RemoveVolumeEndpoint(ctx, p)
-	return
-}
-
-// LabelVolume calls the "label_volume" endpoint of the "spin-apiserver"
-// service.
-func (c *Client) LabelVolume(ctx context.Context, p *LabelVolumePayload) (err error) {
-	_, err = c.LabelVolumeEndpoint(ctx, p)
 	return
 }
 

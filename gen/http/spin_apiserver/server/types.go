@@ -83,16 +83,6 @@ func NewRemoveVolumePayload(volume string) *spinapiserver.RemoveVolumePayload {
 	return v
 }
 
-// NewLabelVolumePayload builds a spin-apiserver service label_volume endpoint
-// payload.
-func NewLabelVolumePayload(volume string, label string) *spinapiserver.LabelVolumePayload {
-	v := &spinapiserver.LabelVolumePayload{}
-	v.Volume = volume
-	v.Label = label
-
-	return v
-}
-
 // NewInfoVolumePayload builds a spin-apiserver service info_volume endpoint
 // payload.
 func NewInfoVolumePayload(volume string) *spinapiserver.InfoVolumePayload {

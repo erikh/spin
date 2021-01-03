@@ -21,11 +21,6 @@ func RemoveVolumeSpinApiserverPath(volume string) string {
 	return fmt.Sprintf("/storage/volume/remove/%v", volume)
 }
 
-// LabelVolumeSpinApiserverPath returns the URL path to the spin-apiserver service label_volume HTTP endpoint.
-func LabelVolumeSpinApiserverPath(volume string, label string) string {
-	return fmt.Sprintf("/storage/volume/label/%v/%v", volume, label)
-}
-
 // InfoVolumeSpinApiserverPath returns the URL path to the spin-apiserver service info_volume HTTP endpoint.
 func InfoVolumeSpinApiserverPath(volume string) string {
 	return fmt.Sprintf("/storage/volume/info/%v", volume)

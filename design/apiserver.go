@@ -35,21 +35,6 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
-	Method("label_volume", func() {
-		Description("Apply a label to a volume.")
-
-		Payload(func() {
-			Attribute("volume", String, "volume identifier")
-			Attribute("label", String, "label identifier to apply to volume")
-			Required("volume", "label")
-		})
-
-		HTTP(func() {
-			POST("/storage/volume/label/{volume}/{label}")
-			Response(StatusOK)
-		})
-	})
-
 	Method("info_volume", func() {
 		Description("Get information on a volume")
 

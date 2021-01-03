@@ -75,33 +75,6 @@ func DecodeRemoveVolumeRequest(mux goahttp.Muxer, decoder func(*http.Request) go
 	}
 }
 
-// EncodeLabelVolumeResponse returns an encoder for responses returned by the
-// spin-apiserver label_volume endpoint.
-func EncodeLabelVolumeResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
-	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		w.WriteHeader(http.StatusOK)
-		return nil
-	}
-}
-
-// DecodeLabelVolumeRequest returns a decoder for requests sent to the
-// spin-apiserver label_volume endpoint.
-func DecodeLabelVolumeRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
-	return func(r *http.Request) (interface{}, error) {
-		var (
-			volume string
-			label  string
-
-			params = mux.Vars(r)
-		)
-		volume = params["volume"]
-		label = params["label"]
-		payload := NewLabelVolumePayload(volume, label)
-
-		return payload, nil
-	}
-}
-
 // EncodeInfoVolumeResponse returns an encoder for responses returned by the
 // spin-apiserver info_volume endpoint.
 func EncodeInfoVolumeResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {

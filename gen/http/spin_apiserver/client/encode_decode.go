@@ -128,60 +128,6 @@ func DecodeRemoveVolumeResponse(decoder func(*http.Response) goahttp.Decoder, re
 	}
 }
 
-// BuildLabelVolumeRequest instantiates a HTTP request object with method and
-// path set to call the "spin-apiserver" service "label_volume" endpoint
-func (c *Client) BuildLabelVolumeRequest(ctx context.Context, v interface{}) (*http.Request, error) {
-	var (
-		volume string
-		label  string
-	)
-	{
-		p, ok := v.(*spinapiserver.LabelVolumePayload)
-		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-apiserver", "label_volume", "*spinapiserver.LabelVolumePayload", v)
-		}
-		volume = p.Volume
-		label = p.Label
-	}
-	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: LabelVolumeSpinApiserverPath(volume, label)}
-	req, err := http.NewRequest("POST", u.String(), nil)
-	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "label_volume", u.String(), err)
-	}
-	if ctx != nil {
-		req = req.WithContext(ctx)
-	}
-
-	return req, nil
-}
-
-// DecodeLabelVolumeResponse returns a decoder for responses returned by the
-// spin-apiserver label_volume endpoint. restoreBody controls whether the
-// response body should be restored after having been read.
-func DecodeLabelVolumeResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
-	return func(resp *http.Response) (interface{}, error) {
-		if restoreBody {
-			b, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
-			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
-			defer func() {
-				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
-			}()
-		} else {
-			defer resp.Body.Close()
-		}
-		switch resp.StatusCode {
-		case http.StatusOK:
-			return nil, nil
-		default:
-			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "label_volume", resp.StatusCode, string(body))
-		}
-	}
-}
-
 // BuildInfoVolumeRequest instantiates a HTTP request object with method and
 // path set to call the "spin-apiserver" service "info_volume" endpoint
 func (c *Client) BuildInfoVolumeRequest(ctx context.Context, v interface{}) (*http.Request, error) {

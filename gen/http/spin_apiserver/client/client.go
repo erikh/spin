@@ -25,10 +25,6 @@ type Client struct {
 	// remove_volume endpoint.
 	RemoveVolumeDoer goahttp.Doer
 
-	// LabelVolume Doer is the HTTP client used to make requests to the
-	// label_volume endpoint.
-	LabelVolumeDoer goahttp.Doer
-
 	// InfoVolume Doer is the HTTP client used to make requests to the info_volume
 	// endpoint.
 	InfoVolumeDoer goahttp.Doer
@@ -76,7 +72,6 @@ func NewClient(
 	return &Client{
 		AddVolumeDoer:           doer,
 		RemoveVolumeDoer:        doer,
-		LabelVolumeDoer:         doer,
 		InfoVolumeDoer:          doer,
 		CreateImageOnVolumeDoer: doer,
 		DeleteImageOnVolumeDoer: doer,
@@ -129,25 +124,6 @@ func (c *Client) RemoveVolume() goa.Endpoint {
 		resp, err := c.RemoveVolumeDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-apiserver", "remove_volume", err)
-		}
-		return decodeResponse(resp)
-	}
-}
-
-// LabelVolume returns an endpoint that makes HTTP requests to the
-// spin-apiserver service label_volume server.
-func (c *Client) LabelVolume() goa.Endpoint {
-	var (
-		decodeResponse = DecodeLabelVolumeResponse(c.decoder, c.RestoreResponseBody)
-	)
-	return func(ctx context.Context, v interface{}) (interface{}, error) {
-		req, err := c.BuildLabelVolumeRequest(ctx, v)
-		if err != nil {
-			return nil, err
-		}
-		resp, err := c.LabelVolumeDoer.Do(req)
-		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "label_volume", err)
 		}
 		return decodeResponse(resp)
 	}

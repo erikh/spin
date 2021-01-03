@@ -17,8 +17,6 @@ type Service interface {
 	AddVolume(context.Context, *AddVolumePayload) (err error)
 	// Remove a volume. Requires all images to be removed.
 	RemoveVolume(context.Context, *RemoveVolumePayload) (err error)
-	// Apply a label to a volume.
-	LabelVolume(context.Context, *LabelVolumePayload) (err error)
 	// Get information on a volume
 	InfoVolume(context.Context, *InfoVolumePayload) (err error)
 	// Create an image on a volume
@@ -41,7 +39,7 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [9]string{"add_volume", "remove_volume", "label_volume", "info_volume", "create_image_on_volume", "delete_image_on_volume", "resize_image_on_volume", "info_image_on_volume", "move_image"}
+var MethodNames = [8]string{"add_volume", "remove_volume", "info_volume", "create_image_on_volume", "delete_image_on_volume", "resize_image_on_volume", "info_image_on_volume", "move_image"}
 
 // AddVolumePayload is the payload type of the spin-apiserver service
 // add_volume method.
@@ -57,15 +55,6 @@ type AddVolumePayload struct {
 type RemoveVolumePayload struct {
 	// volume identifier
 	Volume string
-}
-
-// LabelVolumePayload is the payload type of the spin-apiserver service
-// label_volume method.
-type LabelVolumePayload struct {
-	// volume identifier
-	Volume string
-	// label identifier to apply to volume
-	Label string
 }
 
 // InfoVolumePayload is the payload type of the spin-apiserver service
