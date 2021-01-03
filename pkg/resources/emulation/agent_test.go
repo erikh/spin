@@ -18,6 +18,10 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
+func mkuint(u uint) *uint {
+	return &u
+}
+
 var testTable = map[string]test{
 	"garbage": {
 		commands: []command{{Action: "garbage"}},
@@ -43,7 +47,7 @@ var testTable = map[string]test{
 						{
 							Image:     "test.raw",
 							Volume:    "test",
-							ImageSize: 50,
+							ImageSize: mkuint(50),
 						},
 					},
 				},
@@ -63,7 +67,7 @@ var testTable = map[string]test{
 						{
 							Image:     "test.raw",
 							Volume:    "test",
-							ImageSize: 50,
+							ImageSize: mkuint(50),
 						},
 					},
 				},
@@ -127,7 +131,7 @@ var testTable = map[string]test{
 							{
 								Image:     "test.raw",
 								Volume:    "test",
-								ImageSize: 50,
+								ImageSize: mkuint(50),
 							},
 						},
 					},

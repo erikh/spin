@@ -932,7 +932,6 @@ definitions:
     required:
     - volume
     - image
-    - image_size
   StorageResponseBody:
     title: StorageResponseBody
     type: object
@@ -962,7 +961,6 @@ definitions:
     required:
     - volume
     - image
-    - image_size
   VMRequestBody:
     title: VMRequestBody
     type: object

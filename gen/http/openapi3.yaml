@@ -863,7 +863,6 @@ components:
       required:
       - volume
       - image
-      - image_size
     UpdateRequestBody:
       type: object
       properties:

@@ -27,6 +27,7 @@ var templateInputs = map[string]templateConfig{
 		Command: "/bin/qemu-system-x86_64",
 		SpinQMP: spinQMPBin,
 		Args:    []string{"-cpu", "host"},
+		Home:    "/home/erikh",
 	},
 }
 
@@ -40,7 +41,7 @@ Description=Virtual Machine #1: one
 [Service]
 Type=simple
 ExecStart=/bin/qemu-system-x86_64 -cpu host 
-ExecStop=/home/erikh/bin/spin-qmp shutdown $HOME/.config/spin/monitors/1
+ExecStop=/home/erikh/bin/spin-qmp shutdown /home/erikh/.config/spin/monitors/1
 TimeoutStopSec=30
 KillSignal=SIGCONT
 FinalKillSignal=SIGKILL

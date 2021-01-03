@@ -60,6 +60,10 @@ func TestDispatcher(t *testing.T) {
 		},
 	}
 
+	mkuint := func(u uint) *uint {
+		return &u
+	}
+
 	vm, _ := json.Marshal(&spinregistry.VM{
 		Name:   "foo",
 		Cpus:   1,
@@ -67,7 +71,7 @@ func TestDispatcher(t *testing.T) {
 		Storage: []*spinregistry.Storage{
 			{
 				Image:     "test.raw",
-				ImageSize: 50,
+				ImageSize: mkuint(50),
 				Volume:    "test",
 			},
 		},

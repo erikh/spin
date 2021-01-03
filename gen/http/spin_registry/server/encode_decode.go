@@ -199,7 +199,7 @@ func unmarshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *sp
 	res := &spinregistry.Storage{
 		Volume:    *v.Volume,
 		Image:     *v.Image,
-		ImageSize: *v.ImageSize,
+		ImageSize: v.ImageSize,
 		Cdrom:     v.Cdrom,
 	}
 

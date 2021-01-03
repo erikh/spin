@@ -52,7 +52,7 @@ type StorageResponseBody struct {
 	// Image filename, must not include `/`
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
-	ImageSize uint `form:"image_size" json:"image_size" xml:"image_size"`
+	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
@@ -182,9 +182,6 @@ func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
 	}
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
-	}
-	if body.ImageSize == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image_size", "body"))
 	}
 	return
 }
