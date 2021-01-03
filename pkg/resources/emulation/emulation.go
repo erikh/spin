@@ -1,6 +1,9 @@
 package emulation
 
-import "code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+import (
+	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+)
 
 // ResourceType encapuslates our standard resource type, for all storage
 // agents.
@@ -23,23 +26,26 @@ type DispatcherConfig struct {
 func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 	return dispatcher.Table{
 		"write_config": {
-			RequiredParameters: []string{"vm", "id"},
-			Dispatch:           dc.WriteConfig,
+			RequiredParameters: dispatcher.ParameterTable{
+				"vm": func() interface{} { return &spinregistry.VM{} },
+				"id": dispatcher.TypeUint64,
+			},
+			Dispatch: dc.WriteConfig,
 		},
 		"remove_config": {
-			RequiredParameters: []string{"id"},
+			RequiredParameters: dispatcher.ParameterTable{"id": dispatcher.TypeUint64},
 			Dispatch:           dc.RemoveConfig,
 		},
 		"start": {
-			RequiredParameters: []string{"id"},
+			RequiredParameters: dispatcher.ParameterTable{"id": dispatcher.TypeUint64},
 			Dispatch:           dc.Start,
 		},
 		"stop": {
-			RequiredParameters: []string{"id"},
+			RequiredParameters: dispatcher.ParameterTable{"id": dispatcher.TypeUint64},
 			Dispatch:           dc.Stop,
 		},
 		"shutdown": {
-			RequiredParameters: []string{"id"},
+			RequiredParameters: dispatcher.ParameterTable{"id": dispatcher.TypeUint64},
 			Dispatch:           dc.Shutdown,
 		},
 	}

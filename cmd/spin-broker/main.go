@@ -158,7 +158,7 @@ func messageAdd(ctx *cli.Context) error {
 	pkg := ctx.Args().Get(0)
 	resource := ctx.Args().Get(1)
 	action := ctx.Args().Get(2)
-	parameters := map[string]interface{}{}
+	parameters := map[string]json.RawMessage{}
 
 	if pkg == "" || resource == "" || action == "" {
 		return errors.New("invalid parameters. try --help")
@@ -170,14 +170,7 @@ func messageAdd(ctx *cli.Context) error {
 			return errors.New("invalid key=value parameters")
 		}
 
-		var i interface{}
-
-		// if we cannot unmarshal, just assign it as string for UX goodness
-		if err := json.Unmarshal([]byte(param[1]), &i); err != nil {
-			parameters[param[0]] = param[1]
-		} else {
-			parameters[param[0]] = i
-		}
+		parameters[param[0]] = json.RawMessage(param[1])
 	}
 
 	cc := brokerclient.Config{

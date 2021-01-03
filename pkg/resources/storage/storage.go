@@ -24,28 +24,43 @@ type DispatcherConfig struct {
 func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 	return dispatcher.Table{
 		"add_volume": {
-			RequiredParameters: []string{"path"},
+			RequiredParameters: dispatcher.ParameterTable{"path": dispatcher.TypeString},
 			Dispatch:           dc.AddVolume,
 		},
 		"remove_volume": {
-			RequiredParameters: []string{"path"},
+			RequiredParameters: dispatcher.ParameterTable{"path": dispatcher.TypeString},
 			Dispatch:           dc.RemoveVolume,
 		},
 		"create_image": {
-			RequiredParameters: []string{"volume_path", "image_name", "image_size"},
-			Dispatch:           dc.CreateImage,
+			RequiredParameters: dispatcher.ParameterTable{
+				"volume_path": dispatcher.TypeString,
+				"image_name":  dispatcher.TypeString,
+				"image_size":  dispatcher.TypeUint64,
+			},
+			Dispatch: dc.CreateImage,
 		},
 		"delete_image": {
-			RequiredParameters: []string{"volume_path", "image_name"},
-			Dispatch:           dc.DeleteImage,
+			RequiredParameters: dispatcher.ParameterTable{
+				"volume_path": dispatcher.TypeString,
+				"image_name":  dispatcher.TypeString,
+			},
+			Dispatch: dc.DeleteImage,
 		},
 		"resize_image": {
-			RequiredParameters: []string{"volume_path", "image_name", "image_size"},
-			Dispatch:           dc.ResizeImage,
+			RequiredParameters: dispatcher.ParameterTable{
+				"volume_path": dispatcher.TypeString,
+				"image_name":  dispatcher.TypeString,
+				"image_size":  dispatcher.TypeUint64,
+			},
+			Dispatch: dc.ResizeImage,
 		},
 		"move_image": {
-			RequiredParameters: []string{"image_name", "volume", "target_volume"},
-			Dispatch:           dc.MoveImage,
+			RequiredParameters: dispatcher.ParameterTable{
+				"image_name":    dispatcher.TypeString,
+				"volume":        dispatcher.TypeString,
+				"target_volume": dispatcher.TypeString,
+			},
+			Dispatch: dc.MoveImage,
 		},
 	}
 }

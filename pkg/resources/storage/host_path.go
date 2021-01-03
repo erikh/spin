@@ -44,7 +44,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 
 	return DispatcherConfig{
 		AddVolume: func(c dispatcher.Command) error {
-			path, err := bp(c.Parameters["path"])
+			path, err := bp(c.Parameter("path").(string))
 			if err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return errors.New("already exists")
 		},
 		RemoveVolume: func(c dispatcher.Command) error {
-			path, err := bp(c.Parameters["path"])
+			path, err := bp(c.Parameter("path").(string))
 			if err != nil {
 				return err
 			}
@@ -74,14 +74,14 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return os.RemoveAll(path)
 		},
 		CreateImage: func(c dispatcher.Command) error {
-			path, err := bp(c.Parameters["volume_path"], c.Parameters["image_name"])
+			path, err := bp(c.Parameter("volume_path").(string), c.Parameter("image_name").(string))
 			if err != nil {
 				return err
 			}
 
 			// FIXME add a debug trap for these shell commands later
 			// NOTE the integer parameters come back from JSON by default as float64s
-			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%.0fG", c.Parameters["image_size"]))
+			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%.0fG", c.Parameter("image_size").(float64)))
 			return cmd.Run()
 		},
 		DeleteImage: func(c dispatcher.Command) error {

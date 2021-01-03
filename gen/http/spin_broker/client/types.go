@@ -8,6 +8,8 @@
 package client
 
 import (
+	"encoding/json"
+
 	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -20,7 +22,7 @@ type AddRequestBody struct {
 	// Action name
 	Action string `form:"action" json:"action" xml:"action"`
 	// Action parameters
-	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	Parameters map[string]json.RawMessage `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
@@ -52,8 +54,8 @@ type NextResponseBody struct {
 	Resource *string `form:"resource,omitempty" json:"resource,omitempty" xml:"resource,omitempty"`
 	// action name
 	Action *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
-	// parameters for action
-	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	// Action parameters
+	Parameters map[string]json.RawMessage `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
 }
 
 // StatusRecordNotFoundResponseBody is the type of the "spin-broker" service
@@ -100,7 +102,7 @@ func NewAddRequestBody(p *spinbroker.AddPayload) *AddRequestBody {
 		Action:   p.Action,
 	}
 	if p.Parameters != nil {
-		body.Parameters = make(map[string]interface{}, len(p.Parameters))
+		body.Parameters = make(map[string]json.RawMessage, len(p.Parameters))
 		for key, val := range p.Parameters {
 			tk := key
 			tv := val
@@ -156,7 +158,7 @@ func NewNextResultOK(body *NextResponseBody) *spinbroker.NextResult {
 		Action:   *body.Action,
 	}
 	if body.Parameters != nil {
-		v.Parameters = make(map[string]interface{}, len(body.Parameters))
+		v.Parameters = make(map[string]json.RawMessage, len(body.Parameters))
 		for key, val := range body.Parameters {
 			tk := key
 			tv := val

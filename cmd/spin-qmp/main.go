@@ -27,7 +27,10 @@ func main() {
 			Action:      raw,
 		},
 		{
-			Name: "shutdown",
+			Name:        "shutdown",
+			Usage:       "Sends a shutdown command to the guest, and waits for it to shutdown.",
+			Description: "Sends a shutdown command to the guest, and waits for it to shutdown.",
+			UsageText:   path.Base(os.Args[0]) + " [monitor socket]",
 			Flags: []cli.Flag{
 				&cli.DurationFlag{
 					Name:    "wait",

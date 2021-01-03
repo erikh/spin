@@ -670,7 +670,7 @@ definitions:
         example: Natus dicta aliquid.
       parameters:
         type: object
-        description: parameters for action
+        description: Action parameters
         example:
           Sint ut facilis nobis quo.: Iusto non quae.
         additionalProperties: true

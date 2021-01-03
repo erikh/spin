@@ -9,6 +9,7 @@ package spinbroker
 
 import (
 	"context"
+	"encoding/json"
 
 	goa "goa.design/goa/v3/pkg"
 )
@@ -49,7 +50,7 @@ type AddPayload struct {
 	// Action name
 	Action string
 	// Action parameters
-	Parameters map[string]interface{}
+	Parameters map[string]json.RawMessage
 }
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.
@@ -86,8 +87,8 @@ type NextResult struct {
 	Resource string
 	// action name
 	Action string
-	// parameters for action
-	Parameters map[string]interface{}
+	// Action parameters
+	Parameters map[string]json.RawMessage
 }
 
 // CompletePayload is the payload type of the spin-broker service complete

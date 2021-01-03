@@ -1,7 +1,6 @@
 package emulation
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -41,14 +40,10 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
-			vm, err := commandToVM(c.Parameters["vm"].(map[string]interface{}))
-			if err != nil {
-				return err
-			}
+			id := c.Parameter("id").(*uint64)
+			vm := c.Parameter("vm").(*spinregistry.VM)
 
-			id := uint64(c.Parameters["id"].(float64))
-
-			tc, err := vmToTemplateConfig(ac, id, vm)
+			tc, err := vmToTemplateConfig(ac, *id, vm)
 			if err != nil {
 				return err
 			}
@@ -62,7 +57,7 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 				return err
 			}
 
-			fn := configFilename(id)
+			fn := configFilename(*id)
 
 			os.Remove(fn)
 
@@ -79,40 +74,25 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 			return ac.Supervisor.Reload()
 		},
 		RemoveConfig: func(c dispatcher.Command) error {
-			id := uint64(c.Parameters["id"].(float64))
-			if err := os.Remove(configFilename(id)); err != nil {
+			id := c.Parameter("id").(*uint64)
+			if err := os.Remove(configFilename(*id)); err != nil {
 				return err
 			}
 
 			return ac.Supervisor.Reload()
 		},
 		Start: func(c dispatcher.Command) error {
-			id := uint64(c.Parameters["id"].(float64))
-			return ac.Supervisor.Start(serviceName(id))
+			id := c.Parameter("id").(*uint64)
+			return ac.Supervisor.Start(serviceName(*id))
 		},
 		Stop: func(c dispatcher.Command) error {
-			id := uint64(c.Parameters["id"].(float64))
-			return ac.Supervisor.Stop(serviceName(id))
+			id := c.Parameter("id").(*uint64)
+			return ac.Supervisor.Stop(serviceName(*id))
 		},
 		Shutdown: func(c dispatcher.Command) error {
 			return nil
 		},
 	}
-}
-
-func commandToVM(vm map[string]interface{}) (*spinregistry.VM, error) {
-	content, err := json.Marshal(vm)
-	if err != nil {
-		return nil, err
-	}
-
-	var ret spinregistry.VM
-
-	if err := json.Unmarshal(content, &ret); err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
 }
 
 // MonitorDir is the directory where the qemu control monitors are kept

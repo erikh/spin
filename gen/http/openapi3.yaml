@@ -791,7 +791,7 @@ components:
           example: Tempora quisquam inventore inventore qui nihil.
         parameters:
           type: object
-          description: parameters for action
+          description: Action parameters
           example:
             Consectetur optio sint.: Nesciunt et molestiae soluta ut animi.
             Tempore iste voluptatem est.: Deserunt blanditiis consequatur consequuntur praesentium consequatur.

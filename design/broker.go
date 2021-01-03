@@ -23,7 +23,11 @@ var _ = Service("spin-broker", func() {
 			Attribute("id", String, "Package ID")
 			Attribute("resource", String, "Resource name")
 			Attribute("action", String, "Action name")
-			Attribute("parameters", MapOf(String, Any), "Action parameters")
+			Attribute("parameters", MapOf(String, Any, func() {
+				Elem(func() {
+					Meta("struct:field:type", "json.RawMessage", "encoding/json")
+				})
+			}), "Action parameters")
 
 			Required("id", "resource", "action")
 		})
@@ -91,7 +95,11 @@ var _ = Service("spin-broker", func() {
 			Attribute("uuid", String, "Command ID")
 			Attribute("resource", String, "resource type")
 			Attribute("action", String, "action name")
-			Attribute("parameters", MapOf(String, Any), "parameters for action")
+			Attribute("parameters", MapOf(String, Any, func() {
+				Elem(func() {
+					Meta("struct:field:type", "json.RawMessage", "encoding/json")
+				})
+			}), "Action parameters")
 			Required("uuid", "resource", "action")
 		})
 

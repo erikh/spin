@@ -1,8 +1,11 @@
 package dispatcher
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
+
+	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 )
 
 func TestDispatcher(t *testing.T) {
@@ -11,8 +14,8 @@ func TestDispatcher(t *testing.T) {
 
 	dispatcher := Table{
 		"action1": Action{
-			OptionalParameters: []string{"baz"},
-			RequiredParameters: []string{"foo", "bar"},
+			OptionalParameters: ParameterTable{"baz": TypeString},
+			RequiredParameters: ParameterTable{"foo": TypeString, "bar": TypeString},
 			Dispatch: func(c Command) error {
 				action1++
 				return nil
@@ -29,7 +32,46 @@ func TestDispatcher(t *testing.T) {
 				return errors.New("this is an error")
 			},
 		},
+		"with_typed_parameters": Action{
+			OptionalParameters: ParameterTable{"vm": func() interface{} { return &spinregistry.VM{} }},
+			RequiredParameters: ParameterTable{"string": TypeString, "uint": TypeUint64},
+			Dispatch: func(c Command) error {
+				switch c.Parameter("string").(type) {
+				case *string:
+				default:
+					return errors.New("invalid type for string")
+				}
+
+				switch c.Parameter("uint").(type) {
+				case *uint64:
+				default:
+					return errors.New("invalid type for string")
+				}
+
+				switch c.Parameter("vm").(type) {
+				case *spinregistry.VM:
+				case nil:
+				default:
+					return errors.New("invalid type for string")
+				}
+
+				return nil
+			},
+		},
 	}
+
+	vm, _ := json.Marshal(&spinregistry.VM{
+		Name:   "foo",
+		Cpus:   1,
+		Memory: 1024,
+		Storage: []*spinregistry.Storage{
+			{
+				Image:     "test.raw",
+				ImageSize: 50,
+				Volume:    "test",
+			},
+		},
+	})
 
 	table := map[string]struct {
 		command Command
@@ -46,9 +88,9 @@ func TestDispatcher(t *testing.T) {
 		"action1-green1": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"foo": "quux",
-					"bar": "quux2",
+				Parameters: map[string]json.RawMessage{
+					"foo": []byte(`"quux"`),
+					"bar": []byte(`"quux2"`),
 				},
 			},
 			pass: true,
@@ -56,10 +98,10 @@ func TestDispatcher(t *testing.T) {
 		"action1-green2": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"foo": "quux",
-					"bar": "quux2",
-					"baz": "quux3",
+				Parameters: map[string]json.RawMessage{
+					"foo": []byte(`"quux"`),
+					"bar": []byte(`"quux2"`),
+					"baz": []byte(`"quux3"`),
 				},
 			},
 			pass: true,
@@ -74,9 +116,9 @@ func TestDispatcher(t *testing.T) {
 		"action1-red2": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"bar": "quux2",
-					"baz": "quux3",
+				Parameters: map[string]json.RawMessage{
+					"bar": []byte(`"quux2"`),
+					"baz": []byte(`"quux3"`),
 				},
 			},
 			pass:  false,
@@ -85,9 +127,9 @@ func TestDispatcher(t *testing.T) {
 		"action1-red3": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"foo": "quux2",
-					"baz": "quux3",
+				Parameters: map[string]json.RawMessage{
+					"foo": []byte(`"quux2"`),
+					"baz": []byte(`"quux3"`),
 				},
 			},
 			pass:  false,
@@ -96,8 +138,8 @@ func TestDispatcher(t *testing.T) {
 		"action1-red4": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"baz": "quux3",
+				Parameters: map[string]json.RawMessage{
+					"baz": []byte(`"quux3"`),
 				},
 			},
 			pass:  false,
@@ -106,10 +148,10 @@ func TestDispatcher(t *testing.T) {
 		"action1-red5": {
 			command: Command{
 				Action: "action1",
-				Parameters: map[string]interface{}{
-					"foo":  "quux",
-					"bar":  "quux2",
-					"quux": "quux3",
+				Parameters: map[string]json.RawMessage{
+					"foo":  []byte(`"quux"`),
+					"bar":  []byte(`"quux2"`),
+					"quux": []byte(`"quux3"`),
 				},
 			},
 			pass:  false,
@@ -124,12 +166,66 @@ func TestDispatcher(t *testing.T) {
 		"action2-red1": {
 			command: Command{
 				Action: "action2",
-				Parameters: map[string]interface{}{
-					"foo": "quux",
+				Parameters: map[string]json.RawMessage{
+					"foo": []byte(`"quux"`),
 				},
 			},
 			pass:  false,
 			error: ErrInvalidParameter,
+		},
+		"with_parameters-green1": {
+			command: Command{
+				Action: "with_typed_parameters",
+				Parameters: map[string]json.RawMessage{
+					"string": []byte(`"string"`),
+					"uint":   []byte(`1`),
+				},
+			},
+			pass: true,
+		},
+		"with_parameters-green2": {
+			command: Command{
+				Action: "with_typed_parameters",
+				Parameters: map[string]json.RawMessage{
+					"string": []byte(`"string"`),
+					"uint":   []byte(`1`),
+					"vm":     vm,
+				},
+			},
+			pass: true,
+		},
+		"with_parameters-red1": {
+			command: Command{
+				Action: "with_typed_parameters",
+				Parameters: map[string]json.RawMessage{
+					"string": []byte(`1`),
+					"uint":   []byte(`1`),
+					"vm":     vm,
+				},
+			},
+			pass: false,
+		},
+		"with_parameters-red2": {
+			command: Command{
+				Action: "with_typed_parameters",
+				Parameters: map[string]json.RawMessage{
+					"string": []byte(`"string"`),
+					"uint":   []byte(`"1"`),
+					"vm":     vm,
+				},
+			},
+			pass: false,
+		},
+		"with_parameters-red3": {
+			command: Command{
+				Action: "with_typed_parameters",
+				Parameters: map[string]json.RawMessage{
+					"string": []byte(`"string"`),
+					"uint":   []byte(`1`),
+					"vm":     []byte(`1`),
+				},
+			},
+			pass: false,
 		},
 	}
 
