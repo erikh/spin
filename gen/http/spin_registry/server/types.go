@@ -32,6 +32,20 @@ type VMUpdateRequestBody struct {
 	VM *VMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
 }
 
+// StorageVolumesCreateRequestBody is the type of the "spin-registry" service
+// "storage/volumes/create" endpoint HTTP request body.
+type StorageVolumesCreateRequestBody struct {
+	// name of volume
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
+// StorageVolumesDeleteRequestBody is the type of the "spin-registry" service
+// "storage/volumes/delete" endpoint HTTP request body.
+type StorageVolumesDeleteRequestBody struct {
+	// name of volume
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+}
+
 // VMGetResponseBody is the type of the "spin-registry" service "vm/get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
@@ -139,6 +153,26 @@ func NewVMGetPayload(id uint64) *spinregistry.VMGetPayload {
 	return v
 }
 
+// NewStorageVolumesCreatePayload builds a spin-registry service
+// storage/volumes/create endpoint payload.
+func NewStorageVolumesCreatePayload(body *StorageVolumesCreateRequestBody) *spinregistry.StorageVolumesCreatePayload {
+	v := &spinregistry.StorageVolumesCreatePayload{
+		Name: *body.Name,
+	}
+
+	return v
+}
+
+// NewStorageVolumesDeletePayload builds a spin-registry service
+// storage/volumes/delete endpoint payload.
+func NewStorageVolumesDeletePayload(body *StorageVolumesDeleteRequestBody) *spinregistry.StorageVolumesDeletePayload {
+	v := &spinregistry.StorageVolumesDeletePayload{
+		Name: *body.Name,
+	}
+
+	return v
+}
+
 // ValidateVMCreateRequestBody runs the validations defined on
 // Vm/CreateRequestBody
 func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
@@ -174,6 +208,24 @@ func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 		if err2 := ValidateVMRequestBody(body.VM); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
+	}
+	return
+}
+
+// ValidateStorageVolumesCreateRequestBody runs the validations defined on
+// Storage/Volumes/CreateRequestBody
+func ValidateStorageVolumesCreateRequestBody(body *StorageVolumesCreateRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	return
+}
+
+// ValidateStorageVolumesDeleteRequestBody runs the validations defined on
+// Storage/Volumes/DeleteRequestBody
+func ValidateStorageVolumesDeleteRequestBody(body *StorageVolumesDeleteRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
 	return
 }

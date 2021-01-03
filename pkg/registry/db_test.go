@@ -40,7 +40,7 @@ func TestDBCRUD(t *testing.T) {
 		Name: "foo",
 	}
 
-	id, err := db.Create(vm)
+	id, err := db.VMCreate(vm)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,7 +49,7 @@ func TestDBCRUD(t *testing.T) {
 		t.Fatal("id was equal to 0")
 	}
 
-	vm2, err := db.Get(id)
+	vm2, err := db.VMGet(id)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -60,11 +60,11 @@ func TestDBCRUD(t *testing.T) {
 
 	vm.Cpus = 1 // set something differently to test update
 
-	if err := db.Update(id, vm); err != nil {
+	if err := db.VMUpdate(id, vm); err != nil {
 		t.Fatal(err)
 	}
 
-	vm2, err = db.Get(id)
+	vm2, err = db.VMGet(id)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +73,7 @@ func TestDBCRUD(t *testing.T) {
 		t.Fatal("vms were not equal")
 	}
 
-	ids, err := db.List()
+	ids, err := db.VMList()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,15 +82,15 @@ func TestDBCRUD(t *testing.T) {
 		t.Fatal("id list was not equal")
 	}
 
-	if err := db.Delete(id); err != nil {
+	if err := db.VMDelete(id); err != nil {
 		t.Fatal(err)
 	}
 
-	if _, err := db.Get(id); err == nil {
+	if _, err := db.VMGet(id); err == nil {
 		t.Fatal("vm is still available after delete")
 	}
 
-	ids, err = db.List()
+	ids, err = db.VMList()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func TestDBCRUD(t *testing.T) {
 	ids = []uint64{}
 
 	for i := 0; i < 10; i++ {
-		id, err := db.Create(vm)
+		id, err := db.VMCreate(vm)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -110,7 +110,7 @@ func TestDBCRUD(t *testing.T) {
 		ids = append(ids, id)
 	}
 
-	ids2, err := db.List()
+	ids2, err := db.VMList()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,18 +127,18 @@ func TestDBCRUDTable(t *testing.T) {
 	}{
 		"get non-existent": {
 			call: func(db *DB) error {
-				_, err := db.Get(1)
+				_, err := db.VMGet(1)
 				return err
 			},
 		},
 		"delete non-existent": {
 			call: func(db *DB) error {
-				return db.Delete(1)
+				return db.VMDelete(1)
 			},
 		},
 		"update non-existent": {
 			call: func(db *DB) error {
-				return db.Update(1, &spinregistry.VM{})
+				return db.VMUpdate(1, &spinregistry.VM{})
 			},
 		},
 	}

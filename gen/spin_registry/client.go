@@ -15,21 +15,27 @@ import (
 
 // Client is the "spin-registry" service client.
 type Client struct {
-	VMCreateEndpoint goa.Endpoint
-	VMUpdateEndpoint goa.Endpoint
-	VMDeleteEndpoint goa.Endpoint
-	VMGetEndpoint    goa.Endpoint
-	VMListEndpoint   goa.Endpoint
+	VMCreateEndpoint             goa.Endpoint
+	VMUpdateEndpoint             goa.Endpoint
+	VMDeleteEndpoint             goa.Endpoint
+	VMGetEndpoint                goa.Endpoint
+	VMListEndpoint               goa.Endpoint
+	StorageVolumesListEndpoint   goa.Endpoint
+	StorageVolumesCreateEndpoint goa.Endpoint
+	StorageVolumesDeleteEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "spin-registry" service client given the endpoints.
-func NewClient(vMCreate, vMUpdate, vMDelete, vMGet, vMList goa.Endpoint) *Client {
+func NewClient(vMCreate, vMUpdate, vMDelete, vMGet, vMList, storageVolumesList, storageVolumesCreate, storageVolumesDelete goa.Endpoint) *Client {
 	return &Client{
-		VMCreateEndpoint: vMCreate,
-		VMUpdateEndpoint: vMUpdate,
-		VMDeleteEndpoint: vMDelete,
-		VMGetEndpoint:    vMGet,
-		VMListEndpoint:   vMList,
+		VMCreateEndpoint:             vMCreate,
+		VMUpdateEndpoint:             vMUpdate,
+		VMDeleteEndpoint:             vMDelete,
+		VMGetEndpoint:                vMGet,
+		VMListEndpoint:               vMList,
+		StorageVolumesListEndpoint:   storageVolumesList,
+		StorageVolumesCreateEndpoint: storageVolumesCreate,
+		StorageVolumesDeleteEndpoint: storageVolumesDelete,
 	}
 }
 
@@ -73,4 +79,29 @@ func (c *Client) VMList(ctx context.Context) (res []uint64, err error) {
 		return
 	}
 	return ires.([]uint64), nil
+}
+
+// StorageVolumesList calls the "storage/volumes/list" endpoint of the
+// "spin-registry" service.
+func (c *Client) StorageVolumesList(ctx context.Context) (res []string, err error) {
+	var ires interface{}
+	ires, err = c.StorageVolumesListEndpoint(ctx, nil)
+	if err != nil {
+		return
+	}
+	return ires.([]string), nil
+}
+
+// StorageVolumesCreate calls the "storage/volumes/create" endpoint of the
+// "spin-registry" service.
+func (c *Client) StorageVolumesCreate(ctx context.Context, p *StorageVolumesCreatePayload) (err error) {
+	_, err = c.StorageVolumesCreateEndpoint(ctx, p)
+	return
+}
+
+// StorageVolumesDelete calls the "storage/volumes/delete" endpoint of the
+// "spin-registry" service.
+func (c *Client) StorageVolumesDelete(ctx context.Context, p *StorageVolumesDeletePayload) (err error) {
+	_, err = c.StorageVolumesDeleteEndpoint(ctx, p)
+	return
 }

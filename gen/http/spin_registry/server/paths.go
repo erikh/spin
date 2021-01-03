@@ -35,3 +35,18 @@ func VMGetSpinRegistryPath(id uint64) string {
 func VMListSpinRegistryPath() string {
 	return "/vm/list"
 }
+
+// StorageVolumesListSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/list HTTP endpoint.
+func StorageVolumesListSpinRegistryPath() string {
+	return "/storage/volumes/list"
+}
+
+// StorageVolumesCreateSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/create HTTP endpoint.
+func StorageVolumesCreateSpinRegistryPath() string {
+	return "/storage/volumes/create"
+}
+
+// StorageVolumesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/delete HTTP endpoint.
+func StorageVolumesDeleteSpinRegistryPath() string {
+	return "/storage/volumes/delete"
+}

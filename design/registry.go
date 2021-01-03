@@ -5,6 +5,12 @@ import . "goa.design/goa/v3/dsl" // nolint
 var _ = Service("spin-registry", func() {
 	Description("Keeper of the VMs")
 
+	/*******************************************
+	*
+	* vm registry functions
+	*
+	********************************************/
+
 	Method("vm/create", func() {
 		Description("Create a VM")
 		Payload(VM)
@@ -59,6 +65,48 @@ var _ = Service("spin-registry", func() {
 
 		HTTP(func() {
 			GET("/vm/list")
+			Response(StatusOK)
+		})
+	})
+
+	/*******************************************
+	*
+	* storage registry functions
+	*
+	********************************************/
+
+	Method("storage/volumes/list", func() {
+		Description("list all volumes")
+		Result(ArrayOf(String))
+
+		HTTP(func() {
+			GET("/storage/volumes/list")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/volumes/create", func() {
+		Description("create a new volume")
+		Payload(func() {
+			Attribute("name", String, "name of volume")
+			Required("name")
+		})
+
+		HTTP(func() {
+			POST("/storage/volumes/create")
+			Response(StatusOK)
+		})
+	})
+
+	Method("storage/volumes/delete", func() {
+		Description("delete an existing volume")
+		Payload(func() {
+			Attribute("name", String, "name of volume")
+			Required("name")
+		})
+
+		HTTP(func() {
+			POST("/storage/volumes/delete")
 			Response(StatusOK)
 		})
 	})

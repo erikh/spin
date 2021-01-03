@@ -15,21 +15,27 @@ import (
 
 // Endpoints wraps the "spin-registry" service endpoints.
 type Endpoints struct {
-	VMCreate goa.Endpoint
-	VMUpdate goa.Endpoint
-	VMDelete goa.Endpoint
-	VMGet    goa.Endpoint
-	VMList   goa.Endpoint
+	VMCreate             goa.Endpoint
+	VMUpdate             goa.Endpoint
+	VMDelete             goa.Endpoint
+	VMGet                goa.Endpoint
+	VMList               goa.Endpoint
+	StorageVolumesList   goa.Endpoint
+	StorageVolumesCreate goa.Endpoint
+	StorageVolumesDelete goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "spin-registry" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		VMCreate: NewVMCreateEndpoint(s),
-		VMUpdate: NewVMUpdateEndpoint(s),
-		VMDelete: NewVMDeleteEndpoint(s),
-		VMGet:    NewVMGetEndpoint(s),
-		VMList:   NewVMListEndpoint(s),
+		VMCreate:             NewVMCreateEndpoint(s),
+		VMUpdate:             NewVMUpdateEndpoint(s),
+		VMDelete:             NewVMDeleteEndpoint(s),
+		VMGet:                NewVMGetEndpoint(s),
+		VMList:               NewVMListEndpoint(s),
+		StorageVolumesList:   NewStorageVolumesListEndpoint(s),
+		StorageVolumesCreate: NewStorageVolumesCreateEndpoint(s),
+		StorageVolumesDelete: NewStorageVolumesDeleteEndpoint(s),
 	}
 }
 
@@ -41,6 +47,9 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.VMDelete = m(e.VMDelete)
 	e.VMGet = m(e.VMGet)
 	e.VMList = m(e.VMList)
+	e.StorageVolumesList = m(e.StorageVolumesList)
+	e.StorageVolumesCreate = m(e.StorageVolumesCreate)
+	e.StorageVolumesDelete = m(e.StorageVolumesDelete)
 }
 
 // NewVMCreateEndpoint returns an endpoint function that calls the method
@@ -84,5 +93,31 @@ func NewVMGetEndpoint(s Service) goa.Endpoint {
 func NewVMListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		return s.VMList(ctx)
+	}
+}
+
+// NewStorageVolumesListEndpoint returns an endpoint function that calls the
+// method "storage/volumes/list" of service "spin-registry".
+func NewStorageVolumesListEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		return s.StorageVolumesList(ctx)
+	}
+}
+
+// NewStorageVolumesCreateEndpoint returns an endpoint function that calls the
+// method "storage/volumes/create" of service "spin-registry".
+func NewStorageVolumesCreateEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*StorageVolumesCreatePayload)
+		return nil, s.StorageVolumesCreate(ctx, p)
+	}
+}
+
+// NewStorageVolumesDeleteEndpoint returns an endpoint function that calls the
+// method "storage/volumes/delete" of service "spin-registry".
+func NewStorageVolumesDeleteEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*StorageVolumesDeletePayload)
+		return nil, s.StorageVolumesDelete(ctx, p)
 	}
 }

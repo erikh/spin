@@ -319,6 +319,175 @@ func DecodeVMListResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 	}
 }
 
+// BuildStorageVolumesListRequest instantiates a HTTP request object with
+// method and path set to call the "spin-registry" service
+// "storage/volumes/list" endpoint
+func (c *Client) BuildStorageVolumesListRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageVolumesListSpinRegistryPath()}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/volumes/list", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeStorageVolumesListResponse returns a decoder for responses returned by
+// the spin-registry storage/volumes/list endpoint. restoreBody controls
+// whether the response body should be restored after having been read.
+func DecodeStorageVolumesListResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body []string
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-registry", "storage/volumes/list", err)
+			}
+			return body, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/volumes/list", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildStorageVolumesCreateRequest instantiates a HTTP request object with
+// method and path set to call the "spin-registry" service
+// "storage/volumes/create" endpoint
+func (c *Client) BuildStorageVolumesCreateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageVolumesCreateSpinRegistryPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/volumes/create", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageVolumesCreateRequest returns an encoder for requests sent to
+// the spin-registry storage/volumes/create server.
+func EncodeStorageVolumesCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.StorageVolumesCreatePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/volumes/create", "*spinregistry.StorageVolumesCreatePayload", v)
+		}
+		body := NewStorageVolumesCreateRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/volumes/create", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageVolumesCreateResponse returns a decoder for responses returned
+// by the spin-registry storage/volumes/create endpoint. restoreBody controls
+// whether the response body should be restored after having been read.
+func DecodeStorageVolumesCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/volumes/create", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildStorageVolumesDeleteRequest instantiates a HTTP request object with
+// method and path set to call the "spin-registry" service
+// "storage/volumes/delete" endpoint
+func (c *Client) BuildStorageVolumesDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: StorageVolumesDeleteSpinRegistryPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-registry", "storage/volumes/delete", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeStorageVolumesDeleteRequest returns an encoder for requests sent to
+// the spin-registry storage/volumes/delete server.
+func EncodeStorageVolumesDeleteRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinregistry.StorageVolumesDeletePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-registry", "storage/volumes/delete", "*spinregistry.StorageVolumesDeletePayload", v)
+		}
+		body := NewStorageVolumesDeleteRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-registry", "storage/volumes/delete", err)
+		}
+		return nil
+	}
+}
+
+// DecodeStorageVolumesDeleteResponse returns a decoder for responses returned
+// by the spin-registry storage/volumes/delete endpoint. restoreBody controls
+// whether the response body should be restored after having been read.
+func DecodeStorageVolumesDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage/volumes/delete", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // marshalSpinregistryStorageToStorageRequestBody builds a value of type
 // *StorageRequestBody from a value of type *spinregistry.Storage.
 func marshalSpinregistryStorageToStorageRequestBody(v *spinregistry.Storage) *StorageRequestBody {

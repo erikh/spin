@@ -18,12 +18,15 @@ import (
 
 // Server lists the spin-registry service endpoint HTTP handlers.
 type Server struct {
-	Mounts   []*MountPoint
-	VMCreate http.Handler
-	VMUpdate http.Handler
-	VMDelete http.Handler
-	VMGet    http.Handler
-	VMList   http.Handler
+	Mounts               []*MountPoint
+	VMCreate             http.Handler
+	VMUpdate             http.Handler
+	VMDelete             http.Handler
+	VMGet                http.Handler
+	VMList               http.Handler
+	StorageVolumesList   http.Handler
+	StorageVolumesCreate http.Handler
+	StorageVolumesDelete http.Handler
 }
 
 // ErrorNamer is an interface implemented by generated error structs that
@@ -64,12 +67,18 @@ func New(
 			{"VMDelete", "POST", "/vm/delete/{id}"},
 			{"VMGet", "GET", "/vm/get/{id}"},
 			{"VMList", "GET", "/vm/list"},
+			{"StorageVolumesList", "GET", "/storage/volumes/list"},
+			{"StorageVolumesCreate", "POST", "/storage/volumes/create"},
+			{"StorageVolumesDelete", "POST", "/storage/volumes/delete"},
 		},
-		VMCreate: NewVMCreateHandler(e.VMCreate, mux, decoder, encoder, errhandler, formatter),
-		VMUpdate: NewVMUpdateHandler(e.VMUpdate, mux, decoder, encoder, errhandler, formatter),
-		VMDelete: NewVMDeleteHandler(e.VMDelete, mux, decoder, encoder, errhandler, formatter),
-		VMGet:    NewVMGetHandler(e.VMGet, mux, decoder, encoder, errhandler, formatter),
-		VMList:   NewVMListHandler(e.VMList, mux, decoder, encoder, errhandler, formatter),
+		VMCreate:             NewVMCreateHandler(e.VMCreate, mux, decoder, encoder, errhandler, formatter),
+		VMUpdate:             NewVMUpdateHandler(e.VMUpdate, mux, decoder, encoder, errhandler, formatter),
+		VMDelete:             NewVMDeleteHandler(e.VMDelete, mux, decoder, encoder, errhandler, formatter),
+		VMGet:                NewVMGetHandler(e.VMGet, mux, decoder, encoder, errhandler, formatter),
+		VMList:               NewVMListHandler(e.VMList, mux, decoder, encoder, errhandler, formatter),
+		StorageVolumesList:   NewStorageVolumesListHandler(e.StorageVolumesList, mux, decoder, encoder, errhandler, formatter),
+		StorageVolumesCreate: NewStorageVolumesCreateHandler(e.StorageVolumesCreate, mux, decoder, encoder, errhandler, formatter),
+		StorageVolumesDelete: NewStorageVolumesDeleteHandler(e.StorageVolumesDelete, mux, decoder, encoder, errhandler, formatter),
 	}
 }
 
@@ -83,6 +92,9 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.VMDelete = m(s.VMDelete)
 	s.VMGet = m(s.VMGet)
 	s.VMList = m(s.VMList)
+	s.StorageVolumesList = m(s.StorageVolumesList)
+	s.StorageVolumesCreate = m(s.StorageVolumesCreate)
+	s.StorageVolumesDelete = m(s.StorageVolumesDelete)
 }
 
 // Mount configures the mux to serve the spin-registry endpoints.
@@ -92,6 +104,9 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountVMDeleteHandler(mux, h.VMDelete)
 	MountVMGetHandler(mux, h.VMGet)
 	MountVMListHandler(mux, h.VMList)
+	MountStorageVolumesListHandler(mux, h.StorageVolumesList)
+	MountStorageVolumesCreateHandler(mux, h.StorageVolumesCreate)
+	MountStorageVolumesDeleteHandler(mux, h.StorageVolumesDelete)
 }
 
 // MountVMCreateHandler configures the mux to serve the "spin-registry" service
@@ -330,6 +345,155 @@ func NewVMListHandler(
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		var err error
 		res, err := endpoint(ctx, nil)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageVolumesListHandler configures the mux to serve the
+// "spin-registry" service "storage/volumes/list" endpoint.
+func MountStorageVolumesListHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("GET", "/storage/volumes/list", f)
+}
+
+// NewStorageVolumesListHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/volumes/list"
+// endpoint.
+func NewStorageVolumesListHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		encodeResponse = EncodeStorageVolumesListResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/list")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		var err error
+		res, err := endpoint(ctx, nil)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageVolumesCreateHandler configures the mux to serve the
+// "spin-registry" service "storage/volumes/create" endpoint.
+func MountStorageVolumesCreateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/storage/volumes/create", f)
+}
+
+// NewStorageVolumesCreateHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/volumes/create"
+// endpoint.
+func NewStorageVolumesCreateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageVolumesCreateRequest(mux, decoder)
+		encodeResponse = EncodeStorageVolumesCreateResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/create")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountStorageVolumesDeleteHandler configures the mux to serve the
+// "spin-registry" service "storage/volumes/delete" endpoint.
+func MountStorageVolumesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/storage/volumes/delete", f)
+}
+
+// NewStorageVolumesDeleteHandler creates a HTTP handler which loads the HTTP
+// request and calls the "spin-registry" service "storage/volumes/delete"
+// endpoint.
+func NewStorageVolumesDeleteHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeStorageVolumesDeleteRequest(mux, decoder)
+		encodeResponse = EncodeStorageVolumesDeleteResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/delete")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
 		if err != nil {
 			if err := encodeError(ctx, w, err); err != nil {
 				errhandler(ctx, w, err)

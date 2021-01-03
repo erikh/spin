@@ -193,6 +193,86 @@ func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goa
 	}
 }
 
+// EncodeStorageVolumesListResponse returns an encoder for responses returned
+// by the spin-registry storage/volumes/list endpoint.
+func EncodeStorageVolumesListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.([]string)
+		enc := encoder(ctx, w)
+		body := res
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// EncodeStorageVolumesCreateResponse returns an encoder for responses returned
+// by the spin-registry storage/volumes/create endpoint.
+func EncodeStorageVolumesCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeStorageVolumesCreateRequest returns a decoder for requests sent to the
+// spin-registry storage/volumes/create endpoint.
+func DecodeStorageVolumesCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body StorageVolumesCreateRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateStorageVolumesCreateRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+		payload := NewStorageVolumesCreatePayload(&body)
+
+		return payload, nil
+	}
+}
+
+// EncodeStorageVolumesDeleteResponse returns an encoder for responses returned
+// by the spin-registry storage/volumes/delete endpoint.
+func EncodeStorageVolumesDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeStorageVolumesDeleteRequest returns a decoder for requests sent to the
+// spin-registry storage/volumes/delete endpoint.
+func DecodeStorageVolumesDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body StorageVolumesDeleteRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateStorageVolumesDeleteRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+		payload := NewStorageVolumesDeletePayload(&body)
+
+		return payload, nil
+	}
+}
+
 // unmarshalStorageRequestBodyToSpinregistryStorage builds a value of type
 // *spinregistry.Storage from a value of type *StorageRequestBody.
 func unmarshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *spinregistry.Storage {

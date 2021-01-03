@@ -24,7 +24,7 @@ func BuildVMCreatePayload(spinRegistryVMCreateBody string) (*spinregistry.VM, er
 	{
 		err = json.Unmarshal([]byte(spinRegistryVMCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 6421225864845588134,\n      \"memory\": 15540618699971399982,\n      \"name\": \"Et dicta.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n            \"image_size\": 8351098711286704476,\n            \"volume\": \"Porro eius officiis.\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 2074460472560899620,\n      \"memory\": 5284076406166230851,\n      \"name\": \"Rerum rerum porro eius.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Aut minima recusandae et.\",\n            \"image_size\": 4597833110689897909,\n            \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Aut minima recusandae et.\",\n            \"image_size\": 4597833110689897909,\n            \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Aut minima recusandae et.\",\n            \"image_size\": 4597833110689897909,\n            \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Aut minima recusandae et.\",\n            \"image_size\": 4597833110689897909,\n            \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n         }\n      ]\n   }'")
 		}
 		if body.Storage == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
@@ -56,7 +56,7 @@ func BuildVMUpdatePayload(spinRegistryVMUpdateBody string, spinRegistryVMUpdateI
 	{
 		err = json.Unmarshal([]byte(spinRegistryVMUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 8415388083871949362,\n         \"memory\": 15948619849308310515,\n         \"name\": \"Et qui fugit quis dignissimos qui.\",\n         \"storage\": [\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Labore voluptas perferendis ea iusto adipisci.\",\n               \"image_size\": 8351098711286704476,\n               \"volume\": \"Porro eius officiis.\"\n            }\n         ]\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 6259074207733349285,\n         \"memory\": 3262028922579224625,\n         \"name\": \"Modi magni voluptas corrupti.\",\n         \"storage\": [\n            {\n               \"cdrom\": true,\n               \"image\": \"Aut minima recusandae et.\",\n               \"image_size\": 4597833110689897909,\n               \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Aut minima recusandae et.\",\n               \"image_size\": 4597833110689897909,\n               \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n            },\n            {\n               \"cdrom\": true,\n               \"image\": \"Aut minima recusandae et.\",\n               \"image_size\": 4597833110689897909,\n               \"volume\": \"Perferendis ea iusto adipisci sapiente temporibus.\"\n            }\n         ]\n      }\n   }'")
 		}
 		if body.VM == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
@@ -116,6 +116,42 @@ func BuildVMGetPayload(spinRegistryVMGetID string) (*spinregistry.VMGetPayload, 
 	}
 	v := &spinregistry.VMGetPayload{}
 	v.ID = id
+
+	return v, nil
+}
+
+// BuildStorageVolumesCreatePayload builds the payload for the spin-registry
+// storage/volumes/create endpoint from CLI flags.
+func BuildStorageVolumesCreatePayload(spinRegistryStorageVolumesCreateBody string) (*spinregistry.StorageVolumesCreatePayload, error) {
+	var err error
+	var body StorageVolumesCreateRequestBody
+	{
+		err = json.Unmarshal([]byte(spinRegistryStorageVolumesCreateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Quia reprehenderit vitae.\"\n   }'")
+		}
+	}
+	v := &spinregistry.StorageVolumesCreatePayload{
+		Name: body.Name,
+	}
+
+	return v, nil
+}
+
+// BuildStorageVolumesDeletePayload builds the payload for the spin-registry
+// storage/volumes/delete endpoint from CLI flags.
+func BuildStorageVolumesDeletePayload(spinRegistryStorageVolumesDeleteBody string) (*spinregistry.StorageVolumesDeletePayload, error) {
+	var err error
+	var body StorageVolumesDeleteRequestBody
+	{
+		err = json.Unmarshal([]byte(spinRegistryStorageVolumesDeleteBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"name\": \"Aut adipisci.\"\n   }'")
+		}
+	}
+	v := &spinregistry.StorageVolumesDeletePayload{
+		Name: body.Name,
+	}
 
 	return v, nil
 }

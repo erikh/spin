@@ -35,6 +35,18 @@ type Client struct {
 	// VMList Doer is the HTTP client used to make requests to the vm/list endpoint.
 	VMListDoer goahttp.Doer
 
+	// StorageVolumesList Doer is the HTTP client used to make requests to the
+	// storage/volumes/list endpoint.
+	StorageVolumesListDoer goahttp.Doer
+
+	// StorageVolumesCreate Doer is the HTTP client used to make requests to the
+	// storage/volumes/create endpoint.
+	StorageVolumesCreateDoer goahttp.Doer
+
+	// StorageVolumesDelete Doer is the HTTP client used to make requests to the
+	// storage/volumes/delete endpoint.
+	StorageVolumesDeleteDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -56,16 +68,19 @@ func NewClient(
 	restoreBody bool,
 ) *Client {
 	return &Client{
-		VMCreateDoer:        doer,
-		VMUpdateDoer:        doer,
-		VMDeleteDoer:        doer,
-		VMGetDoer:           doer,
-		VMListDoer:          doer,
-		RestoreResponseBody: restoreBody,
-		scheme:              scheme,
-		host:                host,
-		decoder:             dec,
-		encoder:             enc,
+		VMCreateDoer:             doer,
+		VMUpdateDoer:             doer,
+		VMDeleteDoer:             doer,
+		VMGetDoer:                doer,
+		VMListDoer:               doer,
+		StorageVolumesListDoer:   doer,
+		StorageVolumesCreateDoer: doer,
+		StorageVolumesDeleteDoer: doer,
+		RestoreResponseBody:      restoreBody,
+		scheme:                   scheme,
+		host:                     host,
+		decoder:                  dec,
+		encoder:                  enc,
 	}
 }
 
@@ -169,6 +184,73 @@ func (c *Client) VMList() goa.Endpoint {
 		resp, err := c.VMListDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-registry", "vm/list", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageVolumesList returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/volumes/list server.
+func (c *Client) StorageVolumesList() goa.Endpoint {
+	var (
+		decodeResponse = DecodeStorageVolumesListResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageVolumesListRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageVolumesListDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/list", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageVolumesCreate returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/volumes/create server.
+func (c *Client) StorageVolumesCreate() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageVolumesCreateRequest(c.encoder)
+		decodeResponse = DecodeStorageVolumesCreateResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageVolumesCreateRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageVolumesCreateDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/create", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// StorageVolumesDelete returns an endpoint that makes HTTP requests to the
+// spin-registry service storage/volumes/delete server.
+func (c *Client) StorageVolumesDelete() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeStorageVolumesDeleteRequest(c.encoder)
+		decodeResponse = DecodeStorageVolumesDeleteResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildStorageVolumesDeleteRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.StorageVolumesDeleteDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/delete", err)
 		}
 		return decodeResponse(resp)
 	}

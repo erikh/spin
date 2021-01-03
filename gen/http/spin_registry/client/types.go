@@ -32,6 +32,20 @@ type VMUpdateRequestBody struct {
 	VM *VMRequestBody `form:"vm" json:"vm" xml:"vm"`
 }
 
+// StorageVolumesCreateRequestBody is the type of the "spin-registry" service
+// "storage/volumes/create" endpoint HTTP request body.
+type StorageVolumesCreateRequestBody struct {
+	// name of volume
+	Name string `form:"name" json:"name" xml:"name"`
+}
+
+// StorageVolumesDeleteRequestBody is the type of the "spin-registry" service
+// "storage/volumes/delete" endpoint HTTP request body.
+type StorageVolumesDeleteRequestBody struct {
+	// name of volume
+	Name string `form:"name" json:"name" xml:"name"`
+}
+
 // VMGetResponseBody is the type of the "spin-registry" service "vm/get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
@@ -104,6 +118,26 @@ func NewVMUpdateRequestBody(p *spinregistry.UpdateVM) *VMUpdateRequestBody {
 	body := &VMUpdateRequestBody{}
 	if p.VM != nil {
 		body.VM = marshalSpinregistryVMToVMRequestBody(p.VM)
+	}
+	return body
+}
+
+// NewStorageVolumesCreateRequestBody builds the HTTP request body from the
+// payload of the "storage/volumes/create" endpoint of the "spin-registry"
+// service.
+func NewStorageVolumesCreateRequestBody(p *spinregistry.StorageVolumesCreatePayload) *StorageVolumesCreateRequestBody {
+	body := &StorageVolumesCreateRequestBody{
+		Name: p.Name,
+	}
+	return body
+}
+
+// NewStorageVolumesDeleteRequestBody builds the HTTP request body from the
+// payload of the "storage/volumes/delete" endpoint of the "spin-registry"
+// service.
+func NewStorageVolumesDeleteRequestBody(p *spinregistry.StorageVolumesDeletePayload) *StorageVolumesDeleteRequestBody {
+	body := &StorageVolumesDeleteRequestBody{
+		Name: p.Name,
 	}
 	return body
 }

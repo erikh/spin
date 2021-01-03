@@ -23,6 +23,12 @@ type Service interface {
 	VMGet(context.Context, *VMGetPayload) (res *VM, err error)
 	// Retrieve all VM IDs
 	VMList(context.Context) (res []uint64, err error)
+	// list all volumes
+	StorageVolumesList(context.Context) (res []string, err error)
+	// create a new volume
+	StorageVolumesCreate(context.Context, *StorageVolumesCreatePayload) (err error)
+	// delete an existing volume
+	StorageVolumesDelete(context.Context, *StorageVolumesDeletePayload) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -33,7 +39,7 @@ const ServiceName = "spin-registry"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list"}
+var MethodNames = [8]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list", "storage/volumes/list", "storage/volumes/create", "storage/volumes/delete"}
 
 // VM is the payload type of the spin-registry service vm/create method.
 type VM struct {
@@ -66,6 +72,20 @@ type VMDeletePayload struct {
 type VMGetPayload struct {
 	// ID of VM to remove
 	ID uint64
+}
+
+// StorageVolumesCreatePayload is the payload type of the spin-registry service
+// storage/volumes/create method.
+type StorageVolumesCreatePayload struct {
+	// name of volume
+	Name string
+}
+
+// StorageVolumesDeletePayload is the payload type of the spin-registry service
+// storage/volumes/delete method.
+type StorageVolumesDeletePayload struct {
+	// name of volume
+	Name string
 }
 
 type Storage struct {

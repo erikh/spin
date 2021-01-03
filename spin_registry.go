@@ -19,21 +19,33 @@ func NewSpinRegistry(logger *log.Logger, db *registry.DB) spinregistry.Service {
 }
 
 func (s *spinRegistry) VMCreate(ctx context.Context, p *spinregistry.VM) (uint64, error) {
-	return s.db.Create(p)
+	return s.db.VMCreate(p)
 }
 
 func (s *spinRegistry) VMUpdate(ctx context.Context, p *spinregistry.UpdateVM) error {
-	return s.db.Update(p.ID, p.VM)
+	return s.db.VMUpdate(p.ID, p.VM)
 }
 
 func (s *spinRegistry) VMDelete(ctx context.Context, p *spinregistry.VMDeletePayload) error {
-	return s.db.Delete(p.ID)
+	return s.db.VMDelete(p.ID)
 }
 
 func (s *spinRegistry) VMGet(ctx context.Context, p *spinregistry.VMGetPayload) (*spinregistry.VM, error) {
-	return s.db.Get(p.ID)
+	return s.db.VMGet(p.ID)
 }
 
 func (s *spinRegistry) VMList(ctx context.Context) ([]uint64, error) {
-	return s.db.List()
+	return s.db.VMList()
+}
+
+func (s *spinRegistry) StorageVolumesCreate(ctx context.Context, p *spinregistry.StorageVolumesCreatePayload) error {
+	return s.db.StorageVolumeCreate(p.Name)
+}
+
+func (s *spinRegistry) StorageVolumesDelete(ctx context.Context, p *spinregistry.StorageVolumesDeletePayload) error {
+	return s.db.StorageVolumeDelete(p.Name)
+}
+
+func (s *spinRegistry) StorageVolumesList(ctx context.Context) ([]string, error) {
+	return s.db.StorageVolumeList()
 }
