@@ -13,7 +13,7 @@ func TypeUint64() interface{} { var i uint64; return &i }
 func TypeString() interface{} { var i string; return &i }
 
 // Command is a unit of instruction; it contains a UUID, the unique identifier
-// of the commmand, a Resource, the type of command to execute, an action, the
+// of the command, a Resource, the type of command to execute, an action, the
 // name of the command to execute, and parameters, a collection of items that
 // relate to the action for the purposes of execution.
 //

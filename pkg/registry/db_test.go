@@ -58,7 +58,7 @@ func TestDBCRUD(t *testing.T) {
 		t.Fatal("vms were not equal")
 	}
 
-	vm.Cpus = 1 // set something differenly to test update
+	vm.Cpus = 1 // set something differently to test update
 
 	if err := db.Update(id, vm); err != nil {
 		t.Fatal(err)

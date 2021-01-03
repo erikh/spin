@@ -1,0 +1,19 @@
+linters:                                                                                                                                                                                                                                       
+  enable:                                                                                                                                                                                                                                      
+    - goimports                                                                                                                                                                                                                                
+    - scopelint                                                                                                                                                                                                                                
+    - gocyclo                                                                                                                                                                                                                                  
+    - deadcode                                                                                                                                                                                                                                 
+    - gosimple                                                                                                                                                                                                                                 
+    - govet                                                                                                                                                                                                                                    
+    - ineffassign                                                                                                                                                                                                                              
+    - staticcheck                                                                                                                                                                                                                              
+    - structcheck                                                                                                                                                                                                                              
+    - typecheck                                                                                                                                                                                                                                
+    - unused                                                                                                                                                                                                                                   
+    - varcheck                                                                                                                                                                                                                                 
+    - bodyclose                                                                                                                                                                                                                                
+    - golint
+    - misspell                                                                                                                                                                                                                                 
+run:
+  deadline: 5m
