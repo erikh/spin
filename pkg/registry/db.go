@@ -41,6 +41,10 @@ func NewDB(c DBConfig) (*DB, error) {
 	})
 }
 
+func makeUintPtr(i uint) *uint {
+	return &i
+}
+
 func makeKey(id uint64) []byte {
 	byt := make([]byte, 8)
 	binary.BigEndian.PutUint64(byt, id)

@@ -66,6 +66,11 @@ func (db *DB) StorageImageDelete(volume, image string) error {
 			return errors.New("volume does not exist")
 		}
 
+		obj := bucket.Get([]byte(image))
+		if obj == nil {
+			return errors.New("image does not exist")
+		}
+
 		return bucket.Delete([]byte(image))
 	})
 }
