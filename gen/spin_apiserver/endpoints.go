@@ -8,119 +8,20 @@
 package spinapiserver
 
 import (
-	"context"
-
 	goa "goa.design/goa/v3/pkg"
 )
 
 // Endpoints wraps the "spin-apiserver" service endpoints.
 type Endpoints struct {
-	AddVolume           goa.Endpoint
-	RemoveVolume        goa.Endpoint
-	InfoVolume          goa.Endpoint
-	CreateImageOnVolume goa.Endpoint
-	DeleteImageOnVolume goa.Endpoint
-	ResizeImageOnVolume goa.Endpoint
-	InfoImageOnVolume   goa.Endpoint
-	MoveImage           goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "spin-apiserver" service with
 // endpoints.
 func NewEndpoints(s Service) *Endpoints {
-	return &Endpoints{
-		AddVolume:           NewAddVolumeEndpoint(s),
-		RemoveVolume:        NewRemoveVolumeEndpoint(s),
-		InfoVolume:          NewInfoVolumeEndpoint(s),
-		CreateImageOnVolume: NewCreateImageOnVolumeEndpoint(s),
-		DeleteImageOnVolume: NewDeleteImageOnVolumeEndpoint(s),
-		ResizeImageOnVolume: NewResizeImageOnVolumeEndpoint(s),
-		InfoImageOnVolume:   NewInfoImageOnVolumeEndpoint(s),
-		MoveImage:           NewMoveImageEndpoint(s),
-	}
+	return &Endpoints{}
 }
 
 // Use applies the given middleware to all the "spin-apiserver" service
 // endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
-	e.AddVolume = m(e.AddVolume)
-	e.RemoveVolume = m(e.RemoveVolume)
-	e.InfoVolume = m(e.InfoVolume)
-	e.CreateImageOnVolume = m(e.CreateImageOnVolume)
-	e.DeleteImageOnVolume = m(e.DeleteImageOnVolume)
-	e.ResizeImageOnVolume = m(e.ResizeImageOnVolume)
-	e.InfoImageOnVolume = m(e.InfoImageOnVolume)
-	e.MoveImage = m(e.MoveImage)
-}
-
-// NewAddVolumeEndpoint returns an endpoint function that calls the method
-// "add_volume" of service "spin-apiserver".
-func NewAddVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*AddVolumePayload)
-		return nil, s.AddVolume(ctx, p)
-	}
-}
-
-// NewRemoveVolumeEndpoint returns an endpoint function that calls the method
-// "remove_volume" of service "spin-apiserver".
-func NewRemoveVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*RemoveVolumePayload)
-		return nil, s.RemoveVolume(ctx, p)
-	}
-}
-
-// NewInfoVolumeEndpoint returns an endpoint function that calls the method
-// "info_volume" of service "spin-apiserver".
-func NewInfoVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*InfoVolumePayload)
-		return nil, s.InfoVolume(ctx, p)
-	}
-}
-
-// NewCreateImageOnVolumeEndpoint returns an endpoint function that calls the
-// method "create_image_on_volume" of service "spin-apiserver".
-func NewCreateImageOnVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*CreateImageOnVolumePayload)
-		return nil, s.CreateImageOnVolume(ctx, p)
-	}
-}
-
-// NewDeleteImageOnVolumeEndpoint returns an endpoint function that calls the
-// method "delete_image_on_volume" of service "spin-apiserver".
-func NewDeleteImageOnVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*DeleteImageOnVolumePayload)
-		return nil, s.DeleteImageOnVolume(ctx, p)
-	}
-}
-
-// NewResizeImageOnVolumeEndpoint returns an endpoint function that calls the
-// method "resize_image_on_volume" of service "spin-apiserver".
-func NewResizeImageOnVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*ResizeImageOnVolumePayload)
-		return nil, s.ResizeImageOnVolume(ctx, p)
-	}
-}
-
-// NewInfoImageOnVolumeEndpoint returns an endpoint function that calls the
-// method "info_image_on_volume" of service "spin-apiserver".
-func NewInfoImageOnVolumeEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*InfoImageOnVolumePayload)
-		return nil, s.InfoImageOnVolume(ctx, p)
-	}
-}
-
-// NewMoveImageEndpoint returns an endpoint function that calls the method
-// "move_image" of service "spin-apiserver".
-func NewMoveImageEndpoint(s Service) goa.Endpoint {
-	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*MoveImagePayload)
-		return nil, s.MoveImage(ctx, p)
-	}
 }

@@ -7,28 +7,8 @@
 
 package spinapiserver
 
-import (
-	"context"
-)
-
 // Bridge between the outer-facing UIs and the internals
 type Service interface {
-	// Add a volume for image allocation with backing storage, and name it
-	AddVolume(context.Context, *AddVolumePayload) (err error)
-	// Remove a volume. Requires all images to be removed.
-	RemoveVolume(context.Context, *RemoveVolumePayload) (err error)
-	// Get information on a volume
-	InfoVolume(context.Context, *InfoVolumePayload) (err error)
-	// Create an image on a volume
-	CreateImageOnVolume(context.Context, *CreateImageOnVolumePayload) (err error)
-	// Delete an image on a volume
-	DeleteImageOnVolume(context.Context, *DeleteImageOnVolumePayload) (err error)
-	// Resize an image on a volume
-	ResizeImageOnVolume(context.Context, *ResizeImageOnVolumePayload) (err error)
-	// Obtain information on an image
-	InfoImageOnVolume(context.Context, *InfoImageOnVolumePayload) (err error)
-	// Move an image from one volume to another
-	MoveImage(context.Context, *MoveImagePayload) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -39,78 +19,4 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [8]string{"add_volume", "remove_volume", "info_volume", "create_image_on_volume", "delete_image_on_volume", "resize_image_on_volume", "info_image_on_volume", "move_image"}
-
-// AddVolumePayload is the payload type of the spin-apiserver service
-// add_volume method.
-type AddVolumePayload struct {
-	// volume identifier
-	Volume string
-	// path to backing storage
-	Path string
-}
-
-// RemoveVolumePayload is the payload type of the spin-apiserver service
-// remove_volume method.
-type RemoveVolumePayload struct {
-	// volume identifier
-	Volume string
-}
-
-// InfoVolumePayload is the payload type of the spin-apiserver service
-// info_volume method.
-type InfoVolumePayload struct {
-	// volume identifier
-	Volume string
-}
-
-// CreateImageOnVolumePayload is the payload type of the spin-apiserver service
-// create_image_on_volume method.
-type CreateImageOnVolumePayload struct {
-	// image name
-	ImageName string
-	// image size in GB
-	ImageSize uint
-	// volume identifier
-	Volume string
-}
-
-// DeleteImageOnVolumePayload is the payload type of the spin-apiserver service
-// delete_image_on_volume method.
-type DeleteImageOnVolumePayload struct {
-	// image name
-	ImageName string
-	// volume identifier
-	Volume string
-}
-
-// ResizeImageOnVolumePayload is the payload type of the spin-apiserver service
-// resize_image_on_volume method.
-type ResizeImageOnVolumePayload struct {
-	// image name
-	ImageName string
-	// new image size; must be larger than original size
-	ImageSize uint
-	// volume identifier
-	Volume string
-}
-
-// InfoImageOnVolumePayload is the payload type of the spin-apiserver service
-// info_image_on_volume method.
-type InfoImageOnVolumePayload struct {
-	// image name
-	ImageName string
-	// volume identifier
-	Volume string
-}
-
-// MoveImagePayload is the payload type of the spin-apiserver service
-// move_image method.
-type MoveImagePayload struct {
-	// image name
-	ImageName string
-	// volume identifier
-	Volume string
-	// volume identifier to move to
-	TargetVolume string
-}
+var MethodNames = [0]string{}

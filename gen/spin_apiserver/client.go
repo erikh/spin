@@ -8,86 +8,14 @@
 package spinapiserver
 
 import (
-	"context"
-
 	goa "goa.design/goa/v3/pkg"
 )
 
 // Client is the "spin-apiserver" service client.
 type Client struct {
-	AddVolumeEndpoint           goa.Endpoint
-	RemoveVolumeEndpoint        goa.Endpoint
-	InfoVolumeEndpoint          goa.Endpoint
-	CreateImageOnVolumeEndpoint goa.Endpoint
-	DeleteImageOnVolumeEndpoint goa.Endpoint
-	ResizeImageOnVolumeEndpoint goa.Endpoint
-	InfoImageOnVolumeEndpoint   goa.Endpoint
-	MoveImageEndpoint           goa.Endpoint
 }
 
 // NewClient initializes a "spin-apiserver" service client given the endpoints.
-func NewClient(addVolume, removeVolume, infoVolume, createImageOnVolume, deleteImageOnVolume, resizeImageOnVolume, infoImageOnVolume, moveImage goa.Endpoint) *Client {
-	return &Client{
-		AddVolumeEndpoint:           addVolume,
-		RemoveVolumeEndpoint:        removeVolume,
-		InfoVolumeEndpoint:          infoVolume,
-		CreateImageOnVolumeEndpoint: createImageOnVolume,
-		DeleteImageOnVolumeEndpoint: deleteImageOnVolume,
-		ResizeImageOnVolumeEndpoint: resizeImageOnVolume,
-		InfoImageOnVolumeEndpoint:   infoImageOnVolume,
-		MoveImageEndpoint:           moveImage,
-	}
-}
-
-// AddVolume calls the "add_volume" endpoint of the "spin-apiserver" service.
-func (c *Client) AddVolume(ctx context.Context, p *AddVolumePayload) (err error) {
-	_, err = c.AddVolumeEndpoint(ctx, p)
-	return
-}
-
-// RemoveVolume calls the "remove_volume" endpoint of the "spin-apiserver"
-// service.
-func (c *Client) RemoveVolume(ctx context.Context, p *RemoveVolumePayload) (err error) {
-	_, err = c.RemoveVolumeEndpoint(ctx, p)
-	return
-}
-
-// InfoVolume calls the "info_volume" endpoint of the "spin-apiserver" service.
-func (c *Client) InfoVolume(ctx context.Context, p *InfoVolumePayload) (err error) {
-	_, err = c.InfoVolumeEndpoint(ctx, p)
-	return
-}
-
-// CreateImageOnVolume calls the "create_image_on_volume" endpoint of the
-// "spin-apiserver" service.
-func (c *Client) CreateImageOnVolume(ctx context.Context, p *CreateImageOnVolumePayload) (err error) {
-	_, err = c.CreateImageOnVolumeEndpoint(ctx, p)
-	return
-}
-
-// DeleteImageOnVolume calls the "delete_image_on_volume" endpoint of the
-// "spin-apiserver" service.
-func (c *Client) DeleteImageOnVolume(ctx context.Context, p *DeleteImageOnVolumePayload) (err error) {
-	_, err = c.DeleteImageOnVolumeEndpoint(ctx, p)
-	return
-}
-
-// ResizeImageOnVolume calls the "resize_image_on_volume" endpoint of the
-// "spin-apiserver" service.
-func (c *Client) ResizeImageOnVolume(ctx context.Context, p *ResizeImageOnVolumePayload) (err error) {
-	_, err = c.ResizeImageOnVolumeEndpoint(ctx, p)
-	return
-}
-
-// InfoImageOnVolume calls the "info_image_on_volume" endpoint of the
-// "spin-apiserver" service.
-func (c *Client) InfoImageOnVolume(ctx context.Context, p *InfoImageOnVolumePayload) (err error) {
-	_, err = c.InfoImageOnVolumeEndpoint(ctx, p)
-	return
-}
-
-// MoveImage calls the "move_image" endpoint of the "spin-apiserver" service.
-func (c *Client) MoveImage(ctx context.Context, p *MoveImagePayload) (err error) {
-	_, err = c.MoveImageEndpoint(ctx, p)
-	return
+func NewClient(goa.Endpoint) *Client {
+	return &Client{}
 }

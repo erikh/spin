@@ -82,7 +82,7 @@ paths:
             type: array
             items:
               type: string
-              example: Officiis voluptatum deleniti maxime possimus vero.
+              example: Quis aut quis vel.
       schemes:
       - http
   /new:
@@ -243,174 +243,7 @@ paths:
             type: array
             items:
               type: string
-              example: Labore accusantium ut itaque odio explicabo perferendis.
-      schemes:
-      - http
-  /storage/volume/add:
-    post:
-      tags:
-      - spin-apiserver
-      summary: add_volume spin-apiserver
-      description: Add a volume for image allocation with backing storage, and name it
-      operationId: spin-apiserver#add_volume
-      parameters:
-      - name: add_volume_request_body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinApiserverAddVolumeRequestBody'
-          required:
-          - volume
-          - path
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/image/create:
-    post:
-      tags:
-      - spin-apiserver
-      summary: create_image_on_volume spin-apiserver
-      description: Create an image on a volume
-      operationId: spin-apiserver#create_image_on_volume
-      parameters:
-      - name: create_image_on_volume_request_body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinApiserverCreateImageOnVolumeRequestBody'
-          required:
-          - image_name
-          - image_size
-          - volume
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/image/delete:
-    post:
-      tags:
-      - spin-apiserver
-      summary: delete_image_on_volume spin-apiserver
-      description: Delete an image on a volume
-      operationId: spin-apiserver#delete_image_on_volume
-      parameters:
-      - name: delete_image_on_volume_request_body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinApiserverDeleteImageOnVolumeRequestBody'
-          required:
-          - image_name
-          - volume
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/image/info/{volume}/{image_name}:
-    get:
-      tags:
-      - spin-apiserver
-      summary: info_image_on_volume spin-apiserver
-      description: Obtain information on an image
-      operationId: spin-apiserver#info_image_on_volume
-      parameters:
-      - name: volume
-        in: path
-        description: volume identifier
-        required: true
-        type: string
-      - name: image_name
-        in: path
-        description: image name
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/image/move:
-    post:
-      tags:
-      - spin-apiserver
-      summary: move_image spin-apiserver
-      description: Move an image from one volume to another
-      operationId: spin-apiserver#move_image
-      parameters:
-      - name: move_image_request_body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinApiserverMoveImageRequestBody'
-          required:
-          - image_name
-          - volume
-          - target_volume
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/image/resize:
-    post:
-      tags:
-      - spin-apiserver
-      summary: resize_image_on_volume spin-apiserver
-      description: Resize an image on a volume
-      operationId: spin-apiserver#resize_image_on_volume
-      parameters:
-      - name: resize_image_on_volume_request_body
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/SpinApiserverResizeImageOnVolumeRequestBody'
-          required:
-          - image_name
-          - image_size
-          - volume
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/info/{volume}:
-    get:
-      tags:
-      - spin-apiserver
-      summary: info_volume spin-apiserver
-      description: Get information on a volume
-      operationId: spin-apiserver#info_volume
-      parameters:
-      - name: volume
-        in: path
-        description: volume identifier
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK response.
-      schemes:
-      - http
-  /storage/volume/remove/{volume}:
-    post:
-      tags:
-      - spin-apiserver
-      summary: remove_volume spin-apiserver
-      description: Remove a volume. Requires all images to be removed.
-      operationId: spin-apiserver#remove_volume
-      parameters:
-      - name: volume
-        in: path
-        description: volume identifier
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK response.
+              example: Quibusdam error dolorem.
       schemes:
       - http
   /storage/volumes/create:
@@ -467,7 +300,7 @@ paths:
             type: array
             items:
               type: string
-              example: Tempora dolorem quibusdam minus expedita doloremque.
+              example: Est totam quasi eligendi quod.
       schemes:
       - http
   /vm/create:
@@ -553,7 +386,7 @@ paths:
             type: array
             items:
               type: integer
-              example: 15193501457742630435
+              example: 6242776563299468417
               format: int64
       schemes:
       - http
@@ -583,116 +416,6 @@ paths:
       schemes:
       - http
 definitions:
-  SpinApiserverAddVolumeRequestBody:
-    title: SpinApiserverAddVolumeRequestBody
-    type: object
-    properties:
-      path:
-        type: string
-        description: path to backing storage
-        example: Sint aut dolores atque excepturi ut quo.
-      volume:
-        type: string
-        description: volume identifier
-        example: Quod est enim aperiam.
-    example:
-      path: Sunt ut.
-      volume: Ea deleniti facilis enim autem.
-    required:
-    - volume
-    - path
-  SpinApiserverCreateImageOnVolumeRequestBody:
-    title: SpinApiserverCreateImageOnVolumeRequestBody
-    type: object
-    properties:
-      image_name:
-        type: string
-        description: image name
-        example: Odio ut ex molestiae quod distinctio voluptatibus.
-      image_size:
-        type: integer
-        description: image size in GB
-        example: 5851021306503346817
-        format: int64
-      volume:
-        type: string
-        description: volume identifier
-        example: Non quis quae nihil.
-    example:
-      image_name: Laboriosam sunt minima saepe architecto.
-      image_size: 6321425162984896080
-      volume: Quos numquam recusandae ut omnis laboriosam.
-    required:
-    - image_name
-    - image_size
-    - volume
-  SpinApiserverDeleteImageOnVolumeRequestBody:
-    title: SpinApiserverDeleteImageOnVolumeRequestBody
-    type: object
-    properties:
-      image_name:
-        type: string
-        description: image name
-        example: Odio excepturi non voluptate est qui.
-      volume:
-        type: string
-        description: volume identifier
-        example: Nihil omnis voluptas quia.
-    example:
-      image_name: Laboriosam beatae itaque omnis.
-      volume: Exercitationem incidunt quae est velit eaque mollitia.
-    required:
-    - image_name
-    - volume
-  SpinApiserverMoveImageRequestBody:
-    title: SpinApiserverMoveImageRequestBody
-    type: object
-    properties:
-      image_name:
-        type: string
-        description: image name
-        example: Quaerat illo molestiae.
-      target_volume:
-        type: string
-        description: volume identifier to move to
-        example: Adipisci et provident.
-      volume:
-        type: string
-        description: volume identifier
-        example: Cupiditate perspiciatis voluptas quia.
-    example:
-      image_name: Ea iusto modi aspernatur.
-      target_volume: Libero commodi placeat.
-      volume: Qui sit nihil.
-    required:
-    - image_name
-    - volume
-    - target_volume
-  SpinApiserverResizeImageOnVolumeRequestBody:
-    title: SpinApiserverResizeImageOnVolumeRequestBody
-    type: object
-    properties:
-      image_name:
-        type: string
-        description: image name
-        example: Odio similique qui qui architecto.
-      image_size:
-        type: integer
-        description: new image size; must be larger than original size
-        example: 6053967843912387261
-        format: int64
-      volume:
-        type: string
-        description: volume identifier
-        example: Omnis quia deleniti.
-    example:
-      image_name: Qui ea qui omnis qui sit et.
-      image_size: 14375469499918085890
-      volume: Enim ut voluptas ullam quas aliquam.
-    required:
-    - image_name
-    - image_size
-    - volume
   SpinBrokerAddRequestBody:
     title: SpinBrokerAddRequestBody
     type: object
@@ -700,24 +423,25 @@ definitions:
       action:
         type: string
         description: Action name
-        example: Eligendi quod voluptas sed.
+        example: In ipsa enim non maxime est.
       parameters:
         type: object
         description: Action parameters
         example:
-          Repudiandae eos.: Quibusdam error dolorem.
-          Voluptatem culpa unde ut.: Aut ut illum.
+          Amet et id.: Alias vel.
+          Reprehenderit vitae.: Aut adipisci.
         additionalProperties: true
       resource:
         type: string
         description: Resource name
-        example: Nostrum est totam.
+        example: Rerum asperiores corporis aut.
     example:
-      action: Numquam provident occaecati animi.
+      action: Et ipsa.
       parameters:
-        Commodi accusamus veritatis quos.: Et quisquam.
-        Officia voluptas voluptate.: In animi quos voluptatem qui explicabo.
-      resource: Et aperiam impedit autem optio ut.
+        Aliquam sit necessitatibus pariatur quam.: Velit ut ea excepturi.
+        Facilis ad quod.: Quia facere.
+        Sunt nesciunt natus dolorem.: Vel tempora est.
+      resource: Vitae cupiditate veniam atque accusamus.
     required:
     - resource
     - action
@@ -728,19 +452,19 @@ definitions:
       id:
         type: string
         description: Command ID
-        example: Inventore quae incidunt nulla.
+        example: Laborum sint aut dolores atque excepturi ut.
       status:
         type: boolean
         description: status of work
-        example: false
+        example: true
       status_reason:
         type: string
         description: reason of success/failure
-        example: Minima voluptas dolorem et corporis quo dolores.
+        example: Ea deleniti facilis enim autem.
     example:
-      id: Odit tenetur cupiditate amet fugiat.
+      id: Sunt ut.
       status: true
-      status_reason: Molestiae inventore aut consequatur.
+      status_reason: Ut ex molestiae quod distinctio voluptatibus.
     required:
     - id
     - status
@@ -767,7 +491,7 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
@@ -778,7 +502,7 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: true
     required:
     - name
@@ -794,30 +518,31 @@ definitions:
       action:
         type: string
         description: action name
-        example: Esse blanditiis qui repellendus voluptate.
+        example: Qui laborum.
       parameters:
         type: object
         description: Action parameters
         example:
-          In inventore.: Sequi temporibus.
-          Inventore cupiditate commodi aut asperiores quidem sit.: Deleniti cum repudiandae veniam vel provident.
+          Impedit laboriosam et dolorum tempora inventore officia.: Ipsam dicta accusantium.
+          In ea natus tempore.: Laudantium consectetur assumenda soluta.
+          Provident esse laboriosam sapiente ut sint.: Quod tempora consequatur ut.
         additionalProperties: true
       resource:
         type: string
         description: resource type
-        example: Molestias deserunt dicta eaque reiciendis autem exercitationem.
+        example: Nostrum qui perferendis rerum molestias.
       uuid:
         type: string
         description: Command ID
-        example: Et inventore.
+        example: Iure qui voluptas.
     example:
-      action: Aliquam quae illum molestiae.
+      action: Molestiae quaerat.
       parameters:
-        Dolores reprehenderit quo ab iure.: Voluptas non officiis.
-        Eveniet repudiandae.: Perferendis impedit.
-        Neque qui iusto ex et doloremque.: In repudiandae.
-      resource: Officia animi fugiat excepturi sed nisi aut.
-      uuid: At sed necessitatibus et asperiores earum hic.
+        Aut sit a quas velit.: Rerum illo ratione totam quia.
+        Autem ab delectus.: Magnam ex natus dicta aliquid sint.
+        Sint ut facilis nobis quo.: Iusto non quae.
+      resource: Accusamus beatae nihil.
+      uuid: Eaque neque.
     required:
     - uuid
     - resource
@@ -829,7 +554,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -845,19 +570,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: true
     description: status_record_not_found_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: true
+      temporary: true
+      timeout: false
     required:
     - name
     - id
@@ -872,19 +597,19 @@ definitions:
       causer:
         type: string
         description: Failure causer as UUID (if any)
-        example: Recusandae nobis.
+        example: Sed quae ea.
       reason:
         type: string
         description: Failure reason (if any)
-        example: Qui sint delectus quis.
+        example: Fugit incidunt tempora.
       status:
         type: boolean
         description: Pass/Fail status
         example: true
     example:
-      causer: Qui recusandae.
-      reason: Nihil tempora eum officiis sit quis itaque.
-      status: true
+      causer: Hic expedita.
+      reason: Voluptate voluptas rerum mollitia.
+      status: false
     required:
     - status
   SpinRegistryStorageImagesCreateRequestBody:
@@ -894,25 +619,25 @@ definitions:
       cdrom:
         type: boolean
         description: Is this image a cdrom?
-        example: true
+        example: false
       image:
         type: string
         description: Image filename, must not include `/`
-        example: In qui eaque omnis odio quia.
+        example: Veritatis quos reiciendis et quisquam.
       image_size:
         type: integer
         description: Image size (in gigabytes)
-        example: 11690391126467062567
+        example: 3606296028121108842
         format: int64
       volume:
         type: string
         description: Volume name, must not include `/`
-        example: Eligendi id rerum hic.
+        example: Consectetur commodi.
     example:
-      cdrom: true
-      image: Voluptas quae autem illum enim sequi soluta.
-      image_size: 8837125510370274380
-      volume: Omnis dignissimos nihil soluta.
+      cdrom: false
+      image: Voluptatem qui explicabo quaerat officiis voluptatum deleniti.
+      image_size: 16371545999011268138
+      volume: Voluptate et in animi.
     required:
     - volume
     - image
@@ -923,14 +648,14 @@ definitions:
       image_name:
         type: string
         description: name of image
-        example: Sit earum harum aliquam nobis dicta.
+        example: Et recusandae nobis nisi.
       volume_name:
         type: string
         description: name of volume
-        example: Ex tempora fugit adipisci aliquid aliquam vel.
+        example: Omnis sed qui sint delectus.
     example:
-      image_name: Quia nemo.
-      volume_name: Optio quisquam dolores ut.
+      image_name: Qui recusandae.
+      volume_name: Nihil tempora eum officiis sit quis itaque.
     required:
     - volume_name
     - image_name
@@ -941,14 +666,14 @@ definitions:
       image_name:
         type: string
         description: name of image
-        example: Voluptas libero ea repudiandae.
+        example: Sequi temporibus.
       volume_name:
         type: string
         description: name of volume
-        example: Fugit facere.
+        example: Voluptate voluptas perspiciatis in inventore.
     example:
-      image_name: Veniam iusto sint.
-      volume_name: Ut ut optio nemo dolor doloremque similique.
+      image_name: Deleniti cum repudiandae veniam vel provident.
+      volume_name: Inventore cupiditate commodi aut asperiores quidem sit.
     required:
     - volume_name
     - image_name
@@ -959,25 +684,25 @@ definitions:
       cdrom:
         type: boolean
         description: Is this image a cdrom?
-        example: true
+        example: false
       image:
         type: string
         description: Image filename, must not include `/`
-        example: Mollitia est aliquam.
+        example: Accusantium consequuntur.
       image_size:
         type: integer
         description: Image size (in gigabytes)
-        example: 4167226588280429254
+        example: 7825719430568069293
         format: int64
       volume:
         type: string
         description: Volume name, must not include `/`
-        example: Alias vero non ut id aut dolores.
+        example: Blanditiis repudiandae.
     example:
       cdrom: true
-      image: Sed fugiat autem ut modi.
-      image_size: 12250376680394510718
-      volume: Quasi consequatur.
+      image: Reiciendis autem exercitationem accusamus esse.
+      image_size: 14672973190467009604
+      volume: Sed molestias deserunt dicta.
     required:
     - volume
     - image
@@ -988,9 +713,9 @@ definitions:
       volume_name:
         type: string
         description: name of volume to list images for
-        example: Totam quia sit.
+        example: Et aperiam impedit autem optio ut.
     example:
-      volume_name: Adipisci tempora.
+      volume_name: Numquam provident occaecati animi.
     required:
     - volume_name
   SpinRegistryStorageVolumesCreateRequestBody:
@@ -1000,9 +725,9 @@ definitions:
       name:
         type: string
         description: name of volume
-        example: Iusto fugit aut similique.
+        example: Sed cum.
     example:
-      name: Corrupti amet numquam sed totam.
+      name: Voluptatem culpa unde ut.
     required:
     - name
   SpinRegistryStorageVolumesDeleteRequestBody:
@@ -1012,9 +737,9 @@ definitions:
       name:
         type: string
         description: name of volume
-        example: Minima omnis.
+        example: Aut ut illum.
     example:
-      name: Culpa ut quidem aut et qui porro.
+      name: Repudiandae eos.
     required:
     - name
   SpinRegistryVMCreateRequestBody:
@@ -1024,17 +749,17 @@ definitions:
       cpus:
         type: integer
         description: CPU count
-        example: 5649248651010443443
+        example: 9822952823357733210
         format: int64
       memory:
         type: integer
         description: Memory (in megabytes)
-        example: 7586630164245674569
+        example: 6817438196856585744
         format: int64
       name:
         type: string
         description: Name of VM; does not need to be unique
-        example: Perspiciatis inventore dolore.
+        example: Itaque non quis quae.
       storage:
         type: array
         items:
@@ -1042,38 +767,34 @@ definitions:
         description: Storage references
         example:
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
-        - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
-        - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
     example:
-      cpus: 1402973188997303670
-      memory: 2778513280311012127
-      name: Ut veritatis aut.
+      cpus: 18096405534508380588
+      memory: 13483118564243353270
+      name: Beatae itaque.
       storage:
       - cdrom: false
-        image: Sit ab quo et quis quidem nulla.
-        image_size: 213869279976950464
-        volume: Vero sit ratione molestiae asperiores ut temporibus.
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
       - cdrom: false
-        image: Sit ab quo et quis quidem nulla.
-        image_size: 213869279976950464
-        volume: Vero sit ratione molestiae asperiores ut temporibus.
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
       - cdrom: false
-        image: Sit ab quo et quis quidem nulla.
-        image_size: 213869279976950464
-        volume: Vero sit ratione molestiae asperiores ut temporibus.
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
+      - cdrom: false
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
     required:
     - name
     - cpus
@@ -1086,17 +807,17 @@ definitions:
       cpus:
         type: integer
         description: CPU count
-        example: 2771523747321334770
+        example: 2177811034852891266
         format: int64
       memory:
         type: integer
         description: Memory (in megabytes)
-        example: 6171212572311357635
+        example: 10396896588555547173
         format: int64
       name:
         type: string
         description: Name of VM; does not need to be unique
-        example: Et molestiae soluta ut animi.
+        example: Deleniti voluptate qui ea qui omnis.
       storage:
         type: array
         items:
@@ -1104,34 +825,26 @@ definitions:
         description: Storage references
         example:
         - cdrom: true
-          image: Cupiditate veniam atque accusamus.
-          image_size: 6462753351380853695
-          volume: Et id et alias vel ratione.
+          image: Magnam molestiae.
+          image_size: 14995889596905782688
+          volume: Quo exercitationem.
         - cdrom: true
-          image: Cupiditate veniam atque accusamus.
-          image_size: 6462753351380853695
-          volume: Et id et alias vel ratione.
+          image: Magnam molestiae.
+          image_size: 14995889596905782688
+          volume: Quo exercitationem.
     example:
-      cpus: 14447320800938389636
-      memory: 9462483523330360359
-      name: Corporis ab nulla quis.
+      cpus: 6875004001628868721
+      memory: 2110699203654829006
+      name: Aspernatur reprehenderit qui sit nihil libero.
       storage:
       - cdrom: true
-        image: Cupiditate veniam atque accusamus.
-        image_size: 6462753351380853695
-        volume: Et id et alias vel ratione.
+        image: Magnam molestiae.
+        image_size: 14995889596905782688
+        volume: Quo exercitationem.
       - cdrom: true
-        image: Cupiditate veniam atque accusamus.
-        image_size: 6462753351380853695
-        volume: Et id et alias vel ratione.
-      - cdrom: true
-        image: Cupiditate veniam atque accusamus.
-        image_size: 6462753351380853695
-        volume: Et id et alias vel ratione.
-      - cdrom: true
-        image: Cupiditate veniam atque accusamus.
-        image_size: 6462753351380853695
-        volume: Et id et alias vel ratione.
+        image: Magnam molestiae.
+        image_size: 14995889596905782688
+        volume: Quo exercitationem.
     required:
     - name
     - cpus
@@ -1145,18 +858,18 @@ definitions:
         $ref: '#/definitions/VMRequestBody'
     example:
       vm:
-        cpus: 2037161670898670278
-        memory: 9673633980422219739
-        name: In ipsa enim non maxime est.
+        cpus: 4401059399380998654
+        memory: 17258654746333052904
+        name: Illum omnis suscipit illum repellendus.
         storage:
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
     required:
     - vm
   StorageRequestBody:
@@ -1170,21 +883,21 @@ definitions:
       image:
         type: string
         description: Image filename, must not include `/`
-        example: Eveniet qui ad aut.
+        example: Quos numquam recusandae ut omnis laboriosam.
       image_size:
         type: integer
         description: Image size (in gigabytes)
-        example: 12904115898998457454
+        example: 5303710057253650101
         format: int64
       volume:
         type: string
         description: Volume name, must not include `/`
-        example: Soluta eum laudantium tempora pariatur possimus.
+        example: Sunt minima saepe architecto cum.
     example:
       cdrom: false
-      image: Suscipit cupiditate cumque ratione occaecati quos vel.
-      image_size: 6556408197782365083
-      volume: Ad ipsum natus quasi quia vel.
+      image: Consectetur nihil omnis.
+      image_size: 4727890621428056390
+      volume: Non voluptate est.
     required:
     - volume
     - image
@@ -1195,25 +908,25 @@ definitions:
       cdrom:
         type: boolean
         description: Is this image a cdrom?
-        example: false
+        example: true
       image:
         type: string
         description: Image filename, must not include `/`
-        example: Itaque tempore iste voluptatem.
+        example: Quas aliquam sit quaerat.
       image_size:
         type: integer
         description: Image size (in gigabytes)
-        example: 12589759409974142601
+        example: 13139907858509298089
         format: int64
       volume:
         type: string
         description: Volume name, must not include `/`
-        example: Molestiae voluptatum rerum libero.
+        example: Vel vel enim ut voluptas.
     example:
-      cdrom: false
-      image: Sunt iusto harum.
-      image_size: 3827325331812593760
-      volume: Blanditiis consequatur consequuntur praesentium consequatur.
+      cdrom: true
+      image: Adipisci et provident.
+      image_size: 3165228496034042905
+      volume: Cupiditate perspiciatis voluptas quia.
     required:
     - volume
     - image
@@ -1224,17 +937,17 @@ definitions:
       cpus:
         type: integer
         description: CPU count
-        example: 10434967330952468940
+        example: 7607095544095507179
         format: int64
       memory:
         type: integer
         description: Memory (in megabytes)
-        example: 16191889957180139673
+        example: 3554456819816378797
         format: int64
       name:
         type: string
         description: Name of VM; does not need to be unique
-        example: Asperiores tempora.
+        example: Quae est velit eaque mollitia.
       storage:
         type: array
         items:
@@ -1242,34 +955,30 @@ definitions:
         description: Storage references
         example:
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
         - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
-        - cdrom: false
-          image: Sit ab quo et quis quidem nulla.
-          image_size: 213869279976950464
-          volume: Vero sit ratione molestiae asperiores ut temporibus.
+          image: Soluta voluptatem minima natus.
+          image_size: 8595411673148470411
+          volume: Itaque tenetur labore quia distinctio aperiam.
     example:
-      cpus: 17806796030969069035
-      memory: 15360626515790741720
-      name: Nihil nam natus consectetur.
+      cpus: 6053967843912387261
+      memory: 7763330022071383752
+      name: Qui architecto.
       storage:
       - cdrom: false
-        image: Sit ab quo et quis quidem nulla.
-        image_size: 213869279976950464
-        volume: Vero sit ratione molestiae asperiores ut temporibus.
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
       - cdrom: false
-        image: Sit ab quo et quis quidem nulla.
-        image_size: 213869279976950464
-        volume: Vero sit ratione molestiae asperiores ut temporibus.
+        image: Soluta voluptatem minima natus.
+        image_size: 8595411673148470411
+        volume: Itaque tenetur labore quia distinctio aperiam.
     required:
     - name
     - cpus
