@@ -99,3 +99,41 @@ func (c *Client) StorageVolumeList(ctx context.Context) ([]string, error) {
 
 	return list.([]string), nil
 }
+
+// StorageImageList lists images for a given volume.
+func (c *Client) StorageImageList(ctx context.Context, name string) ([]string, error) {
+	list, err := c.client.StorageImagesList()(ctx, &spinregistry.StorageImagesListPayload{VolumeName: name})
+	if err != nil {
+		return nil, err
+	}
+
+	return list.([]string), nil
+}
+
+// StorageImageGet retrieves an image by name w/ volume name.
+func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName string) (*spinregistry.Storage, error) {
+	res, err := c.client.StorageImagesGet()(ctx, &spinregistry.StorageImagesGetPayload{
+		VolumeName: volumeName,
+		ImageName:  imageName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.(*spinregistry.Storage), nil
+}
+
+// StorageImageCreate creates an image
+func (c *Client) StorageImageCreate(ctx context.Context, s *spinregistry.Storage) error {
+	_, err := c.client.StorageImagesCreate()(ctx, s)
+	return err
+}
+
+// StorageImageDelete deletes an image by name & volume name
+func (c *Client) StorageImageDelete(ctx context.Context, volumeName, imageName string) error {
+	_, err := c.client.StorageImagesDelete()(ctx, &spinregistry.StorageImagesDeletePayload{
+		VolumeName: volumeName,
+		ImageName:  imageName,
+	})
+	return err
+}

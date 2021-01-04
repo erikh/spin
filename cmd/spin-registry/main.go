@@ -55,9 +55,43 @@ func main() {
 					Description: "Send a message to the storage subsystem",
 					Subcommands: []*cli.Command{
 						{
+							Name:        "image",
+							Usage:       "Work with storage images",
+							Description: "Work with storage images",
+							Subcommands: []*cli.Command{
+								{
+									Name:        "create",
+									Usage:       "Create a new storage image inside a volume. Takes JSON over STDIN.",
+									Description: "Create a new storage image inside a volume. Takes JSON over STDIN.",
+									Action:      messageStorageImageCreate,
+								},
+								{
+									Name:        "delete",
+									Usage:       "Delete an existing image",
+									Description: "Delete an existing image",
+									ArgsUsage:   "[volume] [name]",
+									Action:      messageStorageImageDelete,
+								},
+								{
+									Name:        "list",
+									Usage:       "List images for a volume",
+									Description: "List images for a volume",
+									ArgsUsage:   " ",
+									Action:      messageStorageImageList,
+								},
+								{
+									Name:        "get",
+									Usage:       "Get an image for a volume",
+									Description: "Get an image for a volume",
+									ArgsUsage:   "[volume] [name]",
+									Action:      messageStorageImageGet,
+								},
+							},
+						},
+						{
 							Name:        "volume",
-							Usage:       "Work with storage volumes",
-							Description: "Work with storage volumes",
+							Usage:       "Work with storage volumes (volumes hold images)",
+							Description: "Work with storage volumes (volumes hold images)",
 							Subcommands: []*cli.Command{
 								{
 									Name:        "create",
