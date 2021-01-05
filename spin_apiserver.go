@@ -44,7 +44,7 @@ func toRegistryVM(p *spinapiserver.VM) *spinregistry.VM {
 	}
 }
 
-func (s *spinApiserversrvc) GetStatus(ctx context.Context, pkg string) error {
+func (s *spinApiserversrvc) getStatus(ctx context.Context, pkg string) error {
 	for {
 		select {
 		case <-ctx.Done():
@@ -70,6 +70,30 @@ func (s *spinApiserversrvc) GetStatus(ctx context.Context, pkg string) error {
 	}
 
 	return nil
+}
+
+// this call executes entire packages as queued subroutines. it automatically
+// overwrites the ID for each add so that the package is correct. No accounting
+// for dependencies are made, so use this call wisely.
+func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.AddPayload) error {
+	pkg, err := s.broker.New(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, add := range adds {
+		add.ID = pkg
+		_, err = s.broker.Add(ctx, add)
+		if err != nil {
+			return err
+		}
+	}
+
+	if _, err := s.broker.Enqueue(ctx, pkg); err != nil {
+		return err
+	}
+
+	return s.getStatus(ctx, pkg)
 }
 
 func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.VM) (uint64, error) {
@@ -123,7 +147,7 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.VM) (
 		return id, err
 	}
 
-	if err := s.GetStatus(ctx, pkg); err != nil {
+	if err := s.getStatus(ctx, pkg); err != nil {
 		return id, err
 	}
 
@@ -144,36 +168,33 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 
 // ControlStart implements control/start.
 func (s *spinApiserversrvc) ControlStart(ctx context.Context, p *spinapiserver.ControlStartPayload) (err error) {
-	pkg, err := s.broker.New(ctx)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.broker.Add(ctx, &spinbroker.AddPayload{
-		ID:       pkg,
+	return s.apiOneShot(ctx, &spinbroker.AddPayload{
 		Resource: "emulation",
 		Action:   "start",
 		Parameters: map[string]interface{}{
 			"id": p.ID,
 		},
 	})
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.broker.Enqueue(ctx, pkg); err != nil {
-		return err
-	}
-
-	return s.GetStatus(ctx, pkg)
 }
 
 // ControlStop implements control/stop.
 func (s *spinApiserversrvc) ControlStop(ctx context.Context, p *spinapiserver.ControlStopPayload) (err error) {
-	return nil
+	return s.apiOneShot(ctx, &spinbroker.AddPayload{
+		Resource: "emulation",
+		Action:   "stop",
+		Parameters: map[string]interface{}{
+			"id": p.ID,
+		},
+	})
 }
 
 // ControlShutdown implements control/shutdown.
 func (s *spinApiserversrvc) ControlShutdown(ctx context.Context, p *spinapiserver.ControlShutdownPayload) (err error) {
-	return nil
+	return s.apiOneShot(ctx, &spinbroker.AddPayload{
+		Resource: "emulation",
+		Action:   "shutdown",
+		Parameters: map[string]interface{}{
+			"id": p.ID,
+		},
+	})
 }

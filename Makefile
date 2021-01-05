@@ -15,7 +15,7 @@ test-all: gen
 clean: 
 	rm -f spin-broker.db spin-registry.db
 
-stop-server:
+stop-servers:
 	pkill spin-apiserver || :
 	pkill sa- || :
 	pkill spin-registry || :
@@ -28,7 +28,7 @@ install:
 install-local:
 	GOBIN=${PWD}/bin go install -v ./...
 
-server: stop-server install-local 
+servers: stop-servers install-local
 	bin/spin-broker start &
 	bin/spin-registry start &
 	bin/spin-apiserver start &
