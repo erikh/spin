@@ -7,8 +7,22 @@
 
 package spinapiserver
 
+import (
+	"context"
+)
+
 // Bridge between the outer-facing UIs and the internals
 type Service interface {
+	// VMCreate implements vm/create.
+	VMCreate(context.Context, *VM) (res uint64, err error)
+	// VMDelete implements vm/delete.
+	VMDelete(context.Context, *VMDeletePayload) (err error)
+	// ControlStart implements control/start.
+	ControlStart(context.Context, *ControlStartPayload) (err error)
+	// ControlStop implements control/stop.
+	ControlStop(context.Context, *ControlStopPayload) (err error)
+	// ControlShutdown implements control/shutdown.
+	ControlShutdown(context.Context, *ControlShutdownPayload) (err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -19,4 +33,55 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [0]string{}
+var MethodNames = [5]string{"vm/create", "vm/delete", "control/start", "control/stop", "control/shutdown"}
+
+// VM is the payload type of the spin-apiserver service vm/create method.
+type VM struct {
+	// Name of VM; does not need to be unique
+	Name string
+	// CPU count
+	Cpus uint
+	// Memory (in megabytes)
+	Memory uint
+	// Storage references
+	Storage []*Storage
+}
+
+// VMDeletePayload is the payload type of the spin-apiserver service vm/delete
+// method.
+type VMDeletePayload struct {
+	// ID of VM to delete
+	ID uint64
+}
+
+// ControlStartPayload is the payload type of the spin-apiserver service
+// control/start method.
+type ControlStartPayload struct {
+	// ID of VM to start
+	ID uint64
+}
+
+// ControlStopPayload is the payload type of the spin-apiserver service
+// control/stop method.
+type ControlStopPayload struct {
+	// ID of VM to stop
+	ID uint64
+}
+
+// ControlShutdownPayload is the payload type of the spin-apiserver service
+// control/shutdown method.
+type ControlShutdownPayload struct {
+	// ID of VM to shutdown
+	ID uint64
+}
+
+type Storage struct {
+	// Volume name, must not include `/`
+	Volume string
+	// Image filename, must not include `/`
+	Image string
+	// Image size (in gigabytes)
+	ImageSize *uint64
+	// Is this image a cdrom?
+	Cdrom *bool
+}

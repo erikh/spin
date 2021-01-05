@@ -16,6 +16,7 @@ clean:
 	rm -f spin-broker.db spin-registry.db
 
 stop-server:
+	pkill spin-apiserver || :
 	pkill sa- || :
 	pkill spin-registry || :
 	pkill spin-broker || :
@@ -30,6 +31,9 @@ install-local:
 server: stop-server install-local 
 	bin/spin-broker start &
 	bin/spin-registry start &
+	bin/spin-apiserver start &
+	bin/sa-emulation &
+	bin/sa-host-path &
 
 gen:
 	go run goa.design/goa/v3/cmd/goa gen code.hollensbe.org/erikh/spin/design

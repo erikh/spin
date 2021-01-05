@@ -41,7 +41,7 @@ func NewDB(c DBConfig) (*DB, error) {
 	})
 }
 
-func makeUintPtr(i uint) *uint {
+func makeUintPtr(i uint64) *uint64 {
 	return &i
 }
 

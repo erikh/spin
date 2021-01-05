@@ -51,6 +51,8 @@ type AddPayload struct {
 	Action string
 	// Action parameters
 	Parameters map[string]interface{}
+	// Dependency UUIDs
+	Dependencies []string
 }
 
 // EnqueuePayload is the payload type of the spin-broker service enqueue method.

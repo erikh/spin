@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Iusto minima et labore.\",\n      \"parameters\": {\n         \"Consequatur omnis dolor assumenda.\": \"Dignissimos ut doloremque.\",\n         \"Et tempora rem.\": \"Quia voluptas aut.\"\n      },\n      \"resource\": \"Impedit dolor veritatis quo non quae rerum.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Nobis consequatur omnis.\",\n      \"dependencies\": [\n         \"Non dicta quisquam rem qui.\",\n         \"Eius est reprehenderit dolor nesciunt omnis.\",\n         \"Ullam amet magnam.\"\n      ],\n      \"parameters\": {\n         \"Voluptatem dignissimos ut doloremque harum et tempora.\": \"Qui quia.\"\n      },\n      \"resource\": \"Iusto minima et labore.\"\n   }'")
 		}
 	}
 	var id string
@@ -39,6 +39,12 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 			tk := key
 			tv := val
 			v.Parameters[tk] = tv
+		}
+	}
+	if body.Dependencies != nil {
+		v.Dependencies = make([]string, len(body.Dependencies))
+		for i, val := range body.Dependencies {
+			v.Dependencies[i] = val
 		}
 	}
 	v.ID = id
@@ -93,7 +99,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Vero alias doloribus impedit impedit qui dolor.\",\n      \"status\": false,\n      \"status_reason\": \"Non ut hic.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Consequatur quo exercitationem occaecati magnam molestiae qui.\",\n      \"status\": true,\n      \"status_reason\": \"Aut voluptas qui fuga unde.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

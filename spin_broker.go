@@ -44,8 +44,9 @@ func (s *spinBrokersrvc) Add(ctx context.Context, p *spinbroker.AddPayload) (str
 
 	cmd := &broker.Command{
 		Command: dispatcher.Command{
-			Resource: p.Resource,
-			Action:   p.Action,
+			Resource:     p.Resource,
+			Action:       p.Action,
+			Dependencies: p.Dependencies,
 		},
 		Parameters: p.Parameters,
 	}

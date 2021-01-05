@@ -23,6 +23,8 @@ type AddRequestBody struct {
 	Action *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
 	// Action parameters
 	Parameters map[string]interface{} `form:"parameters,omitempty" json:"parameters,omitempty" xml:"parameters,omitempty"`
+	// Dependency UUIDs
+	Dependencies []string `form:"dependencies,omitempty" json:"dependencies,omitempty" xml:"dependencies,omitempty"`
 }
 
 // CompleteRequestBody is the type of the "spin-broker" service "complete"
@@ -166,6 +168,12 @@ func NewAddPayload(body *AddRequestBody, id string) *spinbroker.AddPayload {
 			tk := key
 			tv := val
 			v.Parameters[tk] = tv
+		}
+	}
+	if body.Dependencies != nil {
+		v.Dependencies = make([]string, len(body.Dependencies))
+		for i, val := range body.Dependencies {
+			v.Dependencies[i] = val
 		}
 	}
 	v.ID = id

@@ -24,6 +24,7 @@ var _ = Service("spin-broker", func() {
 			Attribute("resource", String, "Resource name")
 			Attribute("action", String, "Action name")
 			Attribute("parameters", MapOf(String, Any), "Action parameters")
+			Attribute("dependencies", ArrayOf(String), "Dependency UUIDs")
 
 			Required("id", "resource", "action")
 		})

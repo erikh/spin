@@ -61,7 +61,7 @@ type StorageImagesCreateRequestBody struct {
 	// Image filename, must not include `/`
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
-	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
@@ -105,7 +105,7 @@ type StorageImagesGetResponseBody struct {
 	// Image filename, must not include `/`
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
-	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
@@ -117,7 +117,7 @@ type StorageRequestBody struct {
 	// Image filename, must not include `/`
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
-	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
@@ -141,7 +141,7 @@ type StorageResponseBody struct {
 	// Image filename, must not include `/`
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
-	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }

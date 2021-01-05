@@ -3,6 +3,7 @@ package emulation
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 	"text/template"
 
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
@@ -66,7 +67,7 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templat
 				"-drive",
 				fmt.Sprintf(
 					"driver=raw,if=virtio,file=%s,cache=none,media=disk,index=%d",
-					storage.Image, i,
+					filepath.Join(ac.ImagesDir, storage.Volume, storage.Image), i,
 				))
 		}
 	}

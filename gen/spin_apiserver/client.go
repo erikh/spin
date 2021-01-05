@@ -8,14 +8,64 @@
 package spinapiserver
 
 import (
+	"context"
+
 	goa "goa.design/goa/v3/pkg"
 )
 
 // Client is the "spin-apiserver" service client.
 type Client struct {
+	VMCreateEndpoint        goa.Endpoint
+	VMDeleteEndpoint        goa.Endpoint
+	ControlStartEndpoint    goa.Endpoint
+	ControlStopEndpoint     goa.Endpoint
+	ControlShutdownEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "spin-apiserver" service client given the endpoints.
-func NewClient(goa.Endpoint) *Client {
-	return &Client{}
+func NewClient(vMCreate, vMDelete, controlStart, controlStop, controlShutdown goa.Endpoint) *Client {
+	return &Client{
+		VMCreateEndpoint:        vMCreate,
+		VMDeleteEndpoint:        vMDelete,
+		ControlStartEndpoint:    controlStart,
+		ControlStopEndpoint:     controlStop,
+		ControlShutdownEndpoint: controlShutdown,
+	}
+}
+
+// VMCreate calls the "vm/create" endpoint of the "spin-apiserver" service.
+func (c *Client) VMCreate(ctx context.Context, p *VM) (res uint64, err error) {
+	var ires interface{}
+	ires, err = c.VMCreateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(uint64), nil
+}
+
+// VMDelete calls the "vm/delete" endpoint of the "spin-apiserver" service.
+func (c *Client) VMDelete(ctx context.Context, p *VMDeletePayload) (err error) {
+	_, err = c.VMDeleteEndpoint(ctx, p)
+	return
+}
+
+// ControlStart calls the "control/start" endpoint of the "spin-apiserver"
+// service.
+func (c *Client) ControlStart(ctx context.Context, p *ControlStartPayload) (err error) {
+	_, err = c.ControlStartEndpoint(ctx, p)
+	return
+}
+
+// ControlStop calls the "control/stop" endpoint of the "spin-apiserver"
+// service.
+func (c *Client) ControlStop(ctx context.Context, p *ControlStopPayload) (err error) {
+	_, err = c.ControlStopEndpoint(ctx, p)
+	return
+}
+
+// ControlShutdown calls the "control/shutdown" endpoint of the
+// "spin-apiserver" service.
+func (c *Client) ControlShutdown(ctx context.Context, p *ControlShutdownPayload) (err error) {
+	_, err = c.ControlShutdownEndpoint(ctx, p)
+	return
 }

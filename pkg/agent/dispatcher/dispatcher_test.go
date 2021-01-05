@@ -60,7 +60,7 @@ func TestDispatcher(t *testing.T) {
 		},
 	}
 
-	mkuint := func(u uint) *uint {
+	mkuint64 := func(u uint64) *uint64 {
 		return &u
 	}
 
@@ -71,7 +71,7 @@ func TestDispatcher(t *testing.T) {
 		Storage: []*spinregistry.Storage{
 			{
 				Image:     "test.raw",
-				ImageSize: mkuint(50),
+				ImageSize: mkuint64(50),
 				Volume:    "test",
 			},
 		},

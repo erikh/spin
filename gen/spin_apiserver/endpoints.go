@@ -8,20 +8,83 @@
 package spinapiserver
 
 import (
+	"context"
+
 	goa "goa.design/goa/v3/pkg"
 )
 
 // Endpoints wraps the "spin-apiserver" service endpoints.
 type Endpoints struct {
+	VMCreate        goa.Endpoint
+	VMDelete        goa.Endpoint
+	ControlStart    goa.Endpoint
+	ControlStop     goa.Endpoint
+	ControlShutdown goa.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "spin-apiserver" service with
 // endpoints.
 func NewEndpoints(s Service) *Endpoints {
-	return &Endpoints{}
+	return &Endpoints{
+		VMCreate:        NewVMCreateEndpoint(s),
+		VMDelete:        NewVMDeleteEndpoint(s),
+		ControlStart:    NewControlStartEndpoint(s),
+		ControlStop:     NewControlStopEndpoint(s),
+		ControlShutdown: NewControlShutdownEndpoint(s),
+	}
 }
 
 // Use applies the given middleware to all the "spin-apiserver" service
 // endpoints.
 func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
+	e.VMCreate = m(e.VMCreate)
+	e.VMDelete = m(e.VMDelete)
+	e.ControlStart = m(e.ControlStart)
+	e.ControlStop = m(e.ControlStop)
+	e.ControlShutdown = m(e.ControlShutdown)
+}
+
+// NewVMCreateEndpoint returns an endpoint function that calls the method
+// "vm/create" of service "spin-apiserver".
+func NewVMCreateEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*VM)
+		return s.VMCreate(ctx, p)
+	}
+}
+
+// NewVMDeleteEndpoint returns an endpoint function that calls the method
+// "vm/delete" of service "spin-apiserver".
+func NewVMDeleteEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*VMDeletePayload)
+		return nil, s.VMDelete(ctx, p)
+	}
+}
+
+// NewControlStartEndpoint returns an endpoint function that calls the method
+// "control/start" of service "spin-apiserver".
+func NewControlStartEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ControlStartPayload)
+		return nil, s.ControlStart(ctx, p)
+	}
+}
+
+// NewControlStopEndpoint returns an endpoint function that calls the method
+// "control/stop" of service "spin-apiserver".
+func NewControlStopEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ControlStopPayload)
+		return nil, s.ControlStop(ctx, p)
+	}
+}
+
+// NewControlShutdownEndpoint returns an endpoint function that calls the
+// method "control/shutdown" of service "spin-apiserver".
+func NewControlShutdownEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*ControlShutdownPayload)
+		return nil, s.ControlShutdown(ctx, p)
+	}
 }

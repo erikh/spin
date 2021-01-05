@@ -111,7 +111,7 @@ type Storage struct {
 	// Image filename, must not include `/`
 	Image string
 	// Image size (in gigabytes)
-	ImageSize *uint
+	ImageSize *uint64
 	// Is this image a cdrom?
 	Cdrom *bool
 }

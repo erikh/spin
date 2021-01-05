@@ -18,7 +18,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-func mkuint(u uint) *uint {
+func mkuint64(u uint64) *uint64 {
 	return &u
 }
 
@@ -47,7 +47,7 @@ var testTable = map[string]test{
 						{
 							Image:     "test.raw",
 							Volume:    "test",
-							ImageSize: mkuint(50),
+							ImageSize: mkuint64(50),
 						},
 					},
 				},
@@ -67,7 +67,7 @@ var testTable = map[string]test{
 						{
 							Image:     "test.raw",
 							Volume:    "test",
-							ImageSize: mkuint(50),
+							ImageSize: mkuint64(50),
 						},
 					},
 				},
@@ -131,7 +131,7 @@ var testTable = map[string]test{
 							{
 								Image:     "test.raw",
 								Volume:    "test",
-								ImageSize: mkuint(50),
+								ImageSize: mkuint64(50),
 							},
 						},
 					},
