@@ -11,7 +11,7 @@ var _ = Service("spin-registry", func() {
 	*
 	********************************************/
 
-	Method("vm/create", func() {
+	Method("vm_create", func() {
 		Description("Create a VM")
 		Payload(VM)
 		Result(UInt64)
@@ -22,7 +22,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("vm/update", func() {
+	Method("vm_update", func() {
 		Description("Update a VM")
 		Payload(UpdateVM)
 
@@ -32,7 +32,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("vm/delete", func() {
+	Method("vm_delete", func() {
 		Description("Delete a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
@@ -45,7 +45,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("vm/get", func() {
+	Method("vm_get", func() {
 		Description("Retrieve a VM by ID")
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to remove")
@@ -59,7 +59,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("vm/list", func() {
+	Method("vm_list", func() {
 		Description("Retrieve all VM IDs")
 		Result(ArrayOf(UInt64))
 
@@ -75,7 +75,7 @@ var _ = Service("spin-registry", func() {
 	*
 	********************************************/
 
-	Method("storage/volumes/list", func() {
+	Method("storage_volumes_list", func() {
 		Description("list all volumes")
 
 		Result(ArrayOf(String))
@@ -86,7 +86,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/volumes/create", func() {
+	Method("storage_volumes_create", func() {
 		Description("create a new volume")
 
 		Payload(func() {
@@ -100,7 +100,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/volumes/delete", func() {
+	Method("storage_volumes_delete", func() {
 		Description("delete an existing volume")
 
 		Payload(func() {
@@ -114,7 +114,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/images/list", func() {
+	Method("storage_images_list", func() {
 		Description("list all images by volume")
 
 		Payload(func() {
@@ -130,7 +130,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/images/create", func() {
+	Method("storage_images_create", func() {
 		Description("add an image definition to the registry")
 
 		Payload(Storage)
@@ -141,7 +141,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/images/delete", func() {
+	Method("storage_images_delete", func() {
 		Description("remove an image definition from the registry")
 
 		Payload(func() {
@@ -156,7 +156,7 @@ var _ = Service("spin-registry", func() {
 		})
 	})
 
-	Method("storage/images/get", func() {
+	Method("storage_images_get", func() {
 		Description("retrieves an image definition from the registry")
 
 		Payload(func() {

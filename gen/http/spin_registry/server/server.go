@@ -130,7 +130,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 }
 
 // MountVMCreateHandler configures the mux to serve the "spin-registry" service
-// "vm/create" endpoint.
+// "vm_create" endpoint.
 func MountVMCreateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -142,7 +142,7 @@ func MountVMCreateHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMCreateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "vm/create" endpoint.
+// calls the "spin-registry" service "vm_create" endpoint.
 func NewVMCreateHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -158,7 +158,7 @@ func NewVMCreateHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/create")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -181,7 +181,7 @@ func NewVMCreateHandler(
 }
 
 // MountVMUpdateHandler configures the mux to serve the "spin-registry" service
-// "vm/update" endpoint.
+// "vm_update" endpoint.
 func MountVMUpdateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -193,7 +193,7 @@ func MountVMUpdateHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMUpdateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "vm/update" endpoint.
+// calls the "spin-registry" service "vm_update" endpoint.
 func NewVMUpdateHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -209,7 +209,7 @@ func NewVMUpdateHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/update")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_update")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -232,7 +232,7 @@ func NewVMUpdateHandler(
 }
 
 // MountVMDeleteHandler configures the mux to serve the "spin-registry" service
-// "vm/delete" endpoint.
+// "vm_delete" endpoint.
 func MountVMDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -244,7 +244,7 @@ func MountVMDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMDeleteHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "vm/delete" endpoint.
+// calls the "spin-registry" service "vm_delete" endpoint.
 func NewVMDeleteHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -260,7 +260,7 @@ func NewVMDeleteHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/delete")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -283,7 +283,7 @@ func NewVMDeleteHandler(
 }
 
 // MountVMGetHandler configures the mux to serve the "spin-registry" service
-// "vm/get" endpoint.
+// "vm_get" endpoint.
 func MountVMGetHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -295,7 +295,7 @@ func MountVMGetHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMGetHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "vm/get" endpoint.
+// calls the "spin-registry" service "vm_get" endpoint.
 func NewVMGetHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -311,7 +311,7 @@ func NewVMGetHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/get")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_get")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -334,7 +334,7 @@ func NewVMGetHandler(
 }
 
 // MountVMListHandler configures the mux to serve the "spin-registry" service
-// "vm/list" endpoint.
+// "vm_list" endpoint.
 func MountVMListHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -346,7 +346,7 @@ func MountVMListHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMListHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-registry" service "vm/list" endpoint.
+// calls the "spin-registry" service "vm_list" endpoint.
 func NewVMListHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -361,7 +361,7 @@ func NewVMListHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/list")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_list")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		var err error
 		res, err := endpoint(ctx, nil)
@@ -378,7 +378,7 @@ func NewVMListHandler(
 }
 
 // MountStorageVolumesListHandler configures the mux to serve the
-// "spin-registry" service "storage/volumes/list" endpoint.
+// "spin-registry" service "storage_volumes_list" endpoint.
 func MountStorageVolumesListHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -390,7 +390,7 @@ func MountStorageVolumesListHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageVolumesListHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/volumes/list"
+// request and calls the "spin-registry" service "storage_volumes_list"
 // endpoint.
 func NewStorageVolumesListHandler(
 	endpoint goa.Endpoint,
@@ -406,7 +406,7 @@ func NewStorageVolumesListHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/list")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_volumes_list")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		var err error
 		res, err := endpoint(ctx, nil)
@@ -423,7 +423,7 @@ func NewStorageVolumesListHandler(
 }
 
 // MountStorageVolumesCreateHandler configures the mux to serve the
-// "spin-registry" service "storage/volumes/create" endpoint.
+// "spin-registry" service "storage_volumes_create" endpoint.
 func MountStorageVolumesCreateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -435,7 +435,7 @@ func MountStorageVolumesCreateHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageVolumesCreateHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/volumes/create"
+// request and calls the "spin-registry" service "storage_volumes_create"
 // endpoint.
 func NewStorageVolumesCreateHandler(
 	endpoint goa.Endpoint,
@@ -452,7 +452,7 @@ func NewStorageVolumesCreateHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/create")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_volumes_create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -475,7 +475,7 @@ func NewStorageVolumesCreateHandler(
 }
 
 // MountStorageVolumesDeleteHandler configures the mux to serve the
-// "spin-registry" service "storage/volumes/delete" endpoint.
+// "spin-registry" service "storage_volumes_delete" endpoint.
 func MountStorageVolumesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -487,7 +487,7 @@ func MountStorageVolumesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageVolumesDeleteHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/volumes/delete"
+// request and calls the "spin-registry" service "storage_volumes_delete"
 // endpoint.
 func NewStorageVolumesDeleteHandler(
 	endpoint goa.Endpoint,
@@ -504,7 +504,7 @@ func NewStorageVolumesDeleteHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/volumes/delete")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_volumes_delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -527,7 +527,7 @@ func NewStorageVolumesDeleteHandler(
 }
 
 // MountStorageImagesListHandler configures the mux to serve the
-// "spin-registry" service "storage/images/list" endpoint.
+// "spin-registry" service "storage_images_list" endpoint.
 func MountStorageImagesListHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -539,7 +539,7 @@ func MountStorageImagesListHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageImagesListHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/images/list" endpoint.
+// request and calls the "spin-registry" service "storage_images_list" endpoint.
 func NewStorageImagesListHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -555,7 +555,7 @@ func NewStorageImagesListHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/list")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_images_list")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -578,7 +578,7 @@ func NewStorageImagesListHandler(
 }
 
 // MountStorageImagesCreateHandler configures the mux to serve the
-// "spin-registry" service "storage/images/create" endpoint.
+// "spin-registry" service "storage_images_create" endpoint.
 func MountStorageImagesCreateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -590,7 +590,7 @@ func MountStorageImagesCreateHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageImagesCreateHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/images/create"
+// request and calls the "spin-registry" service "storage_images_create"
 // endpoint.
 func NewStorageImagesCreateHandler(
 	endpoint goa.Endpoint,
@@ -607,7 +607,7 @@ func NewStorageImagesCreateHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/create")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_images_create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -630,7 +630,7 @@ func NewStorageImagesCreateHandler(
 }
 
 // MountStorageImagesDeleteHandler configures the mux to serve the
-// "spin-registry" service "storage/images/delete" endpoint.
+// "spin-registry" service "storage_images_delete" endpoint.
 func MountStorageImagesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -642,7 +642,7 @@ func MountStorageImagesDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageImagesDeleteHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/images/delete"
+// request and calls the "spin-registry" service "storage_images_delete"
 // endpoint.
 func NewStorageImagesDeleteHandler(
 	endpoint goa.Endpoint,
@@ -659,7 +659,7 @@ func NewStorageImagesDeleteHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/delete")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_images_delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -682,7 +682,7 @@ func NewStorageImagesDeleteHandler(
 }
 
 // MountStorageImagesGetHandler configures the mux to serve the "spin-registry"
-// service "storage/images/get" endpoint.
+// service "storage_images_get" endpoint.
 func MountStorageImagesGetHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -694,7 +694,7 @@ func MountStorageImagesGetHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewStorageImagesGetHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-registry" service "storage/images/get" endpoint.
+// request and calls the "spin-registry" service "storage_images_get" endpoint.
 func NewStorageImagesGetHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -710,7 +710,7 @@ func NewStorageImagesGetHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "storage/images/get")
+		ctx = context.WithValue(ctx, goa.MethodKey, "storage_images_get")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-registry")
 		payload, err := decodeRequest(r)
 		if err != nil {

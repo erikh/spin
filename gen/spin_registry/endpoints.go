@@ -65,7 +65,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 }
 
 // NewVMCreateEndpoint returns an endpoint function that calls the method
-// "vm/create" of service "spin-registry".
+// "vm_create" of service "spin-registry".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VM)
@@ -74,7 +74,7 @@ func NewVMCreateEndpoint(s Service) goa.Endpoint {
 }
 
 // NewVMUpdateEndpoint returns an endpoint function that calls the method
-// "vm/update" of service "spin-registry".
+// "vm_update" of service "spin-registry".
 func NewVMUpdateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*UpdateVM)
@@ -83,7 +83,7 @@ func NewVMUpdateEndpoint(s Service) goa.Endpoint {
 }
 
 // NewVMDeleteEndpoint returns an endpoint function that calls the method
-// "vm/delete" of service "spin-registry".
+// "vm_delete" of service "spin-registry".
 func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VMDeletePayload)
@@ -91,7 +91,7 @@ func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 	}
 }
 
-// NewVMGetEndpoint returns an endpoint function that calls the method "vm/get"
+// NewVMGetEndpoint returns an endpoint function that calls the method "vm_get"
 // of service "spin-registry".
 func NewVMGetEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
@@ -101,7 +101,7 @@ func NewVMGetEndpoint(s Service) goa.Endpoint {
 }
 
 // NewVMListEndpoint returns an endpoint function that calls the method
-// "vm/list" of service "spin-registry".
+// "vm_list" of service "spin-registry".
 func NewVMListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		return s.VMList(ctx)
@@ -109,7 +109,7 @@ func NewVMListEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageVolumesListEndpoint returns an endpoint function that calls the
-// method "storage/volumes/list" of service "spin-registry".
+// method "storage_volumes_list" of service "spin-registry".
 func NewStorageVolumesListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		return s.StorageVolumesList(ctx)
@@ -117,7 +117,7 @@ func NewStorageVolumesListEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageVolumesCreateEndpoint returns an endpoint function that calls the
-// method "storage/volumes/create" of service "spin-registry".
+// method "storage_volumes_create" of service "spin-registry".
 func NewStorageVolumesCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*StorageVolumesCreatePayload)
@@ -126,7 +126,7 @@ func NewStorageVolumesCreateEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageVolumesDeleteEndpoint returns an endpoint function that calls the
-// method "storage/volumes/delete" of service "spin-registry".
+// method "storage_volumes_delete" of service "spin-registry".
 func NewStorageVolumesDeleteEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*StorageVolumesDeletePayload)
@@ -135,7 +135,7 @@ func NewStorageVolumesDeleteEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageImagesListEndpoint returns an endpoint function that calls the
-// method "storage/images/list" of service "spin-registry".
+// method "storage_images_list" of service "spin-registry".
 func NewStorageImagesListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*StorageImagesListPayload)
@@ -144,7 +144,7 @@ func NewStorageImagesListEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageImagesCreateEndpoint returns an endpoint function that calls the
-// method "storage/images/create" of service "spin-registry".
+// method "storage_images_create" of service "spin-registry".
 func NewStorageImagesCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*Storage)
@@ -153,7 +153,7 @@ func NewStorageImagesCreateEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageImagesDeleteEndpoint returns an endpoint function that calls the
-// method "storage/images/delete" of service "spin-registry".
+// method "storage_images_delete" of service "spin-registry".
 func NewStorageImagesDeleteEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*StorageImagesDeletePayload)
@@ -162,7 +162,7 @@ func NewStorageImagesDeleteEndpoint(s Service) goa.Endpoint {
 }
 
 // NewStorageImagesGetEndpoint returns an endpoint function that calls the
-// method "storage/images/get" of service "spin-registry".
+// method "storage_images_get" of service "spin-registry".
 func NewStorageImagesGetEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*StorageImagesGetPayload)

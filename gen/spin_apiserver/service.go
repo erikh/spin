@@ -13,15 +13,15 @@ import (
 
 // Bridge between the outer-facing UIs and the internals
 type Service interface {
-	// VMCreate implements vm/create.
+	// VMCreate implements vm_create.
 	VMCreate(context.Context, *VM) (res uint64, err error)
-	// VMDelete implements vm/delete.
+	// VMDelete implements vm_delete.
 	VMDelete(context.Context, *VMDeletePayload) (err error)
-	// ControlStart implements control/start.
+	// ControlStart implements control_start.
 	ControlStart(context.Context, *ControlStartPayload) (err error)
-	// ControlStop implements control/stop.
+	// ControlStop implements control_stop.
 	ControlStop(context.Context, *ControlStopPayload) (err error)
-	// ControlShutdown implements control/shutdown.
+	// ControlShutdown implements control_shutdown.
 	ControlShutdown(context.Context, *ControlShutdownPayload) (err error)
 }
 
@@ -33,9 +33,9 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"vm/create", "vm/delete", "control/start", "control/stop", "control/shutdown"}
+var MethodNames = [5]string{"vm_create", "vm_delete", "control_start", "control_stop", "control_shutdown"}
 
-// VM is the payload type of the spin-apiserver service vm/create method.
+// VM is the payload type of the spin-apiserver service vm_create method.
 type VM struct {
 	// Name of VM; does not need to be unique
 	Name string
@@ -47,7 +47,7 @@ type VM struct {
 	Storage []*Storage
 }
 
-// VMDeletePayload is the payload type of the spin-apiserver service vm/delete
+// VMDeletePayload is the payload type of the spin-apiserver service vm_delete
 // method.
 type VMDeletePayload struct {
 	// ID of VM to delete
@@ -55,21 +55,21 @@ type VMDeletePayload struct {
 }
 
 // ControlStartPayload is the payload type of the spin-apiserver service
-// control/start method.
+// control_start method.
 type ControlStartPayload struct {
 	// ID of VM to start
 	ID uint64
 }
 
 // ControlStopPayload is the payload type of the spin-apiserver service
-// control/stop method.
+// control_stop method.
 type ControlStopPayload struct {
 	// ID of VM to stop
 	ID uint64
 }
 
 // ControlShutdownPayload is the payload type of the spin-apiserver service
-// control/shutdown method.
+// control_shutdown method.
 type ControlShutdownPayload struct {
 	// ID of VM to shutdown
 	ID uint64

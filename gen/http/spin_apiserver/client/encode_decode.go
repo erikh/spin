@@ -19,12 +19,12 @@ import (
 )
 
 // BuildVMCreateRequest instantiates a HTTP request object with method and path
-// set to call the "spin-apiserver" service "vm/create" endpoint
+// set to call the "spin-apiserver" service "vm_create" endpoint
 func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMCreateSpinApiserverPath()}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm/create", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm_create", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -34,23 +34,23 @@ func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http
 }
 
 // EncodeVMCreateRequest returns an encoder for requests sent to the
-// spin-apiserver vm/create server.
+// spin-apiserver vm_create server.
 func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
 		p, ok := v.(*spinapiserver.VM)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-apiserver", "vm/create", "*spinapiserver.VM", v)
+			return goahttp.ErrInvalidType("spin-apiserver", "vm_create", "*spinapiserver.VM", v)
 		}
 		body := NewVMCreateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
-			return goahttp.ErrEncodingError("spin-apiserver", "vm/create", err)
+			return goahttp.ErrEncodingError("spin-apiserver", "vm_create", err)
 		}
 		return nil
 	}
 }
 
 // DecodeVMCreateResponse returns a decoder for responses returned by the
-// spin-apiserver vm/create endpoint. restoreBody controls whether the response
+// spin-apiserver vm_create endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
 func DecodeVMCreateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -74,18 +74,18 @@ func DecodeVMCreateResponse(decoder func(*http.Response) goahttp.Decoder, restor
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
-				return nil, goahttp.ErrDecodingError("spin-apiserver", "vm/create", err)
+				return nil, goahttp.ErrDecodingError("spin-apiserver", "vm_create", err)
 			}
 			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm/create", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_create", resp.StatusCode, string(body))
 		}
 	}
 }
 
 // BuildVMDeleteRequest instantiates a HTTP request object with method and path
-// set to call the "spin-apiserver" service "vm/delete" endpoint
+// set to call the "spin-apiserver" service "vm_delete" endpoint
 func (c *Client) BuildVMDeleteRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
@@ -93,14 +93,14 @@ func (c *Client) BuildVMDeleteRequest(ctx context.Context, v interface{}) (*http
 	{
 		p, ok := v.(*spinapiserver.VMDeletePayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-apiserver", "vm/delete", "*spinapiserver.VMDeletePayload", v)
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "vm_delete", "*spinapiserver.VMDeletePayload", v)
 		}
 		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMDeleteSpinApiserverPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm/delete", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm_delete", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -110,7 +110,7 @@ func (c *Client) BuildVMDeleteRequest(ctx context.Context, v interface{}) (*http
 }
 
 // DecodeVMDeleteResponse returns a decoder for responses returned by the
-// spin-apiserver vm/delete endpoint. restoreBody controls whether the response
+// spin-apiserver vm_delete endpoint. restoreBody controls whether the response
 // body should be restored after having been read.
 func DecodeVMDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -131,13 +131,13 @@ func DecodeVMDeleteResponse(decoder func(*http.Response) goahttp.Decoder, restor
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm/delete", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_delete", resp.StatusCode, string(body))
 		}
 	}
 }
 
 // BuildControlStartRequest instantiates a HTTP request object with method and
-// path set to call the "spin-apiserver" service "control/start" endpoint
+// path set to call the "spin-apiserver" service "control_start" endpoint
 func (c *Client) BuildControlStartRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
@@ -145,14 +145,14 @@ func (c *Client) BuildControlStartRequest(ctx context.Context, v interface{}) (*
 	{
 		p, ok := v.(*spinapiserver.ControlStartPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-apiserver", "control/start", "*spinapiserver.ControlStartPayload", v)
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "control_start", "*spinapiserver.ControlStartPayload", v)
 		}
 		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ControlStartSpinApiserverPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control/start", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control_start", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -162,7 +162,7 @@ func (c *Client) BuildControlStartRequest(ctx context.Context, v interface{}) (*
 }
 
 // DecodeControlStartResponse returns a decoder for responses returned by the
-// spin-apiserver control/start endpoint. restoreBody controls whether the
+// spin-apiserver control_start endpoint. restoreBody controls whether the
 // response body should be restored after having been read.
 func DecodeControlStartResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -183,13 +183,13 @@ func DecodeControlStartResponse(decoder func(*http.Response) goahttp.Decoder, re
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control/start", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control_start", resp.StatusCode, string(body))
 		}
 	}
 }
 
 // BuildControlStopRequest instantiates a HTTP request object with method and
-// path set to call the "spin-apiserver" service "control/stop" endpoint
+// path set to call the "spin-apiserver" service "control_stop" endpoint
 func (c *Client) BuildControlStopRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
@@ -197,14 +197,14 @@ func (c *Client) BuildControlStopRequest(ctx context.Context, v interface{}) (*h
 	{
 		p, ok := v.(*spinapiserver.ControlStopPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-apiserver", "control/stop", "*spinapiserver.ControlStopPayload", v)
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "control_stop", "*spinapiserver.ControlStopPayload", v)
 		}
 		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ControlStopSpinApiserverPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control/stop", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control_stop", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -214,7 +214,7 @@ func (c *Client) BuildControlStopRequest(ctx context.Context, v interface{}) (*h
 }
 
 // DecodeControlStopResponse returns a decoder for responses returned by the
-// spin-apiserver control/stop endpoint. restoreBody controls whether the
+// spin-apiserver control_stop endpoint. restoreBody controls whether the
 // response body should be restored after having been read.
 func DecodeControlStopResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -235,13 +235,13 @@ func DecodeControlStopResponse(decoder func(*http.Response) goahttp.Decoder, res
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control/stop", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control_stop", resp.StatusCode, string(body))
 		}
 	}
 }
 
 // BuildControlShutdownRequest instantiates a HTTP request object with method
-// and path set to call the "spin-apiserver" service "control/shutdown" endpoint
+// and path set to call the "spin-apiserver" service "control_shutdown" endpoint
 func (c *Client) BuildControlShutdownRequest(ctx context.Context, v interface{}) (*http.Request, error) {
 	var (
 		id uint64
@@ -249,14 +249,14 @@ func (c *Client) BuildControlShutdownRequest(ctx context.Context, v interface{})
 	{
 		p, ok := v.(*spinapiserver.ControlShutdownPayload)
 		if !ok {
-			return nil, goahttp.ErrInvalidType("spin-apiserver", "control/shutdown", "*spinapiserver.ControlShutdownPayload", v)
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "control_shutdown", "*spinapiserver.ControlShutdownPayload", v)
 		}
 		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: ControlShutdownSpinApiserverPath(id)}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
-		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control/shutdown", u.String(), err)
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "control_shutdown", u.String(), err)
 	}
 	if ctx != nil {
 		req = req.WithContext(ctx)
@@ -266,7 +266,7 @@ func (c *Client) BuildControlShutdownRequest(ctx context.Context, v interface{})
 }
 
 // DecodeControlShutdownResponse returns a decoder for responses returned by
-// the spin-apiserver control/shutdown endpoint. restoreBody controls whether
+// the spin-apiserver control_shutdown endpoint. restoreBody controls whether
 // the response body should be restored after having been read.
 func DecodeControlShutdownResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
 	return func(resp *http.Response) (interface{}, error) {
@@ -287,7 +287,7 @@ func DecodeControlShutdownResponse(decoder func(*http.Response) goahttp.Decoder,
 			return nil, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
-			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control/shutdown", resp.StatusCode, string(body))
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control_shutdown", resp.StatusCode, string(body))
 		}
 	}
 }

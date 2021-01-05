@@ -47,9 +47,9 @@ const ServiceName = "spin-registry"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [12]string{"vm/create", "vm/update", "vm/delete", "vm/get", "vm/list", "storage/volumes/list", "storage/volumes/create", "storage/volumes/delete", "storage/images/list", "storage/images/create", "storage/images/delete", "storage/images/get"}
+var MethodNames = [12]string{"vm_create", "vm_update", "vm_delete", "vm_get", "vm_list", "storage_volumes_list", "storage_volumes_create", "storage_volumes_delete", "storage_images_list", "storage_images_create", "storage_images_delete", "storage_images_get"}
 
-// VM is the payload type of the spin-registry service vm/create method.
+// VM is the payload type of the spin-registry service vm_create method.
 type VM struct {
 	// Name of VM; does not need to be unique
 	Name string
@@ -61,7 +61,7 @@ type VM struct {
 	Storage []*Storage
 }
 
-// UpdateVM is the payload type of the spin-registry service vm/update method.
+// UpdateVM is the payload type of the spin-registry service vm_update method.
 type UpdateVM struct {
 	// ID of VM to update
 	ID uint64
@@ -69,42 +69,42 @@ type UpdateVM struct {
 	VM *VM
 }
 
-// VMDeletePayload is the payload type of the spin-registry service vm/delete
+// VMDeletePayload is the payload type of the spin-registry service vm_delete
 // method.
 type VMDeletePayload struct {
 	// ID of VM to remove
 	ID uint64
 }
 
-// VMGetPayload is the payload type of the spin-registry service vm/get method.
+// VMGetPayload is the payload type of the spin-registry service vm_get method.
 type VMGetPayload struct {
 	// ID of VM to remove
 	ID uint64
 }
 
 // StorageVolumesCreatePayload is the payload type of the spin-registry service
-// storage/volumes/create method.
+// storage_volumes_create method.
 type StorageVolumesCreatePayload struct {
 	// name of volume
 	Name string
 }
 
 // StorageVolumesDeletePayload is the payload type of the spin-registry service
-// storage/volumes/delete method.
+// storage_volumes_delete method.
 type StorageVolumesDeletePayload struct {
 	// name of volume
 	Name string
 }
 
 // StorageImagesListPayload is the payload type of the spin-registry service
-// storage/images/list method.
+// storage_images_list method.
 type StorageImagesListPayload struct {
 	// name of volume to list images for
 	VolumeName string
 }
 
 // Storage is the payload type of the spin-registry service
-// storage/images/create method.
+// storage_images_create method.
 type Storage struct {
 	// Volume name, must not include `/`
 	Volume string
@@ -117,7 +117,7 @@ type Storage struct {
 }
 
 // StorageImagesDeletePayload is the payload type of the spin-registry service
-// storage/images/delete method.
+// storage_images_delete method.
 type StorageImagesDeletePayload struct {
 	// name of volume
 	VolumeName string
@@ -126,7 +126,7 @@ type StorageImagesDeletePayload struct {
 }
 
 // StorageImagesGetPayload is the payload type of the spin-registry service
-// storage/images/get method.
+// storage_images_get method.
 type StorageImagesGetPayload struct {
 	// name of volume
 	VolumeName string

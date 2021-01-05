@@ -11,7 +11,7 @@ import (
 	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
 )
 
-// VMCreateRequestBody is the type of the "spin-apiserver" service "vm/create"
+// VMCreateRequestBody is the type of the "spin-apiserver" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
 	// Name of VM; does not need to be unique
@@ -37,7 +37,7 @@ type StorageRequestBody struct {
 }
 
 // NewVMCreateRequestBody builds the HTTP request body from the payload of the
-// "vm/create" endpoint of the "spin-apiserver" service.
+// "vm_create" endpoint of the "spin-apiserver" service.
 func NewVMCreateRequestBody(p *spinapiserver.VM) *VMCreateRequestBody {
 	body := &VMCreateRequestBody{
 		Name:   p.Name,

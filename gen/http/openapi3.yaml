@@ -71,8 +71,8 @@ paths:
     post:
       tags:
       - spin-apiserver
-      summary: control/shutdown spin-apiserver
-      operationId: spin-apiserver#control/shutdown
+      summary: control_shutdown spin-apiserver
+      operationId: spin-apiserver#control_shutdown
       parameters:
       - name: id
         in: path
@@ -90,8 +90,8 @@ paths:
     post:
       tags:
       - spin-apiserver
-      summary: control/start spin-apiserver
-      operationId: spin-apiserver#control/start
+      summary: control_start spin-apiserver
+      operationId: spin-apiserver#control_start
       parameters:
       - name: id
         in: path
@@ -109,8 +109,8 @@ paths:
     post:
       tags:
       - spin-apiserver
-      summary: control/stop spin-apiserver
-      operationId: spin-apiserver#control/stop
+      summary: control_stop spin-apiserver
+      operationId: spin-apiserver#control_stop
       parameters:
       - name: id
         in: path
@@ -259,9 +259,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: storage/images/create spin-registry
+      summary: storage_images_create spin-registry
       description: add an image definition to the registry
-      operationId: spin-registry#storage/images/create
+      operationId: spin-registry#storage_images_create
       requestBody:
         required: true
         content:
@@ -280,9 +280,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: storage/images/delete spin-registry
+      summary: storage_images_delete spin-registry
       description: remove an image definition from the registry
-      operationId: spin-registry#storage/images/delete
+      operationId: spin-registry#storage_images_delete
       requestBody:
         required: true
         content:
@@ -299,9 +299,9 @@ paths:
     get:
       tags:
       - spin-registry
-      summary: storage/images/get spin-registry
+      summary: storage_images_get spin-registry
       description: retrieves an image definition from the registry
-      operationId: spin-registry#storage/images/get
+      operationId: spin-registry#storage_images_get
       requestBody:
         required: true
         content:
@@ -327,9 +327,9 @@ paths:
     get:
       tags:
       - spin-registry
-      summary: storage/images/list spin-registry
+      summary: storage_images_list spin-registry
       description: list all images by volume
-      operationId: spin-registry#storage/images/list
+      operationId: spin-registry#storage_images_list
       requestBody:
         required: true
         content:
@@ -359,9 +359,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: storage/volumes/create spin-registry
+      summary: storage_volumes_create spin-registry
       description: create a new volume
-      operationId: spin-registry#storage/volumes/create
+      operationId: spin-registry#storage_volumes_create
       requestBody:
         required: true
         content:
@@ -377,9 +377,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: storage/volumes/delete spin-registry
+      summary: storage_volumes_delete spin-registry
       description: delete an existing volume
-      operationId: spin-registry#storage/volumes/delete
+      operationId: spin-registry#storage_volumes_delete
       requestBody:
         required: true
         content:
@@ -395,9 +395,9 @@ paths:
     get:
       tags:
       - spin-registry
-      summary: storage/volumes/list spin-registry
+      summary: storage_volumes_list spin-registry
       description: list all volumes
-      operationId: spin-registry#storage/volumes/list
+      operationId: spin-registry#storage_volumes_list
       responses:
         "200":
           description: OK response.
@@ -420,9 +420,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: vm/create spin-registry
+      summary: vm_create spin-registry
       description: Create a VM
-      operationId: spin-registry#vm/create
+      operationId: spin-registry#vm_create
       requestBody:
         required: true
         content:
@@ -463,9 +463,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: vm/delete spin-registry
+      summary: vm_delete spin-registry
       description: Delete a VM by ID
-      operationId: spin-registry#vm/delete
+      operationId: spin-registry#vm_delete
       parameters:
       - name: id
         in: path
@@ -483,9 +483,9 @@ paths:
     get:
       tags:
       - spin-registry
-      summary: vm/get spin-registry
+      summary: vm_get spin-registry
       description: Retrieve a VM by ID
-      operationId: spin-registry#vm/get
+      operationId: spin-registry#vm_get
       parameters:
       - name: id
         in: path
@@ -528,9 +528,9 @@ paths:
     get:
       tags:
       - spin-registry
-      summary: vm/list spin-registry
+      summary: vm_list spin-registry
       description: Retrieve all VM IDs
-      operationId: spin-registry#vm/list
+      operationId: spin-registry#vm_list
       responses:
         "200":
           description: OK response.
@@ -554,9 +554,9 @@ paths:
     post:
       tags:
       - spin-registry
-      summary: vm/update spin-registry
+      summary: vm_update spin-registry
       description: Update a VM
-      operationId: spin-registry#vm/update
+      operationId: spin-registry#vm_update
       parameters:
       - name: id
         in: path

@@ -19,7 +19,7 @@ import (
 )
 
 // EncodeVMCreateResponse returns an encoder for responses returned by the
-// spin-apiserver vm/create endpoint.
+// spin-apiserver vm_create endpoint.
 func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(uint64)
@@ -31,7 +31,7 @@ func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) g
 }
 
 // DecodeVMCreateRequest returns a decoder for requests sent to the
-// spin-apiserver vm/create endpoint.
+// spin-apiserver vm_create endpoint.
 func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -56,7 +56,7 @@ func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 }
 
 // EncodeVMDeleteResponse returns an encoder for responses returned by the
-// spin-apiserver vm/delete endpoint.
+// spin-apiserver vm_delete endpoint.
 func EncodeVMDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -65,7 +65,7 @@ func EncodeVMDeleteResponse(encoder func(context.Context, http.ResponseWriter) g
 }
 
 // DecodeVMDeleteRequest returns a decoder for requests sent to the
-// spin-apiserver vm/delete endpoint.
+// spin-apiserver vm_delete endpoint.
 func DecodeVMDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -92,7 +92,7 @@ func DecodeVMDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 }
 
 // EncodeControlStartResponse returns an encoder for responses returned by the
-// spin-apiserver control/start endpoint.
+// spin-apiserver control_start endpoint.
 func EncodeControlStartResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -101,7 +101,7 @@ func EncodeControlStartResponse(encoder func(context.Context, http.ResponseWrite
 }
 
 // DecodeControlStartRequest returns a decoder for requests sent to the
-// spin-apiserver control/start endpoint.
+// spin-apiserver control_start endpoint.
 func DecodeControlStartRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -128,7 +128,7 @@ func DecodeControlStartRequest(mux goahttp.Muxer, decoder func(*http.Request) go
 }
 
 // EncodeControlStopResponse returns an encoder for responses returned by the
-// spin-apiserver control/stop endpoint.
+// spin-apiserver control_stop endpoint.
 func EncodeControlStopResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -137,7 +137,7 @@ func EncodeControlStopResponse(encoder func(context.Context, http.ResponseWriter
 }
 
 // DecodeControlStopRequest returns a decoder for requests sent to the
-// spin-apiserver control/stop endpoint.
+// spin-apiserver control_stop endpoint.
 func DecodeControlStopRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -164,7 +164,7 @@ func DecodeControlStopRequest(mux goahttp.Muxer, decoder func(*http.Request) goa
 }
 
 // EncodeControlShutdownResponse returns an encoder for responses returned by
-// the spin-apiserver control/shutdown endpoint.
+// the spin-apiserver control_shutdown endpoint.
 func EncodeControlShutdownResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -173,7 +173,7 @@ func EncodeControlShutdownResponse(encoder func(context.Context, http.ResponseWr
 }
 
 // DecodeControlShutdownRequest returns a decoder for requests sent to the
-// spin-apiserver control/shutdown endpoint.
+// spin-apiserver control_shutdown endpoint.
 func DecodeControlShutdownRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (

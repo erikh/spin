@@ -12,7 +12,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// VMCreateRequestBody is the type of the "spin-apiserver" service "vm/create"
+// VMCreateRequestBody is the type of the "spin-apiserver" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
 	// Name of VM; does not need to be unique
@@ -37,7 +37,7 @@ type StorageRequestBody struct {
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
-// NewVMCreateVM builds a spin-apiserver service vm/create endpoint payload.
+// NewVMCreateVM builds a spin-apiserver service vm_create endpoint payload.
 func NewVMCreateVM(body *VMCreateRequestBody) *spinapiserver.VM {
 	v := &spinapiserver.VM{
 		Name:   *body.Name,
@@ -52,7 +52,7 @@ func NewVMCreateVM(body *VMCreateRequestBody) *spinapiserver.VM {
 	return v
 }
 
-// NewVMDeletePayload builds a spin-apiserver service vm/delete endpoint
+// NewVMDeletePayload builds a spin-apiserver service vm_delete endpoint
 // payload.
 func NewVMDeletePayload(id uint64) *spinapiserver.VMDeletePayload {
 	v := &spinapiserver.VMDeletePayload{}
@@ -61,7 +61,7 @@ func NewVMDeletePayload(id uint64) *spinapiserver.VMDeletePayload {
 	return v
 }
 
-// NewControlStartPayload builds a spin-apiserver service control/start
+// NewControlStartPayload builds a spin-apiserver service control_start
 // endpoint payload.
 func NewControlStartPayload(id uint64) *spinapiserver.ControlStartPayload {
 	v := &spinapiserver.ControlStartPayload{}
@@ -70,7 +70,7 @@ func NewControlStartPayload(id uint64) *spinapiserver.ControlStartPayload {
 	return v
 }
 
-// NewControlStopPayload builds a spin-apiserver service control/stop endpoint
+// NewControlStopPayload builds a spin-apiserver service control_stop endpoint
 // payload.
 func NewControlStopPayload(id uint64) *spinapiserver.ControlStopPayload {
 	v := &spinapiserver.ControlStopPayload{}
@@ -79,7 +79,7 @@ func NewControlStopPayload(id uint64) *spinapiserver.ControlStopPayload {
 	return v
 }
 
-// NewControlShutdownPayload builds a spin-apiserver service control/shutdown
+// NewControlShutdownPayload builds a spin-apiserver service control_shutdown
 // endpoint payload.
 func NewControlShutdownPayload(id uint64) *spinapiserver.ControlShutdownPayload {
 	v := &spinapiserver.ControlShutdownPayload{}
@@ -89,7 +89,7 @@ func NewControlShutdownPayload(id uint64) *spinapiserver.ControlShutdownPayload 
 }
 
 // ValidateVMCreateRequestBody runs the validations defined on
-// Vm/CreateRequestBody
+// vm_create_request_body
 func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))

@@ -12,7 +12,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// VMCreateRequestBody is the type of the "spin-registry" service "vm/create"
+// VMCreateRequestBody is the type of the "spin-registry" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
 	// Name of VM; does not need to be unique
@@ -25,7 +25,7 @@ type VMCreateRequestBody struct {
 	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
-// VMUpdateRequestBody is the type of the "spin-registry" service "vm/update"
+// VMUpdateRequestBody is the type of the "spin-registry" service "vm_update"
 // endpoint HTTP request body.
 type VMUpdateRequestBody struct {
 	// VM to publish
@@ -33,28 +33,28 @@ type VMUpdateRequestBody struct {
 }
 
 // StorageVolumesCreateRequestBody is the type of the "spin-registry" service
-// "storage/volumes/create" endpoint HTTP request body.
+// "storage_volumes_create" endpoint HTTP request body.
 type StorageVolumesCreateRequestBody struct {
 	// name of volume
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // StorageVolumesDeleteRequestBody is the type of the "spin-registry" service
-// "storage/volumes/delete" endpoint HTTP request body.
+// "storage_volumes_delete" endpoint HTTP request body.
 type StorageVolumesDeleteRequestBody struct {
 	// name of volume
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 }
 
 // StorageImagesListRequestBody is the type of the "spin-registry" service
-// "storage/images/list" endpoint HTTP request body.
+// "storage_images_list" endpoint HTTP request body.
 type StorageImagesListRequestBody struct {
 	// name of volume to list images for
 	VolumeName *string `form:"volume_name,omitempty" json:"volume_name,omitempty" xml:"volume_name,omitempty"`
 }
 
 // StorageImagesCreateRequestBody is the type of the "spin-registry" service
-// "storage/images/create" endpoint HTTP request body.
+// "storage_images_create" endpoint HTTP request body.
 type StorageImagesCreateRequestBody struct {
 	// Volume name, must not include `/`
 	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
@@ -67,7 +67,7 @@ type StorageImagesCreateRequestBody struct {
 }
 
 // StorageImagesDeleteRequestBody is the type of the "spin-registry" service
-// "storage/images/delete" endpoint HTTP request body.
+// "storage_images_delete" endpoint HTTP request body.
 type StorageImagesDeleteRequestBody struct {
 	// name of volume
 	VolumeName *string `form:"volume_name,omitempty" json:"volume_name,omitempty" xml:"volume_name,omitempty"`
@@ -76,7 +76,7 @@ type StorageImagesDeleteRequestBody struct {
 }
 
 // StorageImagesGetRequestBody is the type of the "spin-registry" service
-// "storage/images/get" endpoint HTTP request body.
+// "storage_images_get" endpoint HTTP request body.
 type StorageImagesGetRequestBody struct {
 	// name of volume
 	VolumeName *string `form:"volume_name,omitempty" json:"volume_name,omitempty" xml:"volume_name,omitempty"`
@@ -84,7 +84,7 @@ type StorageImagesGetRequestBody struct {
 	ImageName *string `form:"image_name,omitempty" json:"image_name,omitempty" xml:"image_name,omitempty"`
 }
 
-// VMGetResponseBody is the type of the "spin-registry" service "vm/get"
+// VMGetResponseBody is the type of the "spin-registry" service "vm_get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
 	// Name of VM; does not need to be unique
@@ -98,7 +98,7 @@ type VMGetResponseBody struct {
 }
 
 // StorageImagesGetResponseBody is the type of the "spin-registry" service
-// "storage/images/get" endpoint HTTP response body.
+// "storage_images_get" endpoint HTTP response body.
 type StorageImagesGetResponseBody struct {
 	// Volume name, must not include `/`
 	Volume string `form:"volume" json:"volume" xml:"volume"`
@@ -147,7 +147,7 @@ type VMRequestBody struct {
 }
 
 // NewVMGetResponseBody builds the HTTP response body from the result of the
-// "vm/get" endpoint of the "spin-registry" service.
+// "vm_get" endpoint of the "spin-registry" service.
 func NewVMGetResponseBody(res *spinregistry.VM) *VMGetResponseBody {
 	body := &VMGetResponseBody{
 		Name:   res.Name,
@@ -164,7 +164,7 @@ func NewVMGetResponseBody(res *spinregistry.VM) *VMGetResponseBody {
 }
 
 // NewStorageImagesGetResponseBody builds the HTTP response body from the
-// result of the "storage/images/get" endpoint of the "spin-registry" service.
+// result of the "storage_images_get" endpoint of the "spin-registry" service.
 func NewStorageImagesGetResponseBody(res *spinregistry.Storage) *StorageImagesGetResponseBody {
 	body := &StorageImagesGetResponseBody{
 		Volume:    res.Volume,
@@ -175,7 +175,7 @@ func NewStorageImagesGetResponseBody(res *spinregistry.Storage) *StorageImagesGe
 	return body
 }
 
-// NewVMCreateVM builds a spin-registry service vm/create endpoint payload.
+// NewVMCreateVM builds a spin-registry service vm_create endpoint payload.
 func NewVMCreateVM(body *VMCreateRequestBody) *spinregistry.VM {
 	v := &spinregistry.VM{
 		Name:   *body.Name,
@@ -190,7 +190,7 @@ func NewVMCreateVM(body *VMCreateRequestBody) *spinregistry.VM {
 	return v
 }
 
-// NewVMUpdateUpdateVM builds a spin-registry service vm/update endpoint
+// NewVMUpdateUpdateVM builds a spin-registry service vm_update endpoint
 // payload.
 func NewVMUpdateUpdateVM(body *VMUpdateRequestBody, id uint64) *spinregistry.UpdateVM {
 	v := &spinregistry.UpdateVM{}
@@ -200,7 +200,7 @@ func NewVMUpdateUpdateVM(body *VMUpdateRequestBody, id uint64) *spinregistry.Upd
 	return v
 }
 
-// NewVMDeletePayload builds a spin-registry service vm/delete endpoint payload.
+// NewVMDeletePayload builds a spin-registry service vm_delete endpoint payload.
 func NewVMDeletePayload(id uint64) *spinregistry.VMDeletePayload {
 	v := &spinregistry.VMDeletePayload{}
 	v.ID = id
@@ -208,7 +208,7 @@ func NewVMDeletePayload(id uint64) *spinregistry.VMDeletePayload {
 	return v
 }
 
-// NewVMGetPayload builds a spin-registry service vm/get endpoint payload.
+// NewVMGetPayload builds a spin-registry service vm_get endpoint payload.
 func NewVMGetPayload(id uint64) *spinregistry.VMGetPayload {
 	v := &spinregistry.VMGetPayload{}
 	v.ID = id
@@ -217,7 +217,7 @@ func NewVMGetPayload(id uint64) *spinregistry.VMGetPayload {
 }
 
 // NewStorageVolumesCreatePayload builds a spin-registry service
-// storage/volumes/create endpoint payload.
+// storage_volumes_create endpoint payload.
 func NewStorageVolumesCreatePayload(body *StorageVolumesCreateRequestBody) *spinregistry.StorageVolumesCreatePayload {
 	v := &spinregistry.StorageVolumesCreatePayload{
 		Name: *body.Name,
@@ -227,7 +227,7 @@ func NewStorageVolumesCreatePayload(body *StorageVolumesCreateRequestBody) *spin
 }
 
 // NewStorageVolumesDeletePayload builds a spin-registry service
-// storage/volumes/delete endpoint payload.
+// storage_volumes_delete endpoint payload.
 func NewStorageVolumesDeletePayload(body *StorageVolumesDeleteRequestBody) *spinregistry.StorageVolumesDeletePayload {
 	v := &spinregistry.StorageVolumesDeletePayload{
 		Name: *body.Name,
@@ -237,7 +237,7 @@ func NewStorageVolumesDeletePayload(body *StorageVolumesDeleteRequestBody) *spin
 }
 
 // NewStorageImagesListPayload builds a spin-registry service
-// storage/images/list endpoint payload.
+// storage_images_list endpoint payload.
 func NewStorageImagesListPayload(body *StorageImagesListRequestBody) *spinregistry.StorageImagesListPayload {
 	v := &spinregistry.StorageImagesListPayload{
 		VolumeName: *body.VolumeName,
@@ -247,7 +247,7 @@ func NewStorageImagesListPayload(body *StorageImagesListRequestBody) *spinregist
 }
 
 // NewStorageImagesCreateStorage builds a spin-registry service
-// storage/images/create endpoint payload.
+// storage_images_create endpoint payload.
 func NewStorageImagesCreateStorage(body *StorageImagesCreateRequestBody) *spinregistry.Storage {
 	v := &spinregistry.Storage{
 		Volume:    *body.Volume,
@@ -260,7 +260,7 @@ func NewStorageImagesCreateStorage(body *StorageImagesCreateRequestBody) *spinre
 }
 
 // NewStorageImagesDeletePayload builds a spin-registry service
-// storage/images/delete endpoint payload.
+// storage_images_delete endpoint payload.
 func NewStorageImagesDeletePayload(body *StorageImagesDeleteRequestBody) *spinregistry.StorageImagesDeletePayload {
 	v := &spinregistry.StorageImagesDeletePayload{
 		VolumeName: *body.VolumeName,
@@ -270,7 +270,7 @@ func NewStorageImagesDeletePayload(body *StorageImagesDeleteRequestBody) *spinre
 	return v
 }
 
-// NewStorageImagesGetPayload builds a spin-registry service storage/images/get
+// NewStorageImagesGetPayload builds a spin-registry service storage_images_get
 // endpoint payload.
 func NewStorageImagesGetPayload(body *StorageImagesGetRequestBody) *spinregistry.StorageImagesGetPayload {
 	v := &spinregistry.StorageImagesGetPayload{
@@ -282,7 +282,7 @@ func NewStorageImagesGetPayload(body *StorageImagesGetRequestBody) *spinregistry
 }
 
 // ValidateVMCreateRequestBody runs the validations defined on
-// Vm/CreateRequestBody
+// vm_create_request_body
 func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
@@ -307,7 +307,7 @@ func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 }
 
 // ValidateVMUpdateRequestBody runs the validations defined on
-// Vm/UpdateRequestBody
+// vm_update_request_body
 func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 	if body.VM == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
@@ -321,7 +321,7 @@ func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 }
 
 // ValidateStorageVolumesCreateRequestBody runs the validations defined on
-// Storage/Volumes/CreateRequestBody
+// storage_volumes_create_request_body
 func ValidateStorageVolumesCreateRequestBody(body *StorageVolumesCreateRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
@@ -330,7 +330,7 @@ func ValidateStorageVolumesCreateRequestBody(body *StorageVolumesCreateRequestBo
 }
 
 // ValidateStorageVolumesDeleteRequestBody runs the validations defined on
-// Storage/Volumes/DeleteRequestBody
+// storage_volumes_delete_request_body
 func ValidateStorageVolumesDeleteRequestBody(body *StorageVolumesDeleteRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
@@ -339,7 +339,7 @@ func ValidateStorageVolumesDeleteRequestBody(body *StorageVolumesDeleteRequestBo
 }
 
 // ValidateStorageImagesListRequestBody runs the validations defined on
-// Storage/Images/ListRequestBody
+// storage_images_list_request_body
 func ValidateStorageImagesListRequestBody(body *StorageImagesListRequestBody) (err error) {
 	if body.VolumeName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("volume_name", "body"))
@@ -348,7 +348,7 @@ func ValidateStorageImagesListRequestBody(body *StorageImagesListRequestBody) (e
 }
 
 // ValidateStorageImagesCreateRequestBody runs the validations defined on
-// Storage/Images/CreateRequestBody
+// storage_images_create_request_body
 func ValidateStorageImagesCreateRequestBody(body *StorageImagesCreateRequestBody) (err error) {
 	if body.Volume == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
@@ -360,7 +360,7 @@ func ValidateStorageImagesCreateRequestBody(body *StorageImagesCreateRequestBody
 }
 
 // ValidateStorageImagesDeleteRequestBody runs the validations defined on
-// Storage/Images/DeleteRequestBody
+// storage_images_delete_request_body
 func ValidateStorageImagesDeleteRequestBody(body *StorageImagesDeleteRequestBody) (err error) {
 	if body.VolumeName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("volume_name", "body"))
@@ -372,7 +372,7 @@ func ValidateStorageImagesDeleteRequestBody(body *StorageImagesDeleteRequestBody
 }
 
 // ValidateStorageImagesGetRequestBody runs the validations defined on
-// Storage/Images/GetRequestBody
+// storage_images_get_request_body
 func ValidateStorageImagesGetRequestBody(body *StorageImagesGetRequestBody) (err error) {
 	if body.VolumeName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("volume_name", "body"))

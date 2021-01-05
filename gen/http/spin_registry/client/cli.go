@@ -16,7 +16,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// BuildVMCreatePayload builds the payload for the spin-registry vm/create
+// BuildVMCreatePayload builds the payload for the spin-registry vm_create
 // endpoint from CLI flags.
 func BuildVMCreatePayload(spinRegistryVMCreateBody string) (*spinregistry.VM, error) {
 	var err error
@@ -48,7 +48,7 @@ func BuildVMCreatePayload(spinRegistryVMCreateBody string) (*spinregistry.VM, er
 	return v, nil
 }
 
-// BuildVMUpdatePayload builds the payload for the spin-registry vm/update
+// BuildVMUpdatePayload builds the payload for the spin-registry vm_update
 // endpoint from CLI flags.
 func BuildVMUpdatePayload(spinRegistryVMUpdateBody string, spinRegistryVMUpdateID string) (*spinregistry.UpdateVM, error) {
 	var err error
@@ -86,7 +86,7 @@ func BuildVMUpdatePayload(spinRegistryVMUpdateBody string, spinRegistryVMUpdateI
 	return v, nil
 }
 
-// BuildVMDeletePayload builds the payload for the spin-registry vm/delete
+// BuildVMDeletePayload builds the payload for the spin-registry vm_delete
 // endpoint from CLI flags.
 func BuildVMDeletePayload(spinRegistryVMDeleteID string) (*spinregistry.VMDeletePayload, error) {
 	var err error
@@ -103,7 +103,7 @@ func BuildVMDeletePayload(spinRegistryVMDeleteID string) (*spinregistry.VMDelete
 	return v, nil
 }
 
-// BuildVMGetPayload builds the payload for the spin-registry vm/get endpoint
+// BuildVMGetPayload builds the payload for the spin-registry vm_get endpoint
 // from CLI flags.
 func BuildVMGetPayload(spinRegistryVMGetID string) (*spinregistry.VMGetPayload, error) {
 	var err error
@@ -121,7 +121,7 @@ func BuildVMGetPayload(spinRegistryVMGetID string) (*spinregistry.VMGetPayload, 
 }
 
 // BuildStorageVolumesCreatePayload builds the payload for the spin-registry
-// storage/volumes/create endpoint from CLI flags.
+// storage_volumes_create endpoint from CLI flags.
 func BuildStorageVolumesCreatePayload(spinRegistryStorageVolumesCreateBody string) (*spinregistry.StorageVolumesCreatePayload, error) {
 	var err error
 	var body StorageVolumesCreateRequestBody
@@ -139,7 +139,7 @@ func BuildStorageVolumesCreatePayload(spinRegistryStorageVolumesCreateBody strin
 }
 
 // BuildStorageVolumesDeletePayload builds the payload for the spin-registry
-// storage/volumes/delete endpoint from CLI flags.
+// storage_volumes_delete endpoint from CLI flags.
 func BuildStorageVolumesDeletePayload(spinRegistryStorageVolumesDeleteBody string) (*spinregistry.StorageVolumesDeletePayload, error) {
 	var err error
 	var body StorageVolumesDeleteRequestBody
@@ -157,7 +157,7 @@ func BuildStorageVolumesDeletePayload(spinRegistryStorageVolumesDeleteBody strin
 }
 
 // BuildStorageImagesListPayload builds the payload for the spin-registry
-// storage/images/list endpoint from CLI flags.
+// storage_images_list endpoint from CLI flags.
 func BuildStorageImagesListPayload(spinRegistryStorageImagesListBody string) (*spinregistry.StorageImagesListPayload, error) {
 	var err error
 	var body StorageImagesListRequestBody
@@ -175,7 +175,7 @@ func BuildStorageImagesListPayload(spinRegistryStorageImagesListBody string) (*s
 }
 
 // BuildStorageImagesCreatePayload builds the payload for the spin-registry
-// storage/images/create endpoint from CLI flags.
+// storage_images_create endpoint from CLI flags.
 func BuildStorageImagesCreatePayload(spinRegistryStorageImagesCreateBody string) (*spinregistry.Storage, error) {
 	var err error
 	var body StorageImagesCreateRequestBody
@@ -196,7 +196,7 @@ func BuildStorageImagesCreatePayload(spinRegistryStorageImagesCreateBody string)
 }
 
 // BuildStorageImagesDeletePayload builds the payload for the spin-registry
-// storage/images/delete endpoint from CLI flags.
+// storage_images_delete endpoint from CLI flags.
 func BuildStorageImagesDeletePayload(spinRegistryStorageImagesDeleteBody string) (*spinregistry.StorageImagesDeletePayload, error) {
 	var err error
 	var body StorageImagesDeleteRequestBody
@@ -215,7 +215,7 @@ func BuildStorageImagesDeletePayload(spinRegistryStorageImagesDeleteBody string)
 }
 
 // BuildStorageImagesGetPayload builds the payload for the spin-registry
-// storage/images/get endpoint from CLI flags.
+// storage_images_get endpoint from CLI flags.
 func BuildStorageImagesGetPayload(spinRegistryStorageImagesGetBody string) (*spinregistry.StorageImagesGetPayload, error) {
 	var err error
 	var body StorageImagesGetRequestBody

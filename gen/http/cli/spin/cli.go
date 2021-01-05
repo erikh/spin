@@ -26,15 +26,15 @@ import (
 //
 func UsageCommands() string {
 	return `spin-broker (new|add|enqueue|status|next|complete)
-spin-apiserver (vm-/create|vm-/delete|control-/start|control-/stop|control-/shutdown)
-spin-registry (vm-/create|vm-/update|vm-/delete|vm-/get|vm-/list|storage-/volumes-/list|storage-/volumes-/create|storage-/volumes-/delete|storage-/images-/list|storage-/images-/create|storage-/images-/delete|storage-/images-/get)
+spin-apiserver (vm-create|vm-delete|control-start|control-stop|control-shutdown)
+spin-registry (vm-create|vm-update|vm-delete|vm-get|vm-list|storage-volumes-list|storage-volumes-create|storage-volumes-delete|storage-images-list|storage-images-create|storage-images-delete|storage-images-get)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` spin-broker new` + "\n" +
-		os.Args[0] + ` spin-apiserver vm-/create --body '{
+		os.Args[0] + ` spin-apiserver vm-create --body '{
       "cpus": 11441991229016388777,
       "memory": 6501280298701421332,
       "name": "Cupiditate soluta ut corporis.",
@@ -65,7 +65,7 @@ func UsageExamples() string {
          }
       ]
    }'` + "\n" +
-		os.Args[0] + ` spin-registry vm-/create --body '{
+		os.Args[0] + ` spin-registry vm-create --body '{
       "cpus": 10996383488550437060,
       "memory": 9896149697376370528,
       "name": "Molestias eum voluptatem qui nihil officia.",
@@ -131,56 +131,56 @@ func ParseEndpoint(
 
 		spinApiserverFlags = flag.NewFlagSet("spin-apiserver", flag.ContinueOnError)
 
-		spinApiserverVMCreateFlags    = flag.NewFlagSet("vm-/create", flag.ExitOnError)
+		spinApiserverVMCreateFlags    = flag.NewFlagSet("vm-create", flag.ExitOnError)
 		spinApiserverVMCreateBodyFlag = spinApiserverVMCreateFlags.String("body", "REQUIRED", "")
 
-		spinApiserverVMDeleteFlags  = flag.NewFlagSet("vm-/delete", flag.ExitOnError)
+		spinApiserverVMDeleteFlags  = flag.NewFlagSet("vm-delete", flag.ExitOnError)
 		spinApiserverVMDeleteIDFlag = spinApiserverVMDeleteFlags.String("id", "REQUIRED", "ID of VM to delete")
 
-		spinApiserverControlStartFlags  = flag.NewFlagSet("control-/start", flag.ExitOnError)
+		spinApiserverControlStartFlags  = flag.NewFlagSet("control-start", flag.ExitOnError)
 		spinApiserverControlStartIDFlag = spinApiserverControlStartFlags.String("id", "REQUIRED", "ID of VM to start")
 
-		spinApiserverControlStopFlags  = flag.NewFlagSet("control-/stop", flag.ExitOnError)
+		spinApiserverControlStopFlags  = flag.NewFlagSet("control-stop", flag.ExitOnError)
 		spinApiserverControlStopIDFlag = spinApiserverControlStopFlags.String("id", "REQUIRED", "ID of VM to stop")
 
-		spinApiserverControlShutdownFlags  = flag.NewFlagSet("control-/shutdown", flag.ExitOnError)
+		spinApiserverControlShutdownFlags  = flag.NewFlagSet("control-shutdown", flag.ExitOnError)
 		spinApiserverControlShutdownIDFlag = spinApiserverControlShutdownFlags.String("id", "REQUIRED", "ID of VM to shutdown")
 
 		spinRegistryFlags = flag.NewFlagSet("spin-registry", flag.ContinueOnError)
 
-		spinRegistryVMCreateFlags    = flag.NewFlagSet("vm-/create", flag.ExitOnError)
+		spinRegistryVMCreateFlags    = flag.NewFlagSet("vm-create", flag.ExitOnError)
 		spinRegistryVMCreateBodyFlag = spinRegistryVMCreateFlags.String("body", "REQUIRED", "")
 
-		spinRegistryVMUpdateFlags    = flag.NewFlagSet("vm-/update", flag.ExitOnError)
+		spinRegistryVMUpdateFlags    = flag.NewFlagSet("vm-update", flag.ExitOnError)
 		spinRegistryVMUpdateBodyFlag = spinRegistryVMUpdateFlags.String("body", "REQUIRED", "")
 		spinRegistryVMUpdateIDFlag   = spinRegistryVMUpdateFlags.String("id", "REQUIRED", "ID of VM to update")
 
-		spinRegistryVMDeleteFlags  = flag.NewFlagSet("vm-/delete", flag.ExitOnError)
+		spinRegistryVMDeleteFlags  = flag.NewFlagSet("vm-delete", flag.ExitOnError)
 		spinRegistryVMDeleteIDFlag = spinRegistryVMDeleteFlags.String("id", "REQUIRED", "ID of VM to remove")
 
-		spinRegistryVMGetFlags  = flag.NewFlagSet("vm-/get", flag.ExitOnError)
+		spinRegistryVMGetFlags  = flag.NewFlagSet("vm-get", flag.ExitOnError)
 		spinRegistryVMGetIDFlag = spinRegistryVMGetFlags.String("id", "REQUIRED", "ID of VM to remove")
 
-		spinRegistryVMListFlags = flag.NewFlagSet("vm-/list", flag.ExitOnError)
+		spinRegistryVMListFlags = flag.NewFlagSet("vm-list", flag.ExitOnError)
 
-		spinRegistryStorageVolumesListFlags = flag.NewFlagSet("storage-/volumes-/list", flag.ExitOnError)
+		spinRegistryStorageVolumesListFlags = flag.NewFlagSet("storage-volumes-list", flag.ExitOnError)
 
-		spinRegistryStorageVolumesCreateFlags    = flag.NewFlagSet("storage-/volumes-/create", flag.ExitOnError)
+		spinRegistryStorageVolumesCreateFlags    = flag.NewFlagSet("storage-volumes-create", flag.ExitOnError)
 		spinRegistryStorageVolumesCreateBodyFlag = spinRegistryStorageVolumesCreateFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageVolumesDeleteFlags    = flag.NewFlagSet("storage-/volumes-/delete", flag.ExitOnError)
+		spinRegistryStorageVolumesDeleteFlags    = flag.NewFlagSet("storage-volumes-delete", flag.ExitOnError)
 		spinRegistryStorageVolumesDeleteBodyFlag = spinRegistryStorageVolumesDeleteFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageImagesListFlags    = flag.NewFlagSet("storage-/images-/list", flag.ExitOnError)
+		spinRegistryStorageImagesListFlags    = flag.NewFlagSet("storage-images-list", flag.ExitOnError)
 		spinRegistryStorageImagesListBodyFlag = spinRegistryStorageImagesListFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageImagesCreateFlags    = flag.NewFlagSet("storage-/images-/create", flag.ExitOnError)
+		spinRegistryStorageImagesCreateFlags    = flag.NewFlagSet("storage-images-create", flag.ExitOnError)
 		spinRegistryStorageImagesCreateBodyFlag = spinRegistryStorageImagesCreateFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageImagesDeleteFlags    = flag.NewFlagSet("storage-/images-/delete", flag.ExitOnError)
+		spinRegistryStorageImagesDeleteFlags    = flag.NewFlagSet("storage-images-delete", flag.ExitOnError)
 		spinRegistryStorageImagesDeleteBodyFlag = spinRegistryStorageImagesDeleteFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageImagesGetFlags    = flag.NewFlagSet("storage-/images-/get", flag.ExitOnError)
+		spinRegistryStorageImagesGetFlags    = flag.NewFlagSet("storage-images-get", flag.ExitOnError)
 		spinRegistryStorageImagesGetBodyFlag = spinRegistryStorageImagesGetFlags.String("body", "REQUIRED", "")
 	)
 	spinBrokerFlags.Usage = spinBrokerUsage
@@ -272,59 +272,59 @@ func ParseEndpoint(
 
 		case "spin-apiserver":
 			switch epn {
-			case "vm-/create":
+			case "vm-create":
 				epf = spinApiserverVMCreateFlags
 
-			case "vm-/delete":
+			case "vm-delete":
 				epf = spinApiserverVMDeleteFlags
 
-			case "control-/start":
+			case "control-start":
 				epf = spinApiserverControlStartFlags
 
-			case "control-/stop":
+			case "control-stop":
 				epf = spinApiserverControlStopFlags
 
-			case "control-/shutdown":
+			case "control-shutdown":
 				epf = spinApiserverControlShutdownFlags
 
 			}
 
 		case "spin-registry":
 			switch epn {
-			case "vm-/create":
+			case "vm-create":
 				epf = spinRegistryVMCreateFlags
 
-			case "vm-/update":
+			case "vm-update":
 				epf = spinRegistryVMUpdateFlags
 
-			case "vm-/delete":
+			case "vm-delete":
 				epf = spinRegistryVMDeleteFlags
 
-			case "vm-/get":
+			case "vm-get":
 				epf = spinRegistryVMGetFlags
 
-			case "vm-/list":
+			case "vm-list":
 				epf = spinRegistryVMListFlags
 
-			case "storage-/volumes-/list":
+			case "storage-volumes-list":
 				epf = spinRegistryStorageVolumesListFlags
 
-			case "storage-/volumes-/create":
+			case "storage-volumes-create":
 				epf = spinRegistryStorageVolumesCreateFlags
 
-			case "storage-/volumes-/delete":
+			case "storage-volumes-delete":
 				epf = spinRegistryStorageVolumesDeleteFlags
 
-			case "storage-/images-/list":
+			case "storage-images-list":
 				epf = spinRegistryStorageImagesListFlags
 
-			case "storage-/images-/create":
+			case "storage-images-create":
 				epf = spinRegistryStorageImagesCreateFlags
 
-			case "storage-/images-/delete":
+			case "storage-images-delete":
 				epf = spinRegistryStorageImagesDeleteFlags
 
-			case "storage-/images-/get":
+			case "storage-images-get":
 				epf = spinRegistryStorageImagesGetFlags
 
 			}
@@ -374,59 +374,59 @@ func ParseEndpoint(
 		case "spin-apiserver":
 			c := spinapiserverc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
-			case "vm-/create":
+			case "vm-create":
 				endpoint = c.VMCreate()
 				data, err = spinapiserverc.BuildVMCreatePayload(*spinApiserverVMCreateBodyFlag)
-			case "vm-/delete":
+			case "vm-delete":
 				endpoint = c.VMDelete()
 				data, err = spinapiserverc.BuildVMDeletePayload(*spinApiserverVMDeleteIDFlag)
-			case "control-/start":
+			case "control-start":
 				endpoint = c.ControlStart()
 				data, err = spinapiserverc.BuildControlStartPayload(*spinApiserverControlStartIDFlag)
-			case "control-/stop":
+			case "control-stop":
 				endpoint = c.ControlStop()
 				data, err = spinapiserverc.BuildControlStopPayload(*spinApiserverControlStopIDFlag)
-			case "control-/shutdown":
+			case "control-shutdown":
 				endpoint = c.ControlShutdown()
 				data, err = spinapiserverc.BuildControlShutdownPayload(*spinApiserverControlShutdownIDFlag)
 			}
 		case "spin-registry":
 			c := spinregistryc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
-			case "vm-/create":
+			case "vm-create":
 				endpoint = c.VMCreate()
 				data, err = spinregistryc.BuildVMCreatePayload(*spinRegistryVMCreateBodyFlag)
-			case "vm-/update":
+			case "vm-update":
 				endpoint = c.VMUpdate()
 				data, err = spinregistryc.BuildVMUpdatePayload(*spinRegistryVMUpdateBodyFlag, *spinRegistryVMUpdateIDFlag)
-			case "vm-/delete":
+			case "vm-delete":
 				endpoint = c.VMDelete()
 				data, err = spinregistryc.BuildVMDeletePayload(*spinRegistryVMDeleteIDFlag)
-			case "vm-/get":
+			case "vm-get":
 				endpoint = c.VMGet()
 				data, err = spinregistryc.BuildVMGetPayload(*spinRegistryVMGetIDFlag)
-			case "vm-/list":
+			case "vm-list":
 				endpoint = c.VMList()
 				data = nil
-			case "storage-/volumes-/list":
+			case "storage-volumes-list":
 				endpoint = c.StorageVolumesList()
 				data = nil
-			case "storage-/volumes-/create":
+			case "storage-volumes-create":
 				endpoint = c.StorageVolumesCreate()
 				data, err = spinregistryc.BuildStorageVolumesCreatePayload(*spinRegistryStorageVolumesCreateBodyFlag)
-			case "storage-/volumes-/delete":
+			case "storage-volumes-delete":
 				endpoint = c.StorageVolumesDelete()
 				data, err = spinregistryc.BuildStorageVolumesDeletePayload(*spinRegistryStorageVolumesDeleteBodyFlag)
-			case "storage-/images-/list":
+			case "storage-images-list":
 				endpoint = c.StorageImagesList()
 				data, err = spinregistryc.BuildStorageImagesListPayload(*spinRegistryStorageImagesListBodyFlag)
-			case "storage-/images-/create":
+			case "storage-images-create":
 				endpoint = c.StorageImagesCreate()
 				data, err = spinregistryc.BuildStorageImagesCreatePayload(*spinRegistryStorageImagesCreateBodyFlag)
-			case "storage-/images-/delete":
+			case "storage-images-delete":
 				endpoint = c.StorageImagesDelete()
 				data, err = spinregistryc.BuildStorageImagesDeletePayload(*spinRegistryStorageImagesDeleteBodyFlag)
-			case "storage-/images-/get":
+			case "storage-images-get":
 				endpoint = c.StorageImagesGet()
 				data, err = spinregistryc.BuildStorageImagesGetPayload(*spinRegistryStorageImagesGetBodyFlag)
 			}
@@ -547,24 +547,24 @@ Usage:
     %s [globalflags] spin-apiserver COMMAND [flags]
 
 COMMAND:
-    vm-/create: VMCreate implements vm/create.
-    vm-/delete: VMDelete implements vm/delete.
-    control-/start: ControlStart implements control/start.
-    control-/stop: ControlStop implements control/stop.
-    control-/shutdown: ControlShutdown implements control/shutdown.
+    vm-create: VMCreate implements vm_create.
+    vm-delete: VMDelete implements vm_delete.
+    control-start: ControlStart implements control_start.
+    control-stop: ControlStop implements control_stop.
+    control-shutdown: ControlShutdown implements control_shutdown.
 
 Additional help:
     %s spin-apiserver COMMAND --help
 `, os.Args[0], os.Args[0])
 }
 func spinApiserverVMCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-/create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-create -body JSON
 
-VMCreate implements vm/create.
+VMCreate implements vm_create.
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-apiserver vm-/create --body '{
+    `+os.Args[0]+` spin-apiserver vm-create --body '{
       "cpus": 11441991229016388777,
       "memory": 6501280298701421332,
       "name": "Cupiditate soluta ut corporis.",
@@ -599,46 +599,46 @@ Example:
 }
 
 func spinApiserverVMDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-/delete -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-delete -id UINT64
 
-VMDelete implements vm/delete.
+VMDelete implements vm_delete.
     -id UINT64: ID of VM to delete
 
 Example:
-    `+os.Args[0]+` spin-apiserver vm-/delete --id 1396569818981085873
+    `+os.Args[0]+` spin-apiserver vm-delete --id 1396569818981085873
 `, os.Args[0])
 }
 
 func spinApiserverControlStartUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-/start -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-start -id UINT64
 
-ControlStart implements control/start.
+ControlStart implements control_start.
     -id UINT64: ID of VM to start
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-/start --id 17760064090039486513
+    `+os.Args[0]+` spin-apiserver control-start --id 17760064090039486513
 `, os.Args[0])
 }
 
 func spinApiserverControlStopUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-/stop -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-stop -id UINT64
 
-ControlStop implements control/stop.
+ControlStop implements control_stop.
     -id UINT64: ID of VM to stop
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-/stop --id 7714716687717136327
+    `+os.Args[0]+` spin-apiserver control-stop --id 7714716687717136327
 `, os.Args[0])
 }
 
 func spinApiserverControlShutdownUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-/shutdown -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-shutdown -id UINT64
 
-ControlShutdown implements control/shutdown.
+ControlShutdown implements control_shutdown.
     -id UINT64: ID of VM to shutdown
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-/shutdown --id 10054451371681143552
+    `+os.Args[0]+` spin-apiserver control-shutdown --id 10054451371681143552
 `, os.Args[0])
 }
 
@@ -650,31 +650,31 @@ Usage:
     %s [globalflags] spin-registry COMMAND [flags]
 
 COMMAND:
-    vm-/create: Create a VM
-    vm-/update: Update a VM
-    vm-/delete: Delete a VM by ID
-    vm-/get: Retrieve a VM by ID
-    vm-/list: Retrieve all VM IDs
-    storage-/volumes-/list: list all volumes
-    storage-/volumes-/create: create a new volume
-    storage-/volumes-/delete: delete an existing volume
-    storage-/images-/list: list all images by volume
-    storage-/images-/create: add an image definition to the registry
-    storage-/images-/delete: remove an image definition from the registry
-    storage-/images-/get: retrieves an image definition from the registry
+    vm-create: Create a VM
+    vm-update: Update a VM
+    vm-delete: Delete a VM by ID
+    vm-get: Retrieve a VM by ID
+    vm-list: Retrieve all VM IDs
+    storage-volumes-list: list all volumes
+    storage-volumes-create: create a new volume
+    storage-volumes-delete: delete an existing volume
+    storage-images-list: list all images by volume
+    storage-images-create: add an image definition to the registry
+    storage-images-delete: remove an image definition from the registry
+    storage-images-get: retrieves an image definition from the registry
 
 Additional help:
     %s spin-registry COMMAND --help
 `, os.Args[0], os.Args[0])
 }
 func spinRegistryVMCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-create -body JSON
 
 Create a VM
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry vm-/create --body '{
+    `+os.Args[0]+` spin-registry vm-create --body '{
       "cpus": 10996383488550437060,
       "memory": 9896149697376370528,
       "name": "Molestias eum voluptatem qui nihil officia.",
@@ -709,14 +709,14 @@ Example:
 }
 
 func spinRegistryVMUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/update -body JSON -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-update -body JSON -id UINT64
 
 Update a VM
     -body JSON: 
     -id UINT64: ID of VM to update
 
 Example:
-    `+os.Args[0]+` spin-registry vm-/update --body '{
+    `+os.Args[0]+` spin-registry vm-update --body '{
       "vm": {
          "cpus": 17947092167867694340,
          "memory": 17643772877660978986,
@@ -741,94 +741,94 @@ Example:
 }
 
 func spinRegistryVMDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/delete -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-delete -id UINT64
 
 Delete a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-/delete --id 10204393056338092260
+    `+os.Args[0]+` spin-registry vm-delete --id 10204393056338092260
 `, os.Args[0])
 }
 
 func spinRegistryVMGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/get -id UINT64
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-get -id UINT64
 
 Retrieve a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-/get --id 6457499075262444732
+    `+os.Args[0]+` spin-registry vm-get --id 6457499075262444732
 `, os.Args[0])
 }
 
 func spinRegistryVMListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-/list
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-list
 
 Retrieve all VM IDs
 
 Example:
-    `+os.Args[0]+` spin-registry vm-/list
+    `+os.Args[0]+` spin-registry vm-list
 `, os.Args[0])
 }
 
 func spinRegistryStorageVolumesListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/volumes-/list
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-volumes-list
 
 list all volumes
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/volumes-/list
+    `+os.Args[0]+` spin-registry storage-volumes-list
 `, os.Args[0])
 }
 
 func spinRegistryStorageVolumesCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/volumes-/create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-volumes-create -body JSON
 
 create a new volume
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/volumes-/create --body '{
+    `+os.Args[0]+` spin-registry storage-volumes-create --body '{
       "name": "Expedita a."
    }'
 `, os.Args[0])
 }
 
 func spinRegistryStorageVolumesDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/volumes-/delete -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-volumes-delete -body JSON
 
 delete an existing volume
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/volumes-/delete --body '{
+    `+os.Args[0]+` spin-registry storage-volumes-delete --body '{
       "name": "Similique corrupti ab soluta vel qui vel."
    }'
 `, os.Args[0])
 }
 
 func spinRegistryStorageImagesListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/images-/list -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-list -body JSON
 
 list all images by volume
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/images-/list --body '{
+    `+os.Args[0]+` spin-registry storage-images-list --body '{
       "volume_name": "Dolores nihil autem dolorem soluta."
    }'
 `, os.Args[0])
 }
 
 func spinRegistryStorageImagesCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/images-/create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-create -body JSON
 
 add an image definition to the registry
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/images-/create --body '{
+    `+os.Args[0]+` spin-registry storage-images-create --body '{
       "cdrom": false,
       "image": "Aut adipisci.",
       "image_size": 10642461641015261973,
@@ -838,13 +838,13 @@ Example:
 }
 
 func spinRegistryStorageImagesDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/images-/delete -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-delete -body JSON
 
 remove an image definition from the registry
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/images-/delete --body '{
+    `+os.Args[0]+` spin-registry storage-images-delete --body '{
       "image_name": "Cupiditate veniam atque accusamus.",
       "volume_name": "Id et alias vel ratione."
    }'
@@ -852,13 +852,13 @@ Example:
 }
 
 func spinRegistryStorageImagesGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-/images-/get -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-get -body JSON
 
 retrieves an image definition from the registry
     -body JSON: 
 
 Example:
-    `+os.Args[0]+` spin-registry storage-/images-/get --body '{
+    `+os.Args[0]+` spin-registry storage-images-get --body '{
       "image_name": "Quia aliquam sit necessitatibus pariatur quam deleniti.",
       "volume_name": "Et ipsa."
    }'

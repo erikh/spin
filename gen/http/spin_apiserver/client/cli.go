@@ -16,7 +16,7 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// BuildVMCreatePayload builds the payload for the spin-apiserver vm/create
+// BuildVMCreatePayload builds the payload for the spin-apiserver vm_create
 // endpoint from CLI flags.
 func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.VM, error) {
 	var err error
@@ -48,7 +48,7 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.VM, 
 	return v, nil
 }
 
-// BuildVMDeletePayload builds the payload for the spin-apiserver vm/delete
+// BuildVMDeletePayload builds the payload for the spin-apiserver vm_delete
 // endpoint from CLI flags.
 func BuildVMDeletePayload(spinApiserverVMDeleteID string) (*spinapiserver.VMDeletePayload, error) {
 	var err error
@@ -66,7 +66,7 @@ func BuildVMDeletePayload(spinApiserverVMDeleteID string) (*spinapiserver.VMDele
 }
 
 // BuildControlStartPayload builds the payload for the spin-apiserver
-// control/start endpoint from CLI flags.
+// control_start endpoint from CLI flags.
 func BuildControlStartPayload(spinApiserverControlStartID string) (*spinapiserver.ControlStartPayload, error) {
 	var err error
 	var id uint64
@@ -83,7 +83,7 @@ func BuildControlStartPayload(spinApiserverControlStartID string) (*spinapiserve
 }
 
 // BuildControlStopPayload builds the payload for the spin-apiserver
-// control/stop endpoint from CLI flags.
+// control_stop endpoint from CLI flags.
 func BuildControlStopPayload(spinApiserverControlStopID string) (*spinapiserver.ControlStopPayload, error) {
 	var err error
 	var id uint64
@@ -100,7 +100,7 @@ func BuildControlStopPayload(spinApiserverControlStopID string) (*spinapiserver.
 }
 
 // BuildControlShutdownPayload builds the payload for the spin-apiserver
-// control/shutdown endpoint from CLI flags.
+// control_shutdown endpoint from CLI flags.
 func BuildControlShutdownPayload(spinApiserverControlShutdownID string) (*spinapiserver.ControlShutdownPayload, error) {
 	var err error
 	var id uint64

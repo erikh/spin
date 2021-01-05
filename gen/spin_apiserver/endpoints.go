@@ -45,7 +45,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 }
 
 // NewVMCreateEndpoint returns an endpoint function that calls the method
-// "vm/create" of service "spin-apiserver".
+// "vm_create" of service "spin-apiserver".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VM)
@@ -54,7 +54,7 @@ func NewVMCreateEndpoint(s Service) goa.Endpoint {
 }
 
 // NewVMDeleteEndpoint returns an endpoint function that calls the method
-// "vm/delete" of service "spin-apiserver".
+// "vm_delete" of service "spin-apiserver".
 func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*VMDeletePayload)
@@ -63,7 +63,7 @@ func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 }
 
 // NewControlStartEndpoint returns an endpoint function that calls the method
-// "control/start" of service "spin-apiserver".
+// "control_start" of service "spin-apiserver".
 func NewControlStartEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*ControlStartPayload)
@@ -72,7 +72,7 @@ func NewControlStartEndpoint(s Service) goa.Endpoint {
 }
 
 // NewControlStopEndpoint returns an endpoint function that calls the method
-// "control/stop" of service "spin-apiserver".
+// "control_stop" of service "spin-apiserver".
 func NewControlStopEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*ControlStopPayload)
@@ -81,7 +81,7 @@ func NewControlStopEndpoint(s Service) goa.Endpoint {
 }
 
 // NewControlShutdownEndpoint returns an endpoint function that calls the
-// method "control/shutdown" of service "spin-apiserver".
+// method "control_shutdown" of service "spin-apiserver".
 func NewControlShutdownEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*ControlShutdownPayload)

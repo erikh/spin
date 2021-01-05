@@ -17,24 +17,24 @@ import (
 
 // Client lists the spin-apiserver service endpoint HTTP clients.
 type Client struct {
-	// VMCreate Doer is the HTTP client used to make requests to the vm/create
+	// VMCreate Doer is the HTTP client used to make requests to the vm_create
 	// endpoint.
 	VMCreateDoer goahttp.Doer
 
-	// VMDelete Doer is the HTTP client used to make requests to the vm/delete
+	// VMDelete Doer is the HTTP client used to make requests to the vm_delete
 	// endpoint.
 	VMDeleteDoer goahttp.Doer
 
 	// ControlStart Doer is the HTTP client used to make requests to the
-	// control/start endpoint.
+	// control_start endpoint.
 	ControlStartDoer goahttp.Doer
 
 	// ControlStop Doer is the HTTP client used to make requests to the
-	// control/stop endpoint.
+	// control_stop endpoint.
 	ControlStopDoer goahttp.Doer
 
 	// ControlShutdown Doer is the HTTP client used to make requests to the
-	// control/shutdown endpoint.
+	// control_shutdown endpoint.
 	ControlShutdownDoer goahttp.Doer
 
 	// RestoreResponseBody controls whether the response bodies are reset after
@@ -72,7 +72,7 @@ func NewClient(
 }
 
 // VMCreate returns an endpoint that makes HTTP requests to the spin-apiserver
-// service vm/create server.
+// service vm_create server.
 func (c *Client) VMCreate() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeVMCreateRequest(c.encoder)
@@ -89,14 +89,14 @@ func (c *Client) VMCreate() goa.Endpoint {
 		}
 		resp, err := c.VMCreateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "vm/create", err)
+			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_create", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // VMDelete returns an endpoint that makes HTTP requests to the spin-apiserver
-// service vm/delete server.
+// service vm_delete server.
 func (c *Client) VMDelete() goa.Endpoint {
 	var (
 		decodeResponse = DecodeVMDeleteResponse(c.decoder, c.RestoreResponseBody)
@@ -108,14 +108,14 @@ func (c *Client) VMDelete() goa.Endpoint {
 		}
 		resp, err := c.VMDeleteDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "vm/delete", err)
+			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_delete", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // ControlStart returns an endpoint that makes HTTP requests to the
-// spin-apiserver service control/start server.
+// spin-apiserver service control_start server.
 func (c *Client) ControlStart() goa.Endpoint {
 	var (
 		decodeResponse = DecodeControlStartResponse(c.decoder, c.RestoreResponseBody)
@@ -127,14 +127,14 @@ func (c *Client) ControlStart() goa.Endpoint {
 		}
 		resp, err := c.ControlStartDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "control/start", err)
+			return nil, goahttp.ErrRequestError("spin-apiserver", "control_start", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // ControlStop returns an endpoint that makes HTTP requests to the
-// spin-apiserver service control/stop server.
+// spin-apiserver service control_stop server.
 func (c *Client) ControlStop() goa.Endpoint {
 	var (
 		decodeResponse = DecodeControlStopResponse(c.decoder, c.RestoreResponseBody)
@@ -146,14 +146,14 @@ func (c *Client) ControlStop() goa.Endpoint {
 		}
 		resp, err := c.ControlStopDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "control/stop", err)
+			return nil, goahttp.ErrRequestError("spin-apiserver", "control_stop", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // ControlShutdown returns an endpoint that makes HTTP requests to the
-// spin-apiserver service control/shutdown server.
+// spin-apiserver service control_shutdown server.
 func (c *Client) ControlShutdown() goa.Endpoint {
 	var (
 		decodeResponse = DecodeControlShutdownResponse(c.decoder, c.RestoreResponseBody)
@@ -165,7 +165,7 @@ func (c *Client) ControlShutdown() goa.Endpoint {
 		}
 		resp, err := c.ControlShutdownDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-apiserver", "control/shutdown", err)
+			return nil, goahttp.ErrRequestError("spin-apiserver", "control_shutdown", err)
 		}
 		return decodeResponse(resp)
 	}

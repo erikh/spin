@@ -17,50 +17,50 @@ import (
 
 // Client lists the spin-registry service endpoint HTTP clients.
 type Client struct {
-	// VMCreate Doer is the HTTP client used to make requests to the vm/create
+	// VMCreate Doer is the HTTP client used to make requests to the vm_create
 	// endpoint.
 	VMCreateDoer goahttp.Doer
 
-	// VMUpdate Doer is the HTTP client used to make requests to the vm/update
+	// VMUpdate Doer is the HTTP client used to make requests to the vm_update
 	// endpoint.
 	VMUpdateDoer goahttp.Doer
 
-	// VMDelete Doer is the HTTP client used to make requests to the vm/delete
+	// VMDelete Doer is the HTTP client used to make requests to the vm_delete
 	// endpoint.
 	VMDeleteDoer goahttp.Doer
 
-	// VMGet Doer is the HTTP client used to make requests to the vm/get endpoint.
+	// VMGet Doer is the HTTP client used to make requests to the vm_get endpoint.
 	VMGetDoer goahttp.Doer
 
-	// VMList Doer is the HTTP client used to make requests to the vm/list endpoint.
+	// VMList Doer is the HTTP client used to make requests to the vm_list endpoint.
 	VMListDoer goahttp.Doer
 
 	// StorageVolumesList Doer is the HTTP client used to make requests to the
-	// storage/volumes/list endpoint.
+	// storage_volumes_list endpoint.
 	StorageVolumesListDoer goahttp.Doer
 
 	// StorageVolumesCreate Doer is the HTTP client used to make requests to the
-	// storage/volumes/create endpoint.
+	// storage_volumes_create endpoint.
 	StorageVolumesCreateDoer goahttp.Doer
 
 	// StorageVolumesDelete Doer is the HTTP client used to make requests to the
-	// storage/volumes/delete endpoint.
+	// storage_volumes_delete endpoint.
 	StorageVolumesDeleteDoer goahttp.Doer
 
 	// StorageImagesList Doer is the HTTP client used to make requests to the
-	// storage/images/list endpoint.
+	// storage_images_list endpoint.
 	StorageImagesListDoer goahttp.Doer
 
 	// StorageImagesCreate Doer is the HTTP client used to make requests to the
-	// storage/images/create endpoint.
+	// storage_images_create endpoint.
 	StorageImagesCreateDoer goahttp.Doer
 
 	// StorageImagesDelete Doer is the HTTP client used to make requests to the
-	// storage/images/delete endpoint.
+	// storage_images_delete endpoint.
 	StorageImagesDeleteDoer goahttp.Doer
 
 	// StorageImagesGet Doer is the HTTP client used to make requests to the
-	// storage/images/get endpoint.
+	// storage_images_get endpoint.
 	StorageImagesGetDoer goahttp.Doer
 
 	// RestoreResponseBody controls whether the response bodies are reset after
@@ -105,7 +105,7 @@ func NewClient(
 }
 
 // VMCreate returns an endpoint that makes HTTP requests to the spin-registry
-// service vm/create server.
+// service vm_create server.
 func (c *Client) VMCreate() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeVMCreateRequest(c.encoder)
@@ -122,14 +122,14 @@ func (c *Client) VMCreate() goa.Endpoint {
 		}
 		resp, err := c.VMCreateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "vm/create", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm_create", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // VMUpdate returns an endpoint that makes HTTP requests to the spin-registry
-// service vm/update server.
+// service vm_update server.
 func (c *Client) VMUpdate() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeVMUpdateRequest(c.encoder)
@@ -146,14 +146,14 @@ func (c *Client) VMUpdate() goa.Endpoint {
 		}
 		resp, err := c.VMUpdateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "vm/update", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm_update", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // VMDelete returns an endpoint that makes HTTP requests to the spin-registry
-// service vm/delete server.
+// service vm_delete server.
 func (c *Client) VMDelete() goa.Endpoint {
 	var (
 		decodeResponse = DecodeVMDeleteResponse(c.decoder, c.RestoreResponseBody)
@@ -165,14 +165,14 @@ func (c *Client) VMDelete() goa.Endpoint {
 		}
 		resp, err := c.VMDeleteDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "vm/delete", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm_delete", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // VMGet returns an endpoint that makes HTTP requests to the spin-registry
-// service vm/get server.
+// service vm_get server.
 func (c *Client) VMGet() goa.Endpoint {
 	var (
 		decodeResponse = DecodeVMGetResponse(c.decoder, c.RestoreResponseBody)
@@ -184,14 +184,14 @@ func (c *Client) VMGet() goa.Endpoint {
 		}
 		resp, err := c.VMGetDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "vm/get", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm_get", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // VMList returns an endpoint that makes HTTP requests to the spin-registry
-// service vm/list server.
+// service vm_list server.
 func (c *Client) VMList() goa.Endpoint {
 	var (
 		decodeResponse = DecodeVMListResponse(c.decoder, c.RestoreResponseBody)
@@ -203,14 +203,14 @@ func (c *Client) VMList() goa.Endpoint {
 		}
 		resp, err := c.VMListDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "vm/list", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "vm_list", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageVolumesList returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/volumes/list server.
+// spin-registry service storage_volumes_list server.
 func (c *Client) StorageVolumesList() goa.Endpoint {
 	var (
 		decodeResponse = DecodeStorageVolumesListResponse(c.decoder, c.RestoreResponseBody)
@@ -222,14 +222,14 @@ func (c *Client) StorageVolumesList() goa.Endpoint {
 		}
 		resp, err := c.StorageVolumesListDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/list", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_volumes_list", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageVolumesCreate returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/volumes/create server.
+// spin-registry service storage_volumes_create server.
 func (c *Client) StorageVolumesCreate() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageVolumesCreateRequest(c.encoder)
@@ -246,14 +246,14 @@ func (c *Client) StorageVolumesCreate() goa.Endpoint {
 		}
 		resp, err := c.StorageVolumesCreateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/create", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_volumes_create", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageVolumesDelete returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/volumes/delete server.
+// spin-registry service storage_volumes_delete server.
 func (c *Client) StorageVolumesDelete() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageVolumesDeleteRequest(c.encoder)
@@ -270,14 +270,14 @@ func (c *Client) StorageVolumesDelete() goa.Endpoint {
 		}
 		resp, err := c.StorageVolumesDeleteDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/volumes/delete", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_volumes_delete", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageImagesList returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/images/list server.
+// spin-registry service storage_images_list server.
 func (c *Client) StorageImagesList() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageImagesListRequest(c.encoder)
@@ -294,14 +294,14 @@ func (c *Client) StorageImagesList() goa.Endpoint {
 		}
 		resp, err := c.StorageImagesListDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/list", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_images_list", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageImagesCreate returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/images/create server.
+// spin-registry service storage_images_create server.
 func (c *Client) StorageImagesCreate() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageImagesCreateRequest(c.encoder)
@@ -318,14 +318,14 @@ func (c *Client) StorageImagesCreate() goa.Endpoint {
 		}
 		resp, err := c.StorageImagesCreateDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/create", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_images_create", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageImagesDelete returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/images/delete server.
+// spin-registry service storage_images_delete server.
 func (c *Client) StorageImagesDelete() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageImagesDeleteRequest(c.encoder)
@@ -342,14 +342,14 @@ func (c *Client) StorageImagesDelete() goa.Endpoint {
 		}
 		resp, err := c.StorageImagesDeleteDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/delete", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_images_delete", err)
 		}
 		return decodeResponse(resp)
 	}
 }
 
 // StorageImagesGet returns an endpoint that makes HTTP requests to the
-// spin-registry service storage/images/get server.
+// spin-registry service storage_images_get server.
 func (c *Client) StorageImagesGet() goa.Endpoint {
 	var (
 		encodeRequest  = EncodeStorageImagesGetRequest(c.encoder)
@@ -366,7 +366,7 @@ func (c *Client) StorageImagesGet() goa.Endpoint {
 		}
 		resp, err := c.StorageImagesGetDoer.Do(req)
 		if err != nil {
-			return nil, goahttp.ErrRequestError("spin-registry", "storage/images/get", err)
+			return nil, goahttp.ErrRequestError("spin-registry", "storage_images_get", err)
 		}
 		return decodeResponse(resp)
 	}

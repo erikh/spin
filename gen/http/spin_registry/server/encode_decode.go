@@ -19,7 +19,7 @@ import (
 )
 
 // EncodeVMCreateResponse returns an encoder for responses returned by the
-// spin-registry vm/create endpoint.
+// spin-registry vm_create endpoint.
 func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(uint64)
@@ -31,7 +31,7 @@ func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) g
 }
 
 // DecodeVMCreateRequest returns a decoder for requests sent to the
-// spin-registry vm/create endpoint.
+// spin-registry vm_create endpoint.
 func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -56,7 +56,7 @@ func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 }
 
 // EncodeVMUpdateResponse returns an encoder for responses returned by the
-// spin-registry vm/update endpoint.
+// spin-registry vm_update endpoint.
 func EncodeVMUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -65,7 +65,7 @@ func EncodeVMUpdateResponse(encoder func(context.Context, http.ResponseWriter) g
 }
 
 // DecodeVMUpdateRequest returns a decoder for requests sent to the
-// spin-registry vm/update endpoint.
+// spin-registry vm_update endpoint.
 func DecodeVMUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -107,7 +107,7 @@ func DecodeVMUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 }
 
 // EncodeVMDeleteResponse returns an encoder for responses returned by the
-// spin-registry vm/delete endpoint.
+// spin-registry vm_delete endpoint.
 func EncodeVMDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -116,7 +116,7 @@ func EncodeVMDeleteResponse(encoder func(context.Context, http.ResponseWriter) g
 }
 
 // DecodeVMDeleteRequest returns a decoder for requests sent to the
-// spin-registry vm/delete endpoint.
+// spin-registry vm_delete endpoint.
 func DecodeVMDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -143,7 +143,7 @@ func DecodeVMDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 }
 
 // EncodeVMGetResponse returns an encoder for responses returned by the
-// spin-registry vm/get endpoint.
+// spin-registry vm_get endpoint.
 func EncodeVMGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(*spinregistry.VM)
@@ -155,7 +155,7 @@ func EncodeVMGetResponse(encoder func(context.Context, http.ResponseWriter) goah
 }
 
 // DecodeVMGetRequest returns a decoder for requests sent to the spin-registry
-// vm/get endpoint.
+// vm_get endpoint.
 func DecodeVMGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -182,7 +182,7 @@ func DecodeVMGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 }
 
 // EncodeVMListResponse returns an encoder for responses returned by the
-// spin-registry vm/list endpoint.
+// spin-registry vm_list endpoint.
 func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.([]uint64)
@@ -194,7 +194,7 @@ func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goa
 }
 
 // EncodeStorageVolumesListResponse returns an encoder for responses returned
-// by the spin-registry storage/volumes/list endpoint.
+// by the spin-registry storage_volumes_list endpoint.
 func EncodeStorageVolumesListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.([]string)
@@ -206,7 +206,7 @@ func EncodeStorageVolumesListResponse(encoder func(context.Context, http.Respons
 }
 
 // EncodeStorageVolumesCreateResponse returns an encoder for responses returned
-// by the spin-registry storage/volumes/create endpoint.
+// by the spin-registry storage_volumes_create endpoint.
 func EncodeStorageVolumesCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -215,7 +215,7 @@ func EncodeStorageVolumesCreateResponse(encoder func(context.Context, http.Respo
 }
 
 // DecodeStorageVolumesCreateRequest returns a decoder for requests sent to the
-// spin-registry storage/volumes/create endpoint.
+// spin-registry storage_volumes_create endpoint.
 func DecodeStorageVolumesCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -240,7 +240,7 @@ func DecodeStorageVolumesCreateRequest(mux goahttp.Muxer, decoder func(*http.Req
 }
 
 // EncodeStorageVolumesDeleteResponse returns an encoder for responses returned
-// by the spin-registry storage/volumes/delete endpoint.
+// by the spin-registry storage_volumes_delete endpoint.
 func EncodeStorageVolumesDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -249,7 +249,7 @@ func EncodeStorageVolumesDeleteResponse(encoder func(context.Context, http.Respo
 }
 
 // DecodeStorageVolumesDeleteRequest returns a decoder for requests sent to the
-// spin-registry storage/volumes/delete endpoint.
+// spin-registry storage_volumes_delete endpoint.
 func DecodeStorageVolumesDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -274,7 +274,7 @@ func DecodeStorageVolumesDeleteRequest(mux goahttp.Muxer, decoder func(*http.Req
 }
 
 // EncodeStorageImagesListResponse returns an encoder for responses returned by
-// the spin-registry storage/images/list endpoint.
+// the spin-registry storage_images_list endpoint.
 func EncodeStorageImagesListResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.([]string)
@@ -286,7 +286,7 @@ func EncodeStorageImagesListResponse(encoder func(context.Context, http.Response
 }
 
 // DecodeStorageImagesListRequest returns a decoder for requests sent to the
-// spin-registry storage/images/list endpoint.
+// spin-registry storage_images_list endpoint.
 func DecodeStorageImagesListRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -311,7 +311,7 @@ func DecodeStorageImagesListRequest(mux goahttp.Muxer, decoder func(*http.Reques
 }
 
 // EncodeStorageImagesCreateResponse returns an encoder for responses returned
-// by the spin-registry storage/images/create endpoint.
+// by the spin-registry storage_images_create endpoint.
 func EncodeStorageImagesCreateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -320,7 +320,7 @@ func EncodeStorageImagesCreateResponse(encoder func(context.Context, http.Respon
 }
 
 // DecodeStorageImagesCreateRequest returns a decoder for requests sent to the
-// spin-registry storage/images/create endpoint.
+// spin-registry storage_images_create endpoint.
 func DecodeStorageImagesCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -345,7 +345,7 @@ func DecodeStorageImagesCreateRequest(mux goahttp.Muxer, decoder func(*http.Requ
 }
 
 // EncodeStorageImagesDeleteResponse returns an encoder for responses returned
-// by the spin-registry storage/images/delete endpoint.
+// by the spin-registry storage_images_delete endpoint.
 func EncodeStorageImagesDeleteResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		w.WriteHeader(http.StatusOK)
@@ -354,7 +354,7 @@ func EncodeStorageImagesDeleteResponse(encoder func(context.Context, http.Respon
 }
 
 // DecodeStorageImagesDeleteRequest returns a decoder for requests sent to the
-// spin-registry storage/images/delete endpoint.
+// spin-registry storage_images_delete endpoint.
 func DecodeStorageImagesDeleteRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
@@ -379,7 +379,7 @@ func DecodeStorageImagesDeleteRequest(mux goahttp.Muxer, decoder func(*http.Requ
 }
 
 // EncodeStorageImagesGetResponse returns an encoder for responses returned by
-// the spin-registry storage/images/get endpoint.
+// the spin-registry storage_images_get endpoint.
 func EncodeStorageImagesGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
 		res := v.(*spinregistry.Storage)
@@ -391,7 +391,7 @@ func EncodeStorageImagesGetResponse(encoder func(context.Context, http.ResponseW
 }
 
 // DecodeStorageImagesGetRequest returns a decoder for requests sent to the
-// spin-registry storage/images/get endpoint.
+// spin-registry storage_images_get endpoint.
 func DecodeStorageImagesGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (

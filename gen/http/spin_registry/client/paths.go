@@ -11,62 +11,62 @@ import (
 	"fmt"
 )
 
-// VMCreateSpinRegistryPath returns the URL path to the spin-registry service vm/create HTTP endpoint.
+// VMCreateSpinRegistryPath returns the URL path to the spin-registry service vm_create HTTP endpoint.
 func VMCreateSpinRegistryPath() string {
 	return "/vm/create"
 }
 
-// VMUpdateSpinRegistryPath returns the URL path to the spin-registry service vm/update HTTP endpoint.
+// VMUpdateSpinRegistryPath returns the URL path to the spin-registry service vm_update HTTP endpoint.
 func VMUpdateSpinRegistryPath(id uint64) string {
 	return fmt.Sprintf("/vm/update/%v", id)
 }
 
-// VMDeleteSpinRegistryPath returns the URL path to the spin-registry service vm/delete HTTP endpoint.
+// VMDeleteSpinRegistryPath returns the URL path to the spin-registry service vm_delete HTTP endpoint.
 func VMDeleteSpinRegistryPath(id uint64) string {
 	return fmt.Sprintf("/vm/delete/%v", id)
 }
 
-// VMGetSpinRegistryPath returns the URL path to the spin-registry service vm/get HTTP endpoint.
+// VMGetSpinRegistryPath returns the URL path to the spin-registry service vm_get HTTP endpoint.
 func VMGetSpinRegistryPath(id uint64) string {
 	return fmt.Sprintf("/vm/get/%v", id)
 }
 
-// VMListSpinRegistryPath returns the URL path to the spin-registry service vm/list HTTP endpoint.
+// VMListSpinRegistryPath returns the URL path to the spin-registry service vm_list HTTP endpoint.
 func VMListSpinRegistryPath() string {
 	return "/vm/list"
 }
 
-// StorageVolumesListSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/list HTTP endpoint.
+// StorageVolumesListSpinRegistryPath returns the URL path to the spin-registry service storage_volumes_list HTTP endpoint.
 func StorageVolumesListSpinRegistryPath() string {
 	return "/storage/volumes/list"
 }
 
-// StorageVolumesCreateSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/create HTTP endpoint.
+// StorageVolumesCreateSpinRegistryPath returns the URL path to the spin-registry service storage_volumes_create HTTP endpoint.
 func StorageVolumesCreateSpinRegistryPath() string {
 	return "/storage/volumes/create"
 }
 
-// StorageVolumesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage/volumes/delete HTTP endpoint.
+// StorageVolumesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage_volumes_delete HTTP endpoint.
 func StorageVolumesDeleteSpinRegistryPath() string {
 	return "/storage/volumes/delete"
 }
 
-// StorageImagesListSpinRegistryPath returns the URL path to the spin-registry service storage/images/list HTTP endpoint.
+// StorageImagesListSpinRegistryPath returns the URL path to the spin-registry service storage_images_list HTTP endpoint.
 func StorageImagesListSpinRegistryPath() string {
 	return "/storage/images/list"
 }
 
-// StorageImagesCreateSpinRegistryPath returns the URL path to the spin-registry service storage/images/create HTTP endpoint.
+// StorageImagesCreateSpinRegistryPath returns the URL path to the spin-registry service storage_images_create HTTP endpoint.
 func StorageImagesCreateSpinRegistryPath() string {
 	return "/storage/images/create"
 }
 
-// StorageImagesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage/images/delete HTTP endpoint.
+// StorageImagesDeleteSpinRegistryPath returns the URL path to the spin-registry service storage_images_delete HTTP endpoint.
 func StorageImagesDeleteSpinRegistryPath() string {
 	return "/storage/images/delete"
 }
 
-// StorageImagesGetSpinRegistryPath returns the URL path to the spin-registry service storage/images/get HTTP endpoint.
+// StorageImagesGetSpinRegistryPath returns the URL path to the spin-registry service storage_images_get HTTP endpoint.
 func StorageImagesGetSpinRegistryPath() string {
 	return "/storage/images/get"
 }

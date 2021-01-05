@@ -5,7 +5,7 @@ import . "goa.design/goa/v3/dsl" // nolint
 var _ = Service("spin-apiserver", func() {
 	Description("Bridge between the outer-facing UIs and the internals")
 
-	Method("vm/create", func() {
+	Method("vm_create", func() {
 		Payload(VM)
 		Result(UInt64)
 
@@ -15,7 +15,7 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
-	Method("vm/delete", func() {
+	Method("vm_delete", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to delete")
 			Required("id")
@@ -27,7 +27,7 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
-	Method("control/start", func() {
+	Method("control_start", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to start")
 			Required("id")
@@ -38,7 +38,7 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
-	Method("control/stop", func() {
+	Method("control_stop", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to stop")
 			Required("id")
@@ -49,7 +49,7 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
-	Method("control/shutdown", func() {
+	Method("control_shutdown", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to shutdown")
 			Required("id")

@@ -11,27 +11,27 @@ import (
 	"fmt"
 )
 
-// VMCreateSpinApiserverPath returns the URL path to the spin-apiserver service vm/create HTTP endpoint.
+// VMCreateSpinApiserverPath returns the URL path to the spin-apiserver service vm_create HTTP endpoint.
 func VMCreateSpinApiserverPath() string {
 	return "/vm/create"
 }
 
-// VMDeleteSpinApiserverPath returns the URL path to the spin-apiserver service vm/delete HTTP endpoint.
+// VMDeleteSpinApiserverPath returns the URL path to the spin-apiserver service vm_delete HTTP endpoint.
 func VMDeleteSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/vm/delete/%v", id)
 }
 
-// ControlStartSpinApiserverPath returns the URL path to the spin-apiserver service control/start HTTP endpoint.
+// ControlStartSpinApiserverPath returns the URL path to the spin-apiserver service control_start HTTP endpoint.
 func ControlStartSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/start/%v", id)
 }
 
-// ControlStopSpinApiserverPath returns the URL path to the spin-apiserver service control/stop HTTP endpoint.
+// ControlStopSpinApiserverPath returns the URL path to the spin-apiserver service control_stop HTTP endpoint.
 func ControlStopSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/stop/%v", id)
 }
 
-// ControlShutdownSpinApiserverPath returns the URL path to the spin-apiserver service control/shutdown HTTP endpoint.
+// ControlShutdownSpinApiserverPath returns the URL path to the spin-apiserver service control_shutdown HTTP endpoint.
 func ControlShutdownSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/shutdown/%v", id)
 }

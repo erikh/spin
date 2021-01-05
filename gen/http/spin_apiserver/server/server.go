@@ -95,7 +95,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 }
 
 // MountVMCreateHandler configures the mux to serve the "spin-apiserver"
-// service "vm/create" endpoint.
+// service "vm_create" endpoint.
 func MountVMCreateHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -107,7 +107,7 @@ func MountVMCreateHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMCreateHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-apiserver" service "vm/create" endpoint.
+// calls the "spin-apiserver" service "vm_create" endpoint.
 func NewVMCreateHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -123,7 +123,7 @@ func NewVMCreateHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/create")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_create")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -146,7 +146,7 @@ func NewVMCreateHandler(
 }
 
 // MountVMDeleteHandler configures the mux to serve the "spin-apiserver"
-// service "vm/delete" endpoint.
+// service "vm_delete" endpoint.
 func MountVMDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -158,7 +158,7 @@ func MountVMDeleteHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewVMDeleteHandler creates a HTTP handler which loads the HTTP request and
-// calls the "spin-apiserver" service "vm/delete" endpoint.
+// calls the "spin-apiserver" service "vm_delete" endpoint.
 func NewVMDeleteHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -174,7 +174,7 @@ func NewVMDeleteHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "vm/delete")
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_delete")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -197,7 +197,7 @@ func NewVMDeleteHandler(
 }
 
 // MountControlStartHandler configures the mux to serve the "spin-apiserver"
-// service "control/start" endpoint.
+// service "control_start" endpoint.
 func MountControlStartHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -209,7 +209,7 @@ func MountControlStartHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewControlStartHandler creates a HTTP handler which loads the HTTP request
-// and calls the "spin-apiserver" service "control/start" endpoint.
+// and calls the "spin-apiserver" service "control_start" endpoint.
 func NewControlStartHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -225,7 +225,7 @@ func NewControlStartHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "control/start")
+		ctx = context.WithValue(ctx, goa.MethodKey, "control_start")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -248,7 +248,7 @@ func NewControlStartHandler(
 }
 
 // MountControlStopHandler configures the mux to serve the "spin-apiserver"
-// service "control/stop" endpoint.
+// service "control_stop" endpoint.
 func MountControlStopHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -260,7 +260,7 @@ func MountControlStopHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewControlStopHandler creates a HTTP handler which loads the HTTP request
-// and calls the "spin-apiserver" service "control/stop" endpoint.
+// and calls the "spin-apiserver" service "control_stop" endpoint.
 func NewControlStopHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -276,7 +276,7 @@ func NewControlStopHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "control/stop")
+		ctx = context.WithValue(ctx, goa.MethodKey, "control_stop")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {
@@ -299,7 +299,7 @@ func NewControlStopHandler(
 }
 
 // MountControlShutdownHandler configures the mux to serve the "spin-apiserver"
-// service "control/shutdown" endpoint.
+// service "control_shutdown" endpoint.
 func MountControlShutdownHandler(mux goahttp.Muxer, h http.Handler) {
 	f, ok := h.(http.HandlerFunc)
 	if !ok {
@@ -311,7 +311,7 @@ func MountControlShutdownHandler(mux goahttp.Muxer, h http.Handler) {
 }
 
 // NewControlShutdownHandler creates a HTTP handler which loads the HTTP
-// request and calls the "spin-apiserver" service "control/shutdown" endpoint.
+// request and calls the "spin-apiserver" service "control_shutdown" endpoint.
 func NewControlShutdownHandler(
 	endpoint goa.Endpoint,
 	mux goahttp.Muxer,
@@ -327,7 +327,7 @@ func NewControlShutdownHandler(
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
-		ctx = context.WithValue(ctx, goa.MethodKey, "control/shutdown")
+		ctx = context.WithValue(ctx, goa.MethodKey, "control_shutdown")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {
