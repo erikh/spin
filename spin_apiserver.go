@@ -163,7 +163,72 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.VM) (
 }
 
 func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDeletePayload) error {
-	return nil
+	vm, err := s.registry.VMGet(ctx, p.ID)
+	if err != nil {
+		return err
+	}
+
+	pkg, err := s.broker.New(ctx)
+	if err != nil {
+		return err
+	}
+
+	vmid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
+		ID:       pkg,
+		Resource: "emulation",
+		Action:   "stop",
+		Parameters: map[string]interface{}{
+			"id": p.ID,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	storids := []string{}
+
+	for _, stor := range vm.Storage {
+		if stor.Cdrom == nil || !*stor.Cdrom {
+			uuid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
+				ID:       pkg,
+				Resource: "storage",
+				Action:   "delete_image",
+				Parameters: map[string]interface{}{
+					"volume_path": stor.Volume,
+					"image_name":  stor.Image,
+				},
+				Dependencies: []string{vmid},
+			})
+			if err != nil {
+				return err
+			}
+
+			storids = append(storids, uuid)
+		}
+	}
+
+	_, err = s.broker.Add(ctx, &spinbroker.AddPayload{
+		ID:       pkg,
+		Resource: "emulation",
+		Action:   "remove_config",
+		Parameters: map[string]interface{}{
+			"id": p.ID,
+		},
+		Dependencies: append([]string{vmid}, storids...),
+	})
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.broker.Enqueue(ctx, pkg); err != nil {
+		return err
+	}
+
+	if err := s.getStatus(ctx, pkg); err != nil {
+		return err
+	}
+
+	return s.registry.VMDelete(ctx, p.ID)
 }
 
 // ControlStart implements control/start.
