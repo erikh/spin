@@ -14,21 +14,21 @@ import (
 // VMCreateRequestBody is the type of the "spin-apiserver" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
+	// Storage references
+	Storage []*StorageRequestBody `form:"storage" json:"storage" xml:"storage"`
 	// Name of VM; does not need to be unique
 	Name string `form:"name" json:"name" xml:"name"`
 	// CPU count
 	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
 	// Memory (in megabytes)
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage" json:"storage" xml:"storage"`
 }
 
 // StorageRequestBody is used to define fields on request body types.
 type StorageRequestBody struct {
-	// Volume name, must not include `/`
+	// Volume name
 	Volume string `form:"volume" json:"volume" xml:"volume"`
-	// Image filename, must not include `/`
+	// Image filename, no `/` characters
 	Image string `form:"image" json:"image" xml:"image"`
 	// Image size (in gigabytes)
 	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
@@ -38,7 +38,7 @@ type StorageRequestBody struct {
 
 // NewVMCreateRequestBody builds the HTTP request body from the payload of the
 // "vm_create" endpoint of the "spin-apiserver" service.
-func NewVMCreateRequestBody(p *spinapiserver.VM) *VMCreateRequestBody {
+func NewVMCreateRequestBody(p *spinapiserver.CreateVM) *VMCreateRequestBody {
 	body := &VMCreateRequestBody{
 		Name:   p.Name,
 		Cpus:   p.Cpus,

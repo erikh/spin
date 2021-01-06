@@ -12,11 +12,11 @@ import (
 )
 
 func messageStorageVolumeCreate(ctx *cli.Context) error {
-	if ctx.Args().Len() != 1 {
+	if ctx.Args().Len() != 2 {
 		return errors.New("invalid arguments; see --help")
 	}
 
-	return getClient(ctx).StorageVolumeCreate(context.Background(), ctx.Args().First())
+	return getClient(ctx).StorageVolumeCreate(context.Background(), ctx.Args().Get(0), ctx.Args().Get(1))
 }
 
 func messageStorageVolumeDelete(ctx *cli.Context) error {
@@ -77,7 +77,12 @@ func messageStorageImageCreate(ctx *cli.Context) error {
 		return err
 	}
 
-	return getClient(ctx).StorageImageCreate(context.Background(), s)
+	img, err := getClient(ctx).StorageImageCreate(context.Background(), s)
+	if err != nil {
+		return err
+	}
+
+	return json.NewEncoder(os.Stdout).Encode(img)
 }
 
 func messageStorageImageDelete(ctx *cli.Context) error {

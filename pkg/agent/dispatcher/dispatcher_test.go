@@ -33,7 +33,7 @@ func TestDispatcher(t *testing.T) {
 			},
 		},
 		"with_typed_parameters": Action{
-			OptionalParameters: ParameterTable{"vm": func() interface{} { return &spinregistry.VM{} }},
+			OptionalParameters: ParameterTable{"vm": func() interface{} { return &spinregistry.UpdatedVM{} }},
 			RequiredParameters: ParameterTable{"string": TypeString, "uint": TypeUint64},
 			Dispatch: func(c Command) error {
 				switch c.Parameter("string").(type) {
@@ -49,7 +49,7 @@ func TestDispatcher(t *testing.T) {
 				}
 
 				switch c.Parameter("vm").(type) {
-				case *spinregistry.VM:
+				case *spinregistry.UpdatedVM:
 				case nil:
 				default:
 					return errors.New("invalid type for string")
@@ -60,19 +60,13 @@ func TestDispatcher(t *testing.T) {
 		},
 	}
 
-	mkuint64 := func(u uint64) *uint64 {
-		return &u
-	}
-
-	vm, _ := json.Marshal(&spinregistry.VM{
+	vm, _ := json.Marshal(&spinregistry.UpdatedVM{
 		Name:   "foo",
 		Cpus:   1,
 		Memory: 1024,
-		Storage: []*spinregistry.Storage{
+		Images: []*spinregistry.Image{
 			{
-				Image:     "test.raw",
-				ImageSize: mkuint64(50),
-				Volume:    "test",
+				Path: "test.raw",
 			},
 		},
 	})

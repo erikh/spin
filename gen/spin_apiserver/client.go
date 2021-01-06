@@ -34,7 +34,7 @@ func NewClient(vMCreate, vMDelete, controlStart, controlStop, controlShutdown go
 }
 
 // VMCreate calls the "vm_create" endpoint of the "spin-apiserver" service.
-func (c *Client) VMCreate(ctx context.Context, p *VM) (res uint64, err error) {
+func (c *Client) VMCreate(ctx context.Context, p *CreateVM) (res uint64, err error) {
 	var ires interface{}
 	ires, err = c.VMCreateEndpoint(ctx, p)
 	if err != nil {

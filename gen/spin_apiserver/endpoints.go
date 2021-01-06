@@ -48,7 +48,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 // "vm_create" of service "spin-apiserver".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*VM)
+		p := req.(*CreateVM)
 		return s.VMCreate(ctx, p)
 	}
 }

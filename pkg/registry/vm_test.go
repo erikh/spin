@@ -10,7 +10,7 @@ import (
 func TestVMDBCRUD(t *testing.T) {
 	db := makeDB(t)
 
-	vm := &spinregistry.VM{
+	vm := &spinregistry.UpdatedVM{
 		Name: "foo",
 	}
 
@@ -112,7 +112,7 @@ func TestVMDBCRUDTable(t *testing.T) {
 		},
 		"update non-existent": {
 			call: func(db *DB) error {
-				return db.VMUpdate(1, &spinregistry.VM{})
+				return db.VMUpdate(1, &spinregistry.UpdatedVM{})
 			},
 		},
 	}

@@ -2,27 +2,46 @@ package design
 
 import . "goa.design/goa/v3/dsl" // nolint
 
-// Storage encapuslates the properties around VM storage
-var Storage = Type("Storage", func() {
-	Attribute("volume", String, "Volume name, must not include `/`")
-	Attribute("image", String, "Image filename, must not include `/`")
-	Attribute("image_size", UInt64, "Image size (in gigabytes)")
-	Attribute("cdrom", Boolean, "Is this image a cdrom?")
-	Required("volume", "image")
+// Image encapsulates an existing image on disk.
+var Image = Type("Image", func() {
+	Attribute("path", String, "Image path")
+	Attribute("cdrom", Boolean, "Is this a cdrom image?")
+	Required("path", "cdrom")
 })
 
-// VM is a standalone VM.
-var VM = Type("VM", func() {
+// Storage encapuslates the properties around VM storage
+var Storage = Type("Storage", func() {
+	Attribute("volume", String, "Volume name")
+	Attribute("image", String, "Image filename, no `/` characters")
+	Attribute("image_size", UInt64, "Image size (in gigabytes)")
+	Attribute("cdrom", Boolean, "Is this image a cdrom?")
+	Required("image", "volume")
+})
+
+// VMBase is attributes that live similarly between cycles in the VM's lifetime.
+var VMBase = Type("VMBase", func() {
 	Attribute("name", String, "Name of VM; does not need to be unique")
 	Attribute("cpus", UInt, "CPU count")
 	Attribute("memory", UInt, "Memory (in megabytes)")
+})
+
+// CreateVM is a standalone VM for creation purposes.
+var CreateVM = Type("CreateVM", func() {
+	Extend(VMBase)
 	Attribute("storage", ArrayOf(Storage), "Storage references")
 	Required("name", "cpus", "memory", "storage")
+})
+
+// UpdatedVM is a standalone VM for purposes of updating.
+var UpdatedVM = Type("UpdatedVM", func() {
+	Extend(VMBase)
+	Attribute("images", ArrayOf(Image), "Image references")
+	Required("name", "cpus", "memory", "images")
 })
 
 // UpdateVM is a type encapsulating a VM and an ID to update.
 var UpdateVM = Type("UpdateVM", func() {
 	Attribute("id", UInt64, "ID of VM to update")
-	Attribute("vm", VM, "VM to publish")
+	Attribute("vm", UpdatedVM, "VM to publish")
 	Required("id", "vm")
 })

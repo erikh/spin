@@ -18,10 +18,6 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-func mkuint64(u uint64) *uint64 {
-	return &u
-}
-
 var testTable = map[string]test{
 	"garbage": {
 		commands: []command{{Action: "garbage"}},
@@ -39,15 +35,13 @@ var testTable = map[string]test{
 		commands: []command{{
 			Action: "write_config",
 			Parameters: map[string]interface{}{
-				"vm": &spinregistry.VM{
+				"vm": &spinregistry.UpdatedVM{
 					Name:   "foo",
 					Cpus:   1,
 					Memory: 1024,
-					Storage: []*spinregistry.Storage{
+					Images: []*spinregistry.Image{
 						{
-							Image:     "test.raw",
-							Volume:    "test",
-							ImageSize: mkuint64(50),
+							Path: "test.raw",
 						},
 					},
 				},
@@ -59,15 +53,13 @@ var testTable = map[string]test{
 			Action: "write_config",
 			Parameters: map[string]interface{}{
 				"id": 1,
-				"vm": &spinregistry.VM{
+				"vm": &spinregistry.UpdatedVM{
 					Name:   "foo",
 					Cpus:   1,
 					Memory: 1024,
-					Storage: []*spinregistry.Storage{
+					Images: []*spinregistry.Image{
 						{
-							Image:     "test.raw",
-							Volume:    "test",
-							ImageSize: mkuint64(50),
+							Path: "test.raw",
 						},
 					},
 				},
@@ -99,6 +91,10 @@ var testTable = map[string]test{
 				return errors.New("memory arg was invalid/not present")
 			}
 
+			if !strings.Contains(string(content), "test.raw") {
+				return errors.New("disk image was invalid/not present")
+			}
+
 			return nil
 		},
 	},
@@ -123,15 +119,13 @@ var testTable = map[string]test{
 				Action: "write_config",
 				Parameters: map[string]interface{}{
 					"id": 1,
-					"vm": &spinregistry.VM{
+					"vm": &spinregistry.UpdatedVM{
 						Name:   "foo",
 						Cpus:   1,
 						Memory: 1024,
-						Storage: []*spinregistry.Storage{
+						Images: []*spinregistry.Image{
 							{
-								Image:     "test.raw",
-								Volume:    "test",
-								ImageSize: mkuint64(50),
+								Path: "test.raw",
 							},
 						},
 					},

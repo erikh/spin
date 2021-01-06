@@ -9,7 +9,7 @@ import (
 )
 
 // VMCreate creates a vm and returns its id, which is auto-generated.
-func (db *DB) VMCreate(vm *spinregistry.VM) (uint64, error) {
+func (db *DB) VMCreate(vm *spinregistry.UpdatedVM) (uint64, error) {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return 0, err
@@ -33,8 +33,8 @@ func (db *DB) VMCreate(vm *spinregistry.VM) (uint64, error) {
 }
 
 // VMGet retrieves the vm at the id specified.
-func (db *DB) VMGet(id uint64) (*spinregistry.VM, error) {
-	var vm spinregistry.VM
+func (db *DB) VMGet(id uint64) (*spinregistry.UpdatedVM, error) {
+	var vm spinregistry.UpdatedVM
 
 	return &vm, db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(vmBucket))
@@ -62,7 +62,7 @@ func (db *DB) VMDelete(id uint64) error {
 }
 
 // VMUpdate replaces the id with the new vm definition.
-func (db *DB) VMUpdate(id uint64, vm *spinregistry.VM) error {
+func (db *DB) VMUpdate(id uint64, vm *spinregistry.UpdatedVM) error {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return err

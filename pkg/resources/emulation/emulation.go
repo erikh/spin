@@ -27,7 +27,7 @@ func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 	return dispatcher.Table{
 		"write_config": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"vm": func() interface{} { return &spinregistry.VM{} },
+				"vm": func() interface{} { return &spinregistry.UpdatedVM{} },
 				"id": dispatcher.TypeUint64,
 			},
 			Dispatch: dc.WriteConfig,

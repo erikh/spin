@@ -3,7 +3,6 @@ package emulation
 import (
 	"bytes"
 	"fmt"
-	"path/filepath"
 	"text/template"
 
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
@@ -35,7 +34,7 @@ type templateConfig struct {
 	Home    string
 }
 
-func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templateConfig, error) {
+func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (templateConfig, error) {
 	args := []string{
 		"-nodefaults",
 		"-chardev",
@@ -56,18 +55,18 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.VM) (templat
 		"user",
 	}
 
-	for i, storage := range vm.Storage {
-		if storage.Cdrom != nil && *storage.Cdrom {
+	for i, storage := range vm.Images {
+		if storage.Cdrom {
 			args = append(args,
 				"-drive",
-				fmt.Sprintf("file=%s,media=cdrom,index=%d", storage.Image, i),
+				fmt.Sprintf("file=%s,media=cdrom,index=%d", storage.Path, i),
 			)
 		} else {
 			args = append(args,
 				"-drive",
 				fmt.Sprintf(
 					"driver=raw,if=virtio,file=%s,cache=none,media=disk,index=%d",
-					filepath.Join(ac.ImagesDir, storage.Volume, storage.Image), i,
+					storage.Path, i,
 				))
 		}
 	}

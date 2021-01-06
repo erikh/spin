@@ -14,7 +14,7 @@ import (
 // Bridge between the outer-facing UIs and the internals
 type Service interface {
 	// VMCreate implements vm_create.
-	VMCreate(context.Context, *VM) (res uint64, err error)
+	VMCreate(context.Context, *CreateVM) (res uint64, err error)
 	// VMDelete implements vm_delete.
 	VMDelete(context.Context, *VMDeletePayload) (err error)
 	// ControlStart implements control_start.
@@ -35,16 +35,16 @@ const ServiceName = "spin-apiserver"
 // MethodKey key.
 var MethodNames = [5]string{"vm_create", "vm_delete", "control_start", "control_stop", "control_shutdown"}
 
-// VM is the payload type of the spin-apiserver service vm_create method.
-type VM struct {
+// CreateVM is the payload type of the spin-apiserver service vm_create method.
+type CreateVM struct {
+	// Storage references
+	Storage []*Storage
 	// Name of VM; does not need to be unique
 	Name string
 	// CPU count
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
-	// Storage references
-	Storage []*Storage
 }
 
 // VMDeletePayload is the payload type of the spin-apiserver service vm_delete
@@ -76,9 +76,9 @@ type ControlShutdownPayload struct {
 }
 
 type Storage struct {
-	// Volume name, must not include `/`
+	// Volume name
 	Volume string
-	// Image filename, must not include `/`
+	// Image filename, no `/` characters
 	Image string
 	// Image size (in gigabytes)
 	ImageSize *uint64

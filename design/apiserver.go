@@ -6,7 +6,7 @@ var _ = Service("spin-apiserver", func() {
 	Description("Bridge between the outer-facing UIs and the internals")
 
 	Method("vm_create", func() {
-		Payload(VM)
+		Payload(CreateVM)
 		Result(UInt64)
 
 		HTTP(func() {

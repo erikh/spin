@@ -49,7 +49,7 @@ func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 		if err != nil {
 			return nil, err
 		}
-		payload := NewVMCreateVM(&body)
+		payload := NewVMCreateCreateVM(&body)
 
 		return payload, nil
 	}

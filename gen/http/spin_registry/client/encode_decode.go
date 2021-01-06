@@ -37,9 +37,9 @@ func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http
 // spin-registry vm_create server.
 func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*spinregistry.VM)
+		p, ok := v.(*spinregistry.UpdatedVM)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-registry", "vm_create", "*spinregistry.VM", v)
+			return goahttp.ErrInvalidType("spin-registry", "vm_create", "*spinregistry.UpdatedVM", v)
 		}
 		body := NewVMCreateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {
@@ -260,7 +260,7 @@ func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 			if err != nil {
 				return nil, goahttp.ErrValidationError("spin-registry", "vm_get", err)
 			}
-			res := NewVMGetVMOK(&body)
+			res := NewVMGetUpdatedVMOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
@@ -355,7 +355,7 @@ func DecodeStorageVolumesListResponse(decoder func(*http.Response) goahttp.Decod
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body []string
+				body map[string]string
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
@@ -606,7 +606,20 @@ func DecodeStorageImagesCreateResponse(decoder func(*http.Response) goahttp.Deco
 		}
 		switch resp.StatusCode {
 		case http.StatusOK:
-			return nil, nil
+			var (
+				body StorageImagesCreateResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-registry", "storage_images_create", err)
+			}
+			err = ValidateStorageImagesCreateResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("spin-registry", "storage_images_create", err)
+			}
+			res := NewStorageImagesCreateImageOK(&body)
+			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage_images_create", resp.StatusCode, string(body))
@@ -736,7 +749,7 @@ func DecodeStorageImagesGetResponse(decoder func(*http.Response) goahttp.Decoder
 			if err != nil {
 				return nil, goahttp.ErrValidationError("spin-registry", "storage_images_get", err)
 			}
-			res := NewStorageImagesGetStorageOK(&body)
+			res := NewStorageImagesGetImageOK(&body)
 			return res, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
@@ -745,76 +758,70 @@ func DecodeStorageImagesGetResponse(decoder func(*http.Response) goahttp.Decoder
 	}
 }
 
-// marshalSpinregistryStorageToStorageRequestBody builds a value of type
-// *StorageRequestBody from a value of type *spinregistry.Storage.
-func marshalSpinregistryStorageToStorageRequestBody(v *spinregistry.Storage) *StorageRequestBody {
-	res := &StorageRequestBody{
-		Volume:    v.Volume,
-		Image:     v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
+// marshalSpinregistryImageToImageRequestBody builds a value of type
+// *ImageRequestBody from a value of type *spinregistry.Image.
+func marshalSpinregistryImageToImageRequestBody(v *spinregistry.Image) *ImageRequestBody {
+	res := &ImageRequestBody{
+		Path:  v.Path,
+		Cdrom: v.Cdrom,
 	}
 
 	return res
 }
 
-// marshalStorageRequestBodyToSpinregistryStorage builds a value of type
-// *spinregistry.Storage from a value of type *StorageRequestBody.
-func marshalStorageRequestBodyToSpinregistryStorage(v *StorageRequestBody) *spinregistry.Storage {
-	res := &spinregistry.Storage{
-		Volume:    v.Volume,
-		Image:     v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
+// marshalImageRequestBodyToSpinregistryImage builds a value of type
+// *spinregistry.Image from a value of type *ImageRequestBody.
+func marshalImageRequestBodyToSpinregistryImage(v *ImageRequestBody) *spinregistry.Image {
+	res := &spinregistry.Image{
+		Path:  v.Path,
+		Cdrom: v.Cdrom,
 	}
 
 	return res
 }
 
-// marshalSpinregistryVMToVMRequestBody builds a value of type *VMRequestBody
-// from a value of type *spinregistry.VM.
-func marshalSpinregistryVMToVMRequestBody(v *spinregistry.VM) *VMRequestBody {
-	res := &VMRequestBody{
+// marshalSpinregistryUpdatedVMToUpdatedVMRequestBody builds a value of type
+// *UpdatedVMRequestBody from a value of type *spinregistry.UpdatedVM.
+func marshalSpinregistryUpdatedVMToUpdatedVMRequestBody(v *spinregistry.UpdatedVM) *UpdatedVMRequestBody {
+	res := &UpdatedVMRequestBody{
 		Name:   v.Name,
 		Cpus:   v.Cpus,
 		Memory: v.Memory,
 	}
-	if v.Storage != nil {
-		res.Storage = make([]*StorageRequestBody, len(v.Storage))
-		for i, val := range v.Storage {
-			res.Storage[i] = marshalSpinregistryStorageToStorageRequestBody(val)
+	if v.Images != nil {
+		res.Images = make([]*ImageRequestBody, len(v.Images))
+		for i, val := range v.Images {
+			res.Images[i] = marshalSpinregistryImageToImageRequestBody(val)
 		}
 	}
 
 	return res
 }
 
-// marshalVMRequestBodyToSpinregistryVM builds a value of type *spinregistry.VM
-// from a value of type *VMRequestBody.
-func marshalVMRequestBodyToSpinregistryVM(v *VMRequestBody) *spinregistry.VM {
-	res := &spinregistry.VM{
+// marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM builds a value of type
+// *spinregistry.UpdatedVM from a value of type *UpdatedVMRequestBody.
+func marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBody) *spinregistry.UpdatedVM {
+	res := &spinregistry.UpdatedVM{
 		Name:   v.Name,
 		Cpus:   v.Cpus,
 		Memory: v.Memory,
 	}
-	if v.Storage != nil {
-		res.Storage = make([]*spinregistry.Storage, len(v.Storage))
-		for i, val := range v.Storage {
-			res.Storage[i] = marshalStorageRequestBodyToSpinregistryStorage(val)
+	if v.Images != nil {
+		res.Images = make([]*spinregistry.Image, len(v.Images))
+		for i, val := range v.Images {
+			res.Images[i] = marshalImageRequestBodyToSpinregistryImage(val)
 		}
 	}
 
 	return res
 }
 
-// unmarshalStorageResponseBodyToSpinregistryStorage builds a value of type
-// *spinregistry.Storage from a value of type *StorageResponseBody.
-func unmarshalStorageResponseBodyToSpinregistryStorage(v *StorageResponseBody) *spinregistry.Storage {
-	res := &spinregistry.Storage{
-		Volume:    *v.Volume,
-		Image:     *v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
+// unmarshalImageResponseBodyToSpinregistryImage builds a value of type
+// *spinregistry.Image from a value of type *ImageResponseBody.
+func unmarshalImageResponseBodyToSpinregistryImage(v *ImageResponseBody) *spinregistry.Image {
+	res := &spinregistry.Image{
+		Path:  *v.Path,
+		Cdrom: *v.Cdrom,
 	}
 
 	return res

@@ -48,7 +48,7 @@ func NewClient(vMCreate, vMUpdate, vMDelete, vMGet, vMList, storageVolumesList, 
 }
 
 // VMCreate calls the "vm_create" endpoint of the "spin-registry" service.
-func (c *Client) VMCreate(ctx context.Context, p *VM) (res uint64, err error) {
+func (c *Client) VMCreate(ctx context.Context, p *UpdatedVM) (res uint64, err error) {
 	var ires interface{}
 	ires, err = c.VMCreateEndpoint(ctx, p)
 	if err != nil {
@@ -70,13 +70,13 @@ func (c *Client) VMDelete(ctx context.Context, p *VMDeletePayload) (err error) {
 }
 
 // VMGet calls the "vm_get" endpoint of the "spin-registry" service.
-func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *VM, err error) {
+func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *UpdatedVM, err error) {
 	var ires interface{}
 	ires, err = c.VMGetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*VM), nil
+	return ires.(*UpdatedVM), nil
 }
 
 // VMList calls the "vm_list" endpoint of the "spin-registry" service.
@@ -91,13 +91,13 @@ func (c *Client) VMList(ctx context.Context) (res []uint64, err error) {
 
 // StorageVolumesList calls the "storage_volumes_list" endpoint of the
 // "spin-registry" service.
-func (c *Client) StorageVolumesList(ctx context.Context) (res []string, err error) {
+func (c *Client) StorageVolumesList(ctx context.Context) (res map[string]string, err error) {
 	var ires interface{}
 	ires, err = c.StorageVolumesListEndpoint(ctx, nil)
 	if err != nil {
 		return
 	}
-	return ires.([]string), nil
+	return ires.(map[string]string), nil
 }
 
 // StorageVolumesCreate calls the "storage_volumes_create" endpoint of the
@@ -127,9 +127,13 @@ func (c *Client) StorageImagesList(ctx context.Context, p *StorageImagesListPayl
 
 // StorageImagesCreate calls the "storage_images_create" endpoint of the
 // "spin-registry" service.
-func (c *Client) StorageImagesCreate(ctx context.Context, p *Storage) (err error) {
-	_, err = c.StorageImagesCreateEndpoint(ctx, p)
-	return
+func (c *Client) StorageImagesCreate(ctx context.Context, p *Storage) (res *Image, err error) {
+	var ires interface{}
+	ires, err = c.StorageImagesCreateEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*Image), nil
 }
 
 // StorageImagesDelete calls the "storage_images_delete" endpoint of the
@@ -141,11 +145,11 @@ func (c *Client) StorageImagesDelete(ctx context.Context, p *StorageImagesDelete
 
 // StorageImagesGet calls the "storage_images_get" endpoint of the
 // "spin-registry" service.
-func (c *Client) StorageImagesGet(ctx context.Context, p *StorageImagesGetPayload) (res *Storage, err error) {
+func (c *Client) StorageImagesGet(ctx context.Context, p *StorageImagesGetPayload) (res *Image, err error) {
 	var ires interface{}
 	ires, err = c.StorageImagesGetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*Storage), nil
+	return ires.(*Image), nil
 }

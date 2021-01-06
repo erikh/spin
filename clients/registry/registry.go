@@ -37,7 +37,7 @@ func New(cc Config) *Client {
 }
 
 // VMCreate creates a new vm.
-func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.VM) (uint64, error) {
+func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.UpdatedVM) (uint64, error) {
 	pkg, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
@@ -47,7 +47,7 @@ func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.VM) (uint64, err
 }
 
 // VMUpdate updates a vm by id.
-func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinregistry.VM) error {
+func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinregistry.UpdatedVM) error {
 	_, err := c.client.VMUpdate()(ctx, &spinregistry.UpdateVM{ID: id, VM: vm})
 	return err
 }
@@ -59,13 +59,13 @@ func (c *Client) VMDelete(ctx context.Context, id uint64) error {
 }
 
 // VMGet retrieves a vm by id.
-func (c *Client) VMGet(ctx context.Context, id uint64) (*spinregistry.VM, error) {
+func (c *Client) VMGet(ctx context.Context, id uint64) (*spinregistry.UpdatedVM, error) {
 	vm, err := c.client.VMGet()(ctx, &spinregistry.VMGetPayload{ID: id})
 	if err != nil {
 		return nil, err
 	}
 
-	return vm.(*spinregistry.VM), nil
+	return vm.(*spinregistry.UpdatedVM), nil
 }
 
 // VMList retrieves all IDs of all VMs.
@@ -79,8 +79,8 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 }
 
 // StorageVolumeCreate creates a volume by name.
-func (c *Client) StorageVolumeCreate(ctx context.Context, name string) error {
-	_, err := c.client.StorageVolumesCreate()(ctx, &spinregistry.StorageVolumesCreatePayload{Name: name})
+func (c *Client) StorageVolumeCreate(ctx context.Context, name, path string) error {
+	_, err := c.client.StorageVolumesCreate()(ctx, &spinregistry.StorageVolumesCreatePayload{Name: name, Path: path})
 	return err
 }
 
@@ -124,9 +124,13 @@ func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName stri
 }
 
 // StorageImageCreate creates an image
-func (c *Client) StorageImageCreate(ctx context.Context, s *spinregistry.Storage) error {
-	_, err := c.client.StorageImagesCreate()(ctx, s)
-	return err
+func (c *Client) StorageImageCreate(ctx context.Context, s *spinregistry.Storage) (*spinregistry.Image, error) {
+	img, err := c.client.StorageImagesCreate()(ctx, s)
+	if err != nil {
+		return nil, err
+	}
+
+	return img.(*spinregistry.Image), nil
 }
 
 // StorageImageDelete deletes an image by name & volume name

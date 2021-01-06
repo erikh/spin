@@ -17,11 +17,12 @@ type DB struct {
 }
 
 const (
-	vmBucket      = "registry_vms"
-	storageBucket = "registry_storage"
+	vmBucket          = "registry_vms"
+	storageBucket     = "registry_storage"
+	storagePathBucket = "registry_storage_path"
 )
 
-var makeBuckets = []string{vmBucket, storageBucket}
+var makeBuckets = []string{vmBucket, storageBucket, storagePathBucket}
 
 // NewDB creates a new *DB based on a DBConfig.
 func NewDB(c DBConfig) (*DB, error) {

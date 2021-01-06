@@ -15,21 +15,21 @@ import (
 // VMCreateRequestBody is the type of the "spin-apiserver" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
+	// Storage references
+	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 	// Name of VM; does not need to be unique
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// CPU count
 	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
 	// Memory (in megabytes)
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
 // StorageRequestBody is used to define fields on request body types.
 type StorageRequestBody struct {
-	// Volume name, must not include `/`
+	// Volume name
 	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-	// Image filename, must not include `/`
+	// Image filename, no `/` characters
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
 	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
@@ -37,9 +37,10 @@ type StorageRequestBody struct {
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
-// NewVMCreateVM builds a spin-apiserver service vm_create endpoint payload.
-func NewVMCreateVM(body *VMCreateRequestBody) *spinapiserver.VM {
-	v := &spinapiserver.VM{
+// NewVMCreateCreateVM builds a spin-apiserver service vm_create endpoint
+// payload.
+func NewVMCreateCreateVM(body *VMCreateRequestBody) *spinapiserver.CreateVM {
+	v := &spinapiserver.CreateVM{
 		Name:   *body.Name,
 		Cpus:   *body.Cpus,
 		Memory: *body.Memory,
@@ -115,11 +116,11 @@ func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 
 // ValidateStorageRequestBody runs the validations defined on StorageRequestBody
 func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
-	if body.Volume == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
-	}
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	}
+	if body.Volume == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
 	}
 	return
 }

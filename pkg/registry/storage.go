@@ -3,14 +3,26 @@ package registry
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"path/filepath"
 
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"go.etcd.io/bbolt"
 )
 
 // StorageVolumeCreate creates a volume
-func (db *DB) StorageVolumeCreate(name string) error {
+func (db *DB) StorageVolumeCreate(name string, path string) error {
 	return db.db.Update(func(tx *bbolt.Tx) error {
+		pathBucket := tx.Bucket([]byte(storagePathBucket))
+
+		if pathBucket.Get([]byte(name)) != nil {
+			return errors.New("path already in use")
+		}
+
+		if err := pathBucket.Put([]byte(name), []byte(path)); err != nil {
+			return err
+		}
+
 		_, err := tx.Bucket([]byte(storageBucket)).CreateBucket([]byte(name))
 		return err
 	})
@@ -19,17 +31,20 @@ func (db *DB) StorageVolumeCreate(name string) error {
 // StorageVolumeDelete creates a volume
 func (db *DB) StorageVolumeDelete(name string) error {
 	return db.db.Update(func(tx *bbolt.Tx) error {
+		if err := tx.Bucket([]byte(storagePathBucket)).Delete([]byte(name)); err != nil {
+			fmt.Printf("Fell through on storage volume delete with this error pruning the path: %v", err)
+		}
 		return tx.Bucket([]byte(storageBucket)).DeleteBucket([]byte(name))
 	})
 }
 
 // StorageVolumeList lists all volumes
-func (db *DB) StorageVolumeList() ([]string, error) {
-	var list []string
+func (db *DB) StorageVolumeList() (map[string]string, error) {
+	list := map[string]string{}
 	return list, db.db.View(func(tx *bbolt.Tx) error {
-		cur := tx.Bucket([]byte(storageBucket)).Cursor()
-		for key, _ := cur.First(); key != nil; key, _ = cur.Next() {
-			list = append(list, string(key))
+		cur := tx.Bucket([]byte(storagePathBucket)).Cursor()
+		for key, value := cur.First(); key != nil; key, value = cur.Next() {
+			list[string(key)] = string(value)
 		}
 
 		return nil
@@ -37,8 +52,10 @@ func (db *DB) StorageVolumeList() ([]string, error) {
 }
 
 // StorageImageCreate creates an image within a volume.
-func (db *DB) StorageImageCreate(s *spinregistry.Storage) error {
-	return db.db.Update(func(tx *bbolt.Tx) error {
+func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, error) {
+	image := &spinregistry.Image{}
+
+	return image, db.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(s.Volume))
 		if bucket == nil {
 			return errors.New("volume does not exist")
@@ -46,10 +63,18 @@ func (db *DB) StorageImageCreate(s *spinregistry.Storage) error {
 
 		byt := []byte(s.Image)
 		if bucket.Get(byt) != nil {
-			return errors.New("already exists")
+			return errors.New("image already exists")
 		}
 
-		content, err := json.Marshal(s)
+		volPath := tx.Bucket([]byte(storagePathBucket)).Get([]byte(s.Volume))
+		if volPath == nil {
+			return errors.New("invalid volume")
+		}
+
+		image.Path = filepath.Join(string(volPath), s.Image)
+		image.Cdrom = false
+
+		content, err := json.Marshal(image)
 		if err != nil {
 			return err
 		}
@@ -76,8 +101,8 @@ func (db *DB) StorageImageDelete(volume, image string) error {
 }
 
 // StorageImageGet will retrieve an image from the volume as a *spinregistry.Storage.
-func (db *DB) StorageImageGet(volume, image string) (*spinregistry.Storage, error) {
-	var s spinregistry.Storage
+func (db *DB) StorageImageGet(volume, image string) (*spinregistry.Image, error) {
+	var s spinregistry.Image
 
 	return &s, db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(volume))

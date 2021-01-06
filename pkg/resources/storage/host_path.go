@@ -90,12 +90,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return nil
 		},
 		DeleteImage: func(c dispatcher.Command) error {
-			path, err := bp(c.Parameter("volume_path").(*string), c.Parameter("image_name").(*string))
-			if err != nil {
-				return err
-			}
-
-			return os.Remove(path)
+			return os.Remove(*c.Parameter("image_path").(*string))
 		},
 		ResizeImage: func(c dispatcher.Command) error {
 			return nil

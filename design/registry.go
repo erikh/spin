@@ -13,7 +13,7 @@ var _ = Service("spin-registry", func() {
 
 	Method("vm_create", func() {
 		Description("Create a VM")
-		Payload(VM)
+		Payload(UpdatedVM)
 		Result(UInt64)
 
 		HTTP(func() {
@@ -51,7 +51,7 @@ var _ = Service("spin-registry", func() {
 			Attribute("id", UInt64, "ID of VM to remove")
 			Required("id")
 		})
-		Result(VM)
+		Result(UpdatedVM)
 
 		HTTP(func() {
 			GET("/vm/get/{id}")
@@ -78,7 +78,7 @@ var _ = Service("spin-registry", func() {
 	Method("storage_volumes_list", func() {
 		Description("list all volumes")
 
-		Result(ArrayOf(String))
+		Result(MapOf(String, String))
 
 		HTTP(func() {
 			GET("/storage/volumes/list")
@@ -91,7 +91,8 @@ var _ = Service("spin-registry", func() {
 
 		Payload(func() {
 			Attribute("name", String, "name of volume")
-			Required("name")
+			Attribute("path", String, "path to volume")
+			Required("name", "path")
 		})
 
 		HTTP(func() {
@@ -134,6 +135,7 @@ var _ = Service("spin-registry", func() {
 		Description("add an image definition to the registry")
 
 		Payload(Storage)
+		Result(Image)
 
 		HTTP(func() {
 			POST("/storage/images/create")
@@ -165,7 +167,7 @@ var _ = Service("spin-registry", func() {
 			Required("volume_name", "image_name")
 		})
 
-		Result(Storage)
+		Result(Image)
 
 		HTTP(func() {
 			GET("/storage/images/get")

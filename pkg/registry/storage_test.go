@@ -1,6 +1,7 @@
 package registry
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -14,43 +15,44 @@ func TestStorageVolumeDBCRUD(t *testing.T) {
 		t.Fatal("no error deleting invalid volume")
 	}
 
-	list, err := db.StorageVolumeList()
+	m, err := db.StorageVolumeList()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(list) > 0 {
+	if len(m) > 0 {
 		t.Fatal("list yielded invalid items")
 	}
 
-	volumeList := []string{"test", "test2", "test3"}
-	for _, vol := range volumeList {
-		if err := db.StorageVolumeCreate(vol); err != nil {
+	volumeMap := map[string]string{}
+	for _, vol := range []string{"test", "test2", "test3"} {
+		volumeMap[vol] = filepath.Join("/tmp", vol)
+		if err := db.StorageVolumeCreate(vol, filepath.Join("/tmp", vol)); err != nil {
 			t.Fatal(err)
 		}
 	}
 
-	list, err = db.StorageVolumeList()
+	m, err = db.StorageVolumeList()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(volumeList, list) {
-		t.Fatalf("lists were not equal: %v %v", volumeList, list)
+	if !reflect.DeepEqual(volumeMap, m) {
+		t.Fatalf("lists were not equal: %v %v", volumeMap, m)
 	}
 
-	for _, vol := range volumeList {
+	for vol := range volumeMap {
 		if err := db.StorageVolumeDelete(vol); err != nil {
 			t.Fatal(err)
 		}
 	}
 
-	list, err = db.StorageVolumeList()
+	m, err = db.StorageVolumeList()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if len(list) > 0 {
+	if len(m) > 0 {
 		t.Fatal("list yielded invalid items")
 	}
 }
@@ -64,7 +66,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 		ImageSize: makeUintPtr(50),
 	}
 
-	if err := db.StorageImageCreate(image); err == nil {
+	if _, err := db.StorageImageCreate(image); err == nil {
 		t.Fatal("was able to create image with invalid volume")
 	}
 
@@ -80,7 +82,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 		t.Fatal("was able to list images with invalid volume")
 	}
 
-	if err := db.StorageVolumeCreate("test"); err != nil {
+	if err := db.StorageVolumeCreate("test", "/tmp/test"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -92,8 +94,13 @@ func TestStorageImageDBCRUD(t *testing.T) {
 		t.Fatal("was able to delete an invalid image for a valid volume")
 	}
 
-	if err := db.StorageImageCreate(image); err != nil {
+	img, err := db.StorageImageCreate(image)
+	if err != nil {
 		t.Fatal(err)
+	}
+
+	if img.Path != "/tmp/test/test.raw" {
+		t.Fatal("image path was invalid")
 	}
 
 	getImage, err := db.StorageImageGet("test", "test.raw")
@@ -101,8 +108,8 @@ func TestStorageImageDBCRUD(t *testing.T) {
 		t.Fatal("was able to fetch an invalid image for a valid volume")
 	}
 
-	if !reflect.DeepEqual(image, getImage) {
-		t.Fatal("storage structs were not equal")
+	if !reflect.DeepEqual(img, getImage) {
+		t.Fatal("storage structs were not equal", getImage, img)
 	}
 
 	if err := db.StorageImageDelete("test", "test.raw"); err != nil {
@@ -127,8 +134,13 @@ func TestStorageImageDBCRUD(t *testing.T) {
 			ImageSize: makeUintPtr(50),
 		}
 
-		if err := db.StorageImageCreate(image); err != nil {
+		img, err := db.StorageImageCreate(image)
+		if err != nil {
 			t.Fatal(err)
+		}
+
+		if img.Path != filepath.Join("/tmp/test", imgName) {
+			t.Fatal("filepath was not equal to expectation")
 		}
 	}
 

@@ -14,17 +14,17 @@ import (
 // Keeper of the VMs
 type Service interface {
 	// Create a VM
-	VMCreate(context.Context, *VM) (res uint64, err error)
+	VMCreate(context.Context, *UpdatedVM) (res uint64, err error)
 	// Update a VM
 	VMUpdate(context.Context, *UpdateVM) (err error)
 	// Delete a VM by ID
 	VMDelete(context.Context, *VMDeletePayload) (err error)
 	// Retrieve a VM by ID
-	VMGet(context.Context, *VMGetPayload) (res *VM, err error)
+	VMGet(context.Context, *VMGetPayload) (res *UpdatedVM, err error)
 	// Retrieve all VM IDs
 	VMList(context.Context) (res []uint64, err error)
 	// list all volumes
-	StorageVolumesList(context.Context) (res []string, err error)
+	StorageVolumesList(context.Context) (res map[string]string, err error)
 	// create a new volume
 	StorageVolumesCreate(context.Context, *StorageVolumesCreatePayload) (err error)
 	// delete an existing volume
@@ -32,11 +32,11 @@ type Service interface {
 	// list all images by volume
 	StorageImagesList(context.Context, *StorageImagesListPayload) (res []string, err error)
 	// add an image definition to the registry
-	StorageImagesCreate(context.Context, *Storage) (err error)
+	StorageImagesCreate(context.Context, *Storage) (res *Image, err error)
 	// remove an image definition from the registry
 	StorageImagesDelete(context.Context, *StorageImagesDeletePayload) (err error)
 	// retrieves an image definition from the registry
-	StorageImagesGet(context.Context, *StorageImagesGetPayload) (res *Storage, err error)
+	StorageImagesGet(context.Context, *StorageImagesGetPayload) (res *Image, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -49,16 +49,16 @@ const ServiceName = "spin-registry"
 // MethodKey key.
 var MethodNames = [12]string{"vm_create", "vm_update", "vm_delete", "vm_get", "vm_list", "storage_volumes_list", "storage_volumes_create", "storage_volumes_delete", "storage_images_list", "storage_images_create", "storage_images_delete", "storage_images_get"}
 
-// VM is the payload type of the spin-registry service vm_create method.
-type VM struct {
+// UpdatedVM is the payload type of the spin-registry service vm_create method.
+type UpdatedVM struct {
+	// Image references
+	Images []*Image
 	// Name of VM; does not need to be unique
 	Name string
 	// CPU count
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
-	// Storage references
-	Storage []*Storage
 }
 
 // UpdateVM is the payload type of the spin-registry service vm_update method.
@@ -66,7 +66,7 @@ type UpdateVM struct {
 	// ID of VM to update
 	ID uint64
 	// VM to publish
-	VM *VM
+	VM *UpdatedVM
 }
 
 // VMDeletePayload is the payload type of the spin-registry service vm_delete
@@ -87,6 +87,8 @@ type VMGetPayload struct {
 type StorageVolumesCreatePayload struct {
 	// name of volume
 	Name string
+	// path to volume
+	Path string
 }
 
 // StorageVolumesDeletePayload is the payload type of the spin-registry service
@@ -106,14 +108,23 @@ type StorageImagesListPayload struct {
 // Storage is the payload type of the spin-registry service
 // storage_images_create method.
 type Storage struct {
-	// Volume name, must not include `/`
+	// Volume name
 	Volume string
-	// Image filename, must not include `/`
+	// Image filename, no `/` characters
 	Image string
 	// Image size (in gigabytes)
 	ImageSize *uint64
 	// Is this image a cdrom?
 	Cdrom *bool
+}
+
+// Image is the result type of the spin-registry service storage_images_create
+// method.
+type Image struct {
+	// Image path
+	Path string
+	// Is this a cdrom image?
+	Cdrom bool
 }
 
 // StorageImagesDeletePayload is the payload type of the spin-registry service

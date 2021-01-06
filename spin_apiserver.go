@@ -29,18 +29,12 @@ func NewSpinApiserver(logger *log.Logger, broker *brokerclient.Client, registry 
 	}
 }
 
-func toRegistryVM(p *spinapiserver.VM) *spinregistry.VM {
-	storage := []*spinregistry.Storage{}
-
-	for _, stor := range p.Storage {
-		storage = append(storage, (*spinregistry.Storage)(stor))
-	}
-
-	return &spinregistry.VM{
-		Name:    p.Name,
-		Cpus:    p.Cpus,
-		Memory:  p.Memory,
-		Storage: storage,
+func toRegistryVM(p *spinapiserver.CreateVM, images []*spinregistry.Image) *spinregistry.UpdatedVM {
+	return &spinregistry.UpdatedVM{
+		Name:   p.Name,
+		Cpus:   p.Cpus,
+		Memory: p.Memory,
+		Images: images,
 	}
 }
 
@@ -96,8 +90,21 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 	return s.getStatus(ctx, pkg)
 }
 
-func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.VM) (uint64, error) {
-	id, err := s.registry.VMCreate(ctx, toRegistryVM(p))
+func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.CreateVM) (uint64, error) {
+	images := []*spinregistry.Image{}
+
+	for _, storage := range p.Storage {
+		if storage.Cdrom == nil || !*storage.Cdrom {
+			img, err := s.registry.StorageImageCreate(ctx, (*spinregistry.Storage)(storage))
+			if err != nil {
+				return 0, err
+			}
+
+			images = append(images, img)
+		}
+	}
+
+	id, err := s.registry.VMCreate(ctx, toRegistryVM(p, images))
 	if err != nil {
 		return id, err
 	}
@@ -151,14 +158,6 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.VM) (
 		return id, err
 	}
 
-	for _, storage := range p.Storage {
-		if storage.Cdrom == nil || !*storage.Cdrom {
-			if err := s.registry.StorageImageCreate(ctx, (*spinregistry.Storage)(storage)); err != nil {
-				return id, err
-			}
-		}
-	}
-
 	return id, nil
 }
 
@@ -187,15 +186,14 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 
 	storids := []string{}
 
-	for _, stor := range vm.Storage {
-		if stor.Cdrom == nil || !*stor.Cdrom {
+	for _, stor := range vm.Images {
+		if !stor.Cdrom {
 			uuid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
 				ID:       pkg,
 				Resource: "storage",
 				Action:   "delete_image",
 				Parameters: map[string]interface{}{
-					"volume_path": stor.Volume,
-					"image_name":  stor.Image,
+					"image_path": stor.Path,
 				},
 				Dependencies: []string{vmid},
 			})

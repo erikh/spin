@@ -11,7 +11,7 @@ import (
 )
 
 func messageVMCreate(ctx *cli.Context) error {
-	var vm spinregistry.VM
+	var vm spinregistry.UpdatedVM
 
 	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
@@ -32,7 +32,7 @@ func messageVMUpdate(ctx *cli.Context) error {
 		return err
 	}
 
-	var vm spinregistry.VM
+	var vm spinregistry.UpdatedVM
 
 	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
 		return fmt.Errorf("Error decoding JSON document: %v", err)

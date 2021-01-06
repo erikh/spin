@@ -37,9 +37,9 @@ func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http
 // spin-apiserver vm_create server.
 func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*spinapiserver.VM)
+		p, ok := v.(*spinapiserver.CreateVM)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-apiserver", "vm_create", "*spinapiserver.VM", v)
+			return goahttp.ErrInvalidType("spin-apiserver", "vm_create", "*spinapiserver.CreateVM", v)
 		}
 		body := NewVMCreateRequestBody(p)
 		if err := encoder(req).Encode(&body); err != nil {

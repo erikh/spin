@@ -43,7 +43,7 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
 			id := c.Parameter("id").(*uint64)
-			vm := c.Parameter("vm").(*spinregistry.VM)
+			vm := c.Parameter("vm").(*spinregistry.UpdatedVM)
 
 			tc, err := vmToTemplateConfig(ac, *id, vm)
 			if err != nil {

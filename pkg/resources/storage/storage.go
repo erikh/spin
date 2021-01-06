@@ -41,8 +41,7 @@ func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 		},
 		"delete_image": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"volume_path": dispatcher.TypeString,
-				"image_name":  dispatcher.TypeString,
+				"image_path": dispatcher.TypeString,
 			},
 			Dispatch: dc.DeleteImage,
 		},

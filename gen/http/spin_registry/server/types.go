@@ -15,21 +15,21 @@ import (
 // VMCreateRequestBody is the type of the "spin-registry" service "vm_create"
 // endpoint HTTP request body.
 type VMCreateRequestBody struct {
+	// Image references
+	Images []*ImageRequestBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
 	// Name of VM; does not need to be unique
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// CPU count
 	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
 	// Memory (in megabytes)
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
 // VMUpdateRequestBody is the type of the "spin-registry" service "vm_update"
 // endpoint HTTP request body.
 type VMUpdateRequestBody struct {
 	// VM to publish
-	VM *VMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
+	VM *UpdatedVMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
 }
 
 // StorageVolumesCreateRequestBody is the type of the "spin-registry" service
@@ -37,6 +37,8 @@ type VMUpdateRequestBody struct {
 type StorageVolumesCreateRequestBody struct {
 	// name of volume
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// path to volume
+	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
 }
 
 // StorageVolumesDeleteRequestBody is the type of the "spin-registry" service
@@ -56,9 +58,9 @@ type StorageImagesListRequestBody struct {
 // StorageImagesCreateRequestBody is the type of the "spin-registry" service
 // "storage_images_create" endpoint HTTP request body.
 type StorageImagesCreateRequestBody struct {
-	// Volume name, must not include `/`
+	// Volume name
 	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-	// Image filename, must not include `/`
+	// Image filename, no `/` characters
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes)
 	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
@@ -87,104 +89,111 @@ type StorageImagesGetRequestBody struct {
 // VMGetResponseBody is the type of the "spin-registry" service "vm_get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
+	// Image references
+	Images []*ImageResponseBody `form:"images" json:"images" xml:"images"`
 	// Name of VM; does not need to be unique
 	Name string `form:"name" json:"name" xml:"name"`
 	// CPU count
 	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
 	// Memory (in megabytes)
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
-	// Storage references
-	Storage []*StorageResponseBody `form:"storage" json:"storage" xml:"storage"`
+}
+
+// StorageImagesCreateResponseBody is the type of the "spin-registry" service
+// "storage_images_create" endpoint HTTP response body.
+type StorageImagesCreateResponseBody struct {
+	// Image path
+	Path string `form:"path" json:"path" xml:"path"`
+	// Is this a cdrom image?
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
 }
 
 // StorageImagesGetResponseBody is the type of the "spin-registry" service
 // "storage_images_get" endpoint HTTP response body.
 type StorageImagesGetResponseBody struct {
-	// Volume name, must not include `/`
-	Volume string `form:"volume" json:"volume" xml:"volume"`
-	// Image filename, must not include `/`
-	Image string `form:"image" json:"image" xml:"image"`
-	// Image size (in gigabytes)
-	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
-	// Is this image a cdrom?
+	// Image path
+	Path string `form:"path" json:"path" xml:"path"`
+	// Is this a cdrom image?
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+}
+
+// ImageResponseBody is used to define fields on response body types.
+type ImageResponseBody struct {
+	// Image path
+	Path string `form:"path" json:"path" xml:"path"`
+	// Is this a cdrom image?
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+}
+
+// ImageRequestBody is used to define fields on request body types.
+type ImageRequestBody struct {
+	// Image path
+	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
+	// Is this a cdrom image?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }
 
-// StorageResponseBody is used to define fields on response body types.
-type StorageResponseBody struct {
-	// Volume name, must not include `/`
-	Volume string `form:"volume" json:"volume" xml:"volume"`
-	// Image filename, must not include `/`
-	Image string `form:"image" json:"image" xml:"image"`
-	// Image size (in gigabytes)
-	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
-	// Is this image a cdrom?
-	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
-}
-
-// StorageRequestBody is used to define fields on request body types.
-type StorageRequestBody struct {
-	// Volume name, must not include `/`
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-	// Image filename, must not include `/`
-	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
-	// Image size (in gigabytes)
-	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
-	// Is this image a cdrom?
-	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
-}
-
-// VMRequestBody is used to define fields on request body types.
-type VMRequestBody struct {
+// UpdatedVMRequestBody is used to define fields on request body types.
+type UpdatedVMRequestBody struct {
+	// Image references
+	Images []*ImageRequestBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
 	// Name of VM; does not need to be unique
 	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	// CPU count
 	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
 	// Memory (in megabytes)
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Storage references
-	Storage []*StorageRequestBody `form:"storage,omitempty" json:"storage,omitempty" xml:"storage,omitempty"`
 }
 
 // NewVMGetResponseBody builds the HTTP response body from the result of the
 // "vm_get" endpoint of the "spin-registry" service.
-func NewVMGetResponseBody(res *spinregistry.VM) *VMGetResponseBody {
+func NewVMGetResponseBody(res *spinregistry.UpdatedVM) *VMGetResponseBody {
 	body := &VMGetResponseBody{
 		Name:   res.Name,
 		Cpus:   res.Cpus,
 		Memory: res.Memory,
 	}
-	if res.Storage != nil {
-		body.Storage = make([]*StorageResponseBody, len(res.Storage))
-		for i, val := range res.Storage {
-			body.Storage[i] = marshalSpinregistryStorageToStorageResponseBody(val)
+	if res.Images != nil {
+		body.Images = make([]*ImageResponseBody, len(res.Images))
+		for i, val := range res.Images {
+			body.Images[i] = marshalSpinregistryImageToImageResponseBody(val)
 		}
+	}
+	return body
+}
+
+// NewStorageImagesCreateResponseBody builds the HTTP response body from the
+// result of the "storage_images_create" endpoint of the "spin-registry"
+// service.
+func NewStorageImagesCreateResponseBody(res *spinregistry.Image) *StorageImagesCreateResponseBody {
+	body := &StorageImagesCreateResponseBody{
+		Path:  res.Path,
+		Cdrom: res.Cdrom,
 	}
 	return body
 }
 
 // NewStorageImagesGetResponseBody builds the HTTP response body from the
 // result of the "storage_images_get" endpoint of the "spin-registry" service.
-func NewStorageImagesGetResponseBody(res *spinregistry.Storage) *StorageImagesGetResponseBody {
+func NewStorageImagesGetResponseBody(res *spinregistry.Image) *StorageImagesGetResponseBody {
 	body := &StorageImagesGetResponseBody{
-		Volume:    res.Volume,
-		Image:     res.Image,
-		ImageSize: res.ImageSize,
-		Cdrom:     res.Cdrom,
+		Path:  res.Path,
+		Cdrom: res.Cdrom,
 	}
 	return body
 }
 
-// NewVMCreateVM builds a spin-registry service vm_create endpoint payload.
-func NewVMCreateVM(body *VMCreateRequestBody) *spinregistry.VM {
-	v := &spinregistry.VM{
+// NewVMCreateUpdatedVM builds a spin-registry service vm_create endpoint
+// payload.
+func NewVMCreateUpdatedVM(body *VMCreateRequestBody) *spinregistry.UpdatedVM {
+	v := &spinregistry.UpdatedVM{
 		Name:   *body.Name,
 		Cpus:   *body.Cpus,
 		Memory: *body.Memory,
 	}
-	v.Storage = make([]*spinregistry.Storage, len(body.Storage))
-	for i, val := range body.Storage {
-		v.Storage[i] = unmarshalStorageRequestBodyToSpinregistryStorage(val)
+	v.Images = make([]*spinregistry.Image, len(body.Images))
+	for i, val := range body.Images {
+		v.Images[i] = unmarshalImageRequestBodyToSpinregistryImage(val)
 	}
 
 	return v
@@ -194,7 +203,7 @@ func NewVMCreateVM(body *VMCreateRequestBody) *spinregistry.VM {
 // payload.
 func NewVMUpdateUpdateVM(body *VMUpdateRequestBody, id uint64) *spinregistry.UpdateVM {
 	v := &spinregistry.UpdateVM{}
-	v.VM = unmarshalVMRequestBodyToSpinregistryVM(body.VM)
+	v.VM = unmarshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(body.VM)
 	v.ID = id
 
 	return v
@@ -221,6 +230,7 @@ func NewVMGetPayload(id uint64) *spinregistry.VMGetPayload {
 func NewStorageVolumesCreatePayload(body *StorageVolumesCreateRequestBody) *spinregistry.StorageVolumesCreatePayload {
 	v := &spinregistry.StorageVolumesCreatePayload{
 		Name: *body.Name,
+		Path: *body.Path,
 	}
 
 	return v
@@ -293,12 +303,12 @@ func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 	if body.Memory == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
 	}
-	if body.Storage == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
+	if body.Images == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
 	}
-	for _, e := range body.Storage {
+	for _, e := range body.Images {
 		if e != nil {
-			if err2 := ValidateStorageRequestBody(e); err2 != nil {
+			if err2 := ValidateImageRequestBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
@@ -313,7 +323,7 @@ func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
 	}
 	if body.VM != nil {
-		if err2 := ValidateVMRequestBody(body.VM); err2 != nil {
+		if err2 := ValidateUpdatedVMRequestBody(body.VM); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
@@ -325,6 +335,9 @@ func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 func ValidateStorageVolumesCreateRequestBody(body *StorageVolumesCreateRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Path == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("path", "body"))
 	}
 	return
 }
@@ -350,11 +363,11 @@ func ValidateStorageImagesListRequestBody(body *StorageImagesListRequestBody) (e
 // ValidateStorageImagesCreateRequestBody runs the validations defined on
 // storage_images_create_request_body
 func ValidateStorageImagesCreateRequestBody(body *StorageImagesCreateRequestBody) (err error) {
-	if body.Volume == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
-	}
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	}
+	if body.Volume == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
 	}
 	return
 }
@@ -383,19 +396,20 @@ func ValidateStorageImagesGetRequestBody(body *StorageImagesGetRequestBody) (err
 	return
 }
 
-// ValidateStorageRequestBody runs the validations defined on StorageRequestBody
-func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
-	if body.Volume == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
+// ValidateImageRequestBody runs the validations defined on ImageRequestBody
+func ValidateImageRequestBody(body *ImageRequestBody) (err error) {
+	if body.Path == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("path", "body"))
 	}
-	if body.Image == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	if body.Cdrom == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
 	}
 	return
 }
 
-// ValidateVMRequestBody runs the validations defined on VMRequestBody
-func ValidateVMRequestBody(body *VMRequestBody) (err error) {
+// ValidateUpdatedVMRequestBody runs the validations defined on
+// UpdatedVMRequestBody
+func ValidateUpdatedVMRequestBody(body *UpdatedVMRequestBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}
@@ -405,12 +419,12 @@ func ValidateVMRequestBody(body *VMRequestBody) (err error) {
 	if body.Memory == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
 	}
-	if body.Storage == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
+	if body.Images == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
 	}
-	for _, e := range body.Storage {
+	for _, e := range body.Images {
 		if e != nil {
-			if err2 := ValidateStorageRequestBody(e); err2 != nil {
+			if err2 := ValidateImageRequestBody(e); err2 != nil {
 				err = goa.MergeErrors(err, err2)
 			}
 		}

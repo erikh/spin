@@ -68,7 +68,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 // "vm_create" of service "spin-registry".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*VM)
+		p := req.(*UpdatedVM)
 		return s.VMCreate(ctx, p)
 	}
 }
@@ -148,7 +148,7 @@ func NewStorageImagesListEndpoint(s Service) goa.Endpoint {
 func NewStorageImagesCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*Storage)
-		return nil, s.StorageImagesCreate(ctx, p)
+		return s.StorageImagesCreate(ctx, p)
 	}
 }
 

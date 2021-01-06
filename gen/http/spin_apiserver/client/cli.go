@@ -18,13 +18,13 @@ import (
 
 // BuildVMCreatePayload builds the payload for the spin-apiserver vm_create
 // endpoint from CLI flags.
-func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.VM, error) {
+func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.CreateVM, error) {
 	var err error
 	var body VMCreateRequestBody
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 11441991229016388777,\n      \"memory\": 6501280298701421332,\n      \"name\": \"Cupiditate soluta ut corporis.\",\n      \"storage\": [\n         {\n            \"cdrom\": false,\n            \"image\": \"Sint eveniet hic minus facere.\",\n            \"image_size\": 12121496662175385537,\n            \"volume\": \"Eum repellat earum.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Sint eveniet hic minus facere.\",\n            \"image_size\": 12121496662175385537,\n            \"volume\": \"Eum repellat earum.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Sint eveniet hic minus facere.\",\n            \"image_size\": 12121496662175385537,\n            \"volume\": \"Eum repellat earum.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Sint eveniet hic minus facere.\",\n            \"image_size\": 12121496662175385537,\n            \"volume\": \"Eum repellat earum.\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 4310599689986484391,\n      \"memory\": 15720100322202030012,\n      \"name\": \"Sapiente temporibus.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Eius officiis esse labore voluptas perferendis.\",\n            \"image_size\": 3976908564030419353,\n            \"volume\": \"Dicta id sint rerum rerum.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Eius officiis esse labore voluptas perferendis.\",\n            \"image_size\": 3976908564030419353,\n            \"volume\": \"Dicta id sint rerum rerum.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Eius officiis esse labore voluptas perferendis.\",\n            \"image_size\": 3976908564030419353,\n            \"volume\": \"Dicta id sint rerum rerum.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Eius officiis esse labore voluptas perferendis.\",\n            \"image_size\": 3976908564030419353,\n            \"volume\": \"Dicta id sint rerum rerum.\"\n         }\n      ]\n   }'")
 		}
 		if body.Storage == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
@@ -33,7 +33,7 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.VM, 
 			return nil, err
 		}
 	}
-	v := &spinapiserver.VM{
+	v := &spinapiserver.CreateVM{
 		Name:   body.Name,
 		Cpus:   body.Cpus,
 		Memory: body.Memory,
