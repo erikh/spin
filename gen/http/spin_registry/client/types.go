@@ -58,14 +58,14 @@ type StorageImagesListRequestBody struct {
 // StorageImagesCreateRequestBody is the type of the "spin-registry" service
 // "storage_images_create" endpoint HTTP request body.
 type StorageImagesCreateRequestBody struct {
-	// Volume name
-	Volume string `form:"volume" json:"volume" xml:"volume"`
+	// Volume name; required if image is not a cdrom
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 	// Image filename, no `/` characters
 	Image string `form:"image" json:"image" xml:"image"`
-	// Image size (in gigabytes)
+	// Image size (in gigabytes); required if image is not a cdrom
 	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
-	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
 }
 
 // StorageImagesDeleteRequestBody is the type of the "spin-registry" service
@@ -106,6 +106,8 @@ type StorageImagesCreateResponseBody struct {
 	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
 	// Is this a cdrom image?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // StorageImagesGetResponseBody is the type of the "spin-registry" service
@@ -115,6 +117,8 @@ type StorageImagesGetResponseBody struct {
 	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
 	// Is this a cdrom image?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // ImageRequestBody is used to define fields on request body types.
@@ -123,6 +127,8 @@ type ImageRequestBody struct {
 	Path string `form:"path" json:"path" xml:"path"`
 	// Is this a cdrom image?
 	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // UpdatedVMRequestBody is used to define fields on request body types.
@@ -143,6 +149,8 @@ type ImageResponseBody struct {
 	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
 	// Is this a cdrom image?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // NewVMCreateRequestBody builds the HTTP request body from the payload of the
@@ -256,8 +264,9 @@ func NewVMGetUpdatedVMOK(body *VMGetResponseBody) *spinregistry.UpdatedVM {
 // "storage_images_create" endpoint result from a HTTP "OK" response.
 func NewStorageImagesCreateImageOK(body *StorageImagesCreateResponseBody) *spinregistry.Image {
 	v := &spinregistry.Image{
-		Path:  *body.Path,
-		Cdrom: *body.Cdrom,
+		Path:   *body.Path,
+		Cdrom:  *body.Cdrom,
+		Volume: body.Volume,
 	}
 
 	return v
@@ -267,8 +276,9 @@ func NewStorageImagesCreateImageOK(body *StorageImagesCreateResponseBody) *spinr
 // "storage_images_get" endpoint result from a HTTP "OK" response.
 func NewStorageImagesGetImageOK(body *StorageImagesGetResponseBody) *spinregistry.Image {
 	v := &spinregistry.Image{
-		Path:  *body.Path,
-		Cdrom: *body.Cdrom,
+		Path:   *body.Path,
+		Cdrom:  *body.Cdrom,
+		Volume: body.Volume,
 	}
 
 	return v

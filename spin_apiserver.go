@@ -2,8 +2,11 @@ package spin
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"path/filepath"
+	"strings"
 	"time"
 
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
@@ -94,7 +97,18 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.Creat
 	images := []*spinregistry.Image{}
 
 	for _, storage := range p.Storage {
-		if storage.Cdrom == nil || !*storage.Cdrom {
+		if !storage.Cdrom && strings.Contains(storage.Image, "/") {
+			return 0, errors.New("images cannot contain path components")
+		}
+	}
+
+	for _, storage := range p.Storage {
+		if storage.Cdrom {
+			images = append(images, &spinregistry.Image{
+				Path:  storage.Image,
+				Cdrom: true,
+			})
+		} else {
 			img, err := s.registry.StorageImageCreate(ctx, (*spinregistry.Storage)(storage))
 			if err != nil {
 				return 0, err
@@ -104,7 +118,8 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.Creat
 		}
 	}
 
-	id, err := s.registry.VMCreate(ctx, toRegistryVM(p, images))
+	vm := toRegistryVM(p, images)
+	id, err := s.registry.VMCreate(ctx, vm)
 	if err != nil {
 		return id, err
 	}
@@ -117,7 +132,7 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.Creat
 	storids := []string{}
 
 	for _, stor := range p.Storage {
-		if stor.Cdrom == nil || !*stor.Cdrom {
+		if !stor.Cdrom {
 			storid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
 				ID:       pkg,
 				Resource: "storage",
@@ -142,7 +157,7 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.Creat
 		Action:   "write_config",
 		Parameters: map[string]interface{}{
 			"id": id,
-			"vm": p, // NOTE loose typing through JSON lets us get away with this, but this expects *spinregistry.VM.
+			"vm": vm,
 		},
 		Dependencies: storids,
 	})
@@ -224,6 +239,14 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 
 	if err := s.getStatus(ctx, pkg); err != nil {
 		return err
+	}
+
+	for _, stor := range vm.Images {
+		if !stor.Cdrom {
+			if err := s.registry.StorageImageDelete(ctx, *stor.Volume, filepath.Base(stor.Path)); err != nil {
+				return err
+			}
+		}
 	}
 
 	return s.registry.VMDelete(ctx, p.ID)

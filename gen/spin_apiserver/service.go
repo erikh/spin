@@ -76,12 +76,12 @@ type ControlShutdownPayload struct {
 }
 
 type Storage struct {
-	// Volume name
-	Volume string
+	// Volume name; required if image is not a cdrom
+	Volume *string
 	// Image filename, no `/` characters
 	Image string
-	// Image size (in gigabytes)
+	// Image size (in gigabytes); required if image is not a cdrom
 	ImageSize *uint64
 	// Is this image a cdrom?
-	Cdrom *bool
+	Cdrom bool
 }

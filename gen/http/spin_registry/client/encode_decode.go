@@ -762,8 +762,9 @@ func DecodeStorageImagesGetResponse(decoder func(*http.Response) goahttp.Decoder
 // *ImageRequestBody from a value of type *spinregistry.Image.
 func marshalSpinregistryImageToImageRequestBody(v *spinregistry.Image) *ImageRequestBody {
 	res := &ImageRequestBody{
-		Path:  v.Path,
-		Cdrom: v.Cdrom,
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res
@@ -773,8 +774,9 @@ func marshalSpinregistryImageToImageRequestBody(v *spinregistry.Image) *ImageReq
 // *spinregistry.Image from a value of type *ImageRequestBody.
 func marshalImageRequestBodyToSpinregistryImage(v *ImageRequestBody) *spinregistry.Image {
 	res := &spinregistry.Image{
-		Path:  v.Path,
-		Cdrom: v.Cdrom,
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res
@@ -820,8 +822,9 @@ func marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBody)
 // *spinregistry.Image from a value of type *ImageResponseBody.
 func unmarshalImageResponseBodyToSpinregistryImage(v *ImageResponseBody) *spinregistry.Image {
 	res := &spinregistry.Image{
-		Path:  *v.Path,
-		Cdrom: *v.Cdrom,
+		Path:   *v.Path,
+		Cdrom:  *v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res

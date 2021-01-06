@@ -53,10 +53,18 @@ func (db *DB) StorageVolumeList() (map[string]string, error) {
 
 // StorageImageCreate creates an image within a volume.
 func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, error) {
+	if s.Cdrom {
+		return nil, errors.New("cannot create cdrom images")
+	}
+
+	if s.Volume == nil {
+		return nil, errors.New("volume cannot be nil")
+	}
+
 	image := &spinregistry.Image{}
 
 	return image, db.db.Update(func(tx *bbolt.Tx) error {
-		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(s.Volume))
+		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(*s.Volume))
 		if bucket == nil {
 			return errors.New("volume does not exist")
 		}
@@ -66,13 +74,14 @@ func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, 
 			return errors.New("image already exists")
 		}
 
-		volPath := tx.Bucket([]byte(storagePathBucket)).Get([]byte(s.Volume))
+		volPath := tx.Bucket([]byte(storagePathBucket)).Get([]byte(*s.Volume))
 		if volPath == nil {
 			return errors.New("invalid volume")
 		}
 
 		image.Path = filepath.Join(string(volPath), s.Image)
 		image.Cdrom = false
+		image.Volume = s.Volume
 
 		content, err := json.Marshal(image)
 		if err != nil {

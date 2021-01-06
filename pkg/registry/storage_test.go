@@ -60,9 +60,11 @@ func TestStorageVolumeDBCRUD(t *testing.T) {
 func TestStorageImageDBCRUD(t *testing.T) {
 	db := makeDB(t)
 
+	volumeName := "test"
+
 	image := &spinregistry.Storage{
 		Image:     "test.raw",
-		Volume:    "test",
+		Volume:    &volumeName,
 		ImageSize: makeUintPtr(50),
 	}
 
@@ -130,7 +132,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 	for _, imgName := range imageList {
 		image := &spinregistry.Storage{
 			Image:     imgName,
-			Volume:    "test",
+			Volume:    &volumeName,
 			ImageSize: makeUintPtr(50),
 		}
 

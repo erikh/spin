@@ -203,10 +203,10 @@ func DecodeControlShutdownRequest(mux goahttp.Muxer, decoder func(*http.Request)
 // *spinapiserver.Storage from a value of type *StorageRequestBody.
 func unmarshalStorageRequestBodyToSpinapiserverStorage(v *StorageRequestBody) *spinapiserver.Storage {
 	res := &spinapiserver.Storage{
-		Volume:    *v.Volume,
+		Volume:    v.Volume,
 		Image:     *v.Image,
 		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
+		Cdrom:     *v.Cdrom,
 	}
 
 	return res

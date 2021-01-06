@@ -422,8 +422,9 @@ func DecodeStorageImagesGetRequest(mux goahttp.Muxer, decoder func(*http.Request
 // *spinregistry.Image from a value of type *ImageRequestBody.
 func unmarshalImageRequestBodyToSpinregistryImage(v *ImageRequestBody) *spinregistry.Image {
 	res := &spinregistry.Image{
-		Path:  *v.Path,
-		Cdrom: *v.Cdrom,
+		Path:   *v.Path,
+		Cdrom:  *v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res
@@ -449,8 +450,9 @@ func unmarshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBod
 // *ImageResponseBody from a value of type *spinregistry.Image.
 func marshalSpinregistryImageToImageResponseBody(v *spinregistry.Image) *ImageResponseBody {
 	res := &ImageResponseBody{
-		Path:  v.Path,
-		Cdrom: v.Cdrom,
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res

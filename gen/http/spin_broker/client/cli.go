@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Ad ut nulla laboriosam non deserunt vitae.\",\n      \"dependencies\": [\n         \"Porro fugiat ex consequatur provident dignissimos.\",\n         \"Possimus velit quod sit.\",\n         \"Mollitia natus temporibus fugit occaecati ipsum qui.\"\n      ],\n      \"parameters\": {\n         \"Id et autem ut debitis.\": \"Saepe occaecati impedit quas laborum.\",\n         \"Quaerat itaque aut.\": \"Voluptatem quibusdam dolor.\",\n         \"Sint ducimus ullam odio.\": \"Aliquid consequatur atque quam neque.\"\n      },\n      \"resource\": \"Ullam amet magnam.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Deserunt vitae rerum illum sint.\",\n      \"dependencies\": [\n         \"Et autem ut debitis dolores.\",\n         \"Occaecati impedit quas laborum consequatur.\"\n      ],\n      \"parameters\": {\n         \"Odio tenetur aliquid consequatur.\": \"Quam neque.\"\n      },\n      \"resource\": \"Magnam sint ad ut nulla laboriosam.\"\n   }'")
 		}
 	}
 	var id string
@@ -99,7 +99,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Cum delectus occaecati enim in.\",\n      \"status\": true,\n      \"status_reason\": \"Amet quia quis omnis suscipit.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Iure aut voluptas qui.\",\n      \"status\": true,\n      \"status_reason\": \"Inventore cupiditate soluta ut corporis sit.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

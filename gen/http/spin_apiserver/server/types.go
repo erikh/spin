@@ -27,11 +27,11 @@ type VMCreateRequestBody struct {
 
 // StorageRequestBody is used to define fields on request body types.
 type StorageRequestBody struct {
-	// Volume name
+	// Volume name; required if image is not a cdrom
 	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 	// Image filename, no `/` characters
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
-	// Image size (in gigabytes)
+	// Image size (in gigabytes); required if image is not a cdrom
 	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
@@ -119,8 +119,8 @@ func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
 	}
-	if body.Volume == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("volume", "body"))
+	if body.Cdrom == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
 	}
 	return
 }

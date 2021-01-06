@@ -6,16 +6,17 @@ import . "goa.design/goa/v3/dsl" // nolint
 var Image = Type("Image", func() {
 	Attribute("path", String, "Image path")
 	Attribute("cdrom", Boolean, "Is this a cdrom image?")
+	Attribute("volume", String, "Volume name")
 	Required("path", "cdrom")
 })
 
 // Storage encapuslates the properties around VM storage
 var Storage = Type("Storage", func() {
-	Attribute("volume", String, "Volume name")
+	Attribute("volume", String, "Volume name; required if image is not a cdrom")
 	Attribute("image", String, "Image filename, no `/` characters")
-	Attribute("image_size", UInt64, "Image size (in gigabytes)")
+	Attribute("image_size", UInt64, "Image size (in gigabytes); required if image is not a cdrom")
 	Attribute("cdrom", Boolean, "Is this image a cdrom?")
-	Required("image", "volume")
+	Required("image", "cdrom")
 })
 
 // VMBase is attributes that live similarly between cycles in the VM's lifetime.
