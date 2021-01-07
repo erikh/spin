@@ -18,9 +18,17 @@ import (
 const (
 	systemdUserDir = ".config/systemd/user"
 	qemuPath       = "/bin/qemu-system-x86_64"
-	// FIXME change this
-	spinQMPBin = "/home/erikh/bin/spin-qmp"
 )
+
+var spinQMPBin = filepath.Join(baseDir(), "spin-qmp")
+
+func baseDir() string {
+	path, err := filepath.Abs(os.Args[0])
+	if err != nil {
+		panic(err)
+	}
+	return filepath.Dir(path)
+}
 
 func systemdDir() string {
 	dir, err := homedir.Dir()

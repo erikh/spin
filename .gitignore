@@ -1,4 +1,5 @@
 *.db
 bin
 test.sh
+cleanup.sh
 *.json
