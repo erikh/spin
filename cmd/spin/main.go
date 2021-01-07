@@ -129,7 +129,7 @@ func main() {
 func getClient(ctx *cli.Context) *api.Client {
 	return api.New(api.Config{
 		Host:    ctx.String("host"),
-		Timeout: 1,
+		Timeout: 60,
 	})
 }
 
