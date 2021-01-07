@@ -1,15 +1,15 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"os"
 	"path"
 	"time"
 
+	"code.hollensbe.org/erikh/spin/pkg/qmp"
 	"github.com/urfave/cli/v2"
 )
 
@@ -49,56 +49,20 @@ func main() {
 	}
 }
 
-func getConn(socket string) (net.Conn, error) {
-	conn, err := net.Dial("unix", socket)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.NewEncoder(conn).Encode(map[string]interface{}{"execute": "qmp_capabilities"}); err != nil {
-		conn.Close()
-		return nil, err
-	}
-
-	obj := map[string]interface{}{}
-	if err := json.NewDecoder(conn).Decode(&obj); err != nil {
-		conn.Close()
-		return nil, err
-	}
-
-	return conn, nil
-}
-
 func shutdown(ctx *cli.Context) error {
 	if ctx.Args().Len() != 1 {
 		return errors.New("please provide the monitor socket (see --help)")
 	}
 
-	conn, err := getConn(ctx.Args().First())
+	conn, err := qmp.Dial(ctx.Args().First())
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	if err := json.NewEncoder(conn).Encode(map[string]string{"execute": "system_powerdown"}); err != nil {
-		return err
-	}
-
-	go func() {
-		time.Sleep(ctx.Duration("wait"))
-		conn.Close()
-	}()
-
-	for {
-		obj := map[string]interface{}{}
-		if err := json.NewDecoder(conn).Decode(&obj); err != nil {
-			return err
-		}
-		fmt.Println(obj)
-		if event, ok := obj["event"]; ok && event == "SHUTDOWN" {
-			return nil
-		}
-	}
+	cCtx, cancel := context.WithTimeout(context.Background(), ctx.Duration("wait"))
+	defer cancel()
+	return qmp.Shutdown(cCtx, conn)
 }
 
 func raw(ctx *cli.Context) error {
@@ -106,7 +70,7 @@ func raw(ctx *cli.Context) error {
 		return errors.New("please provide the monitor socket (see --help)")
 	}
 
-	conn, err := getConn(ctx.Args().First())
+	conn, err := qmp.Dial(ctx.Args().First())
 	if err != nil {
 		return err
 	}
