@@ -63,6 +63,8 @@ spin vm image list 1      # lists attached devices to my_cool_image
 spin vm image detach 1 1  # detaches cdrom, index 1 on my_cool_image
 ```
 
+Run `make stop-servers` to stop the servers when you are done playing! :D
+
 ### Development
 
 Just some notes:
@@ -102,7 +104,3 @@ And it contains the following sub-components:
 ## Author
 
 Erik Hollensbe <github@hollensbe.org>
-
-```
-
-```
