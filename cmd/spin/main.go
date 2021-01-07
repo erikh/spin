@@ -49,6 +49,12 @@ func main() {
 			Usage: "Manipulate VMs",
 			Subcommands: []*cli.Command{
 				{
+					Name:      "list",
+					Usage:     "List all VMs by ID + Name",
+					ArgsUsage: " ",
+					Action:    list,
+				},
+				{
 					Name:      "delete",
 					Usage:     "Delete a VM by ID",
 					ArgsUsage: "[id]",
@@ -195,4 +201,17 @@ func shutdown(ctx *cli.Context) error {
 	}
 
 	return getClient(ctx).ControlShutdown(context.Background(), id)
+}
+
+func list(ctx *cli.Context) error {
+	ids, err := getClient(ctx).VMList(context.Background())
+	if err != nil {
+		return err
+	}
+
+	for _, id := range ids {
+		fmt.Println(id)
+	}
+
+	return nil
 }

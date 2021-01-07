@@ -27,6 +27,15 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
+	Method("vm_list", func() {
+		Result(ArrayOf(UInt64))
+
+		HTTP(func() {
+			POST("/vm/list")
+			Response(StatusOK)
+		})
+	})
+
 	Method("control_start", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to start")

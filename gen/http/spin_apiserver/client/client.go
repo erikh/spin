@@ -25,6 +25,9 @@ type Client struct {
 	// endpoint.
 	VMDeleteDoer goahttp.Doer
 
+	// VMList Doer is the HTTP client used to make requests to the vm_list endpoint.
+	VMListDoer goahttp.Doer
+
 	// ControlStart Doer is the HTTP client used to make requests to the
 	// control_start endpoint.
 	ControlStartDoer goahttp.Doer
@@ -60,6 +63,7 @@ func NewClient(
 	return &Client{
 		VMCreateDoer:        doer,
 		VMDeleteDoer:        doer,
+		VMListDoer:          doer,
 		ControlStartDoer:    doer,
 		ControlStopDoer:     doer,
 		ControlShutdownDoer: doer,
@@ -109,6 +113,25 @@ func (c *Client) VMDelete() goa.Endpoint {
 		resp, err := c.VMDeleteDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_delete", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// VMList returns an endpoint that makes HTTP requests to the spin-apiserver
+// service vm_list server.
+func (c *Client) VMList() goa.Endpoint {
+	var (
+		decodeResponse = DecodeVMListResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildVMListRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.VMListDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_list", err)
 		}
 		return decodeResponse(resp)
 	}

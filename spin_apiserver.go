@@ -93,6 +93,10 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 	return s.getStatus(ctx, pkg)
 }
 
+func (s *spinApiserversrvc) VMList(ctx context.Context) ([]uint64, error) {
+	return s.registry.VMList(ctx)
+}
+
 func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.CreateVM) (uint64, error) {
 	images := []*spinregistry.Image{}
 

@@ -52,6 +52,16 @@ func (c *Client) VMDelete(ctx context.Context, id uint64) error {
 	return err
 }
 
+// VMList lists the ids of all vms
+func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
+	res, err := c.client.VMList()(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.([]uint64), nil
+}
+
 // ControlStart starts a VM by id.
 func (c *Client) ControlStart(ctx context.Context, id uint64) error {
 	_, err := c.client.ControlStart()(ctx, &spinapiserver.ControlStartPayload{ID: id})

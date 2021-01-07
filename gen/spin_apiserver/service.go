@@ -17,6 +17,8 @@ type Service interface {
 	VMCreate(context.Context, *CreateVM) (res uint64, err error)
 	// VMDelete implements vm_delete.
 	VMDelete(context.Context, *VMDeletePayload) (err error)
+	// VMList implements vm_list.
+	VMList(context.Context) (res []uint64, err error)
 	// ControlStart implements control_start.
 	ControlStart(context.Context, *ControlStartPayload) (err error)
 	// ControlStop implements control_stop.
@@ -33,7 +35,7 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [5]string{"vm_create", "vm_delete", "control_start", "control_stop", "control_shutdown"}
+var MethodNames = [6]string{"vm_create", "vm_delete", "vm_list", "control_start", "control_stop", "control_shutdown"}
 
 // CreateVM is the payload type of the spin-apiserver service vm_create method.
 type CreateVM struct {

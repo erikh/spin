@@ -21,6 +21,11 @@ func VMDeleteSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/vm/delete/%v", id)
 }
 
+// VMListSpinApiserverPath returns the URL path to the spin-apiserver service vm_list HTTP endpoint.
+func VMListSpinApiserverPath() string {
+	return "/vm/list"
+}
+
 // ControlStartSpinApiserverPath returns the URL path to the spin-apiserver service control_start HTTP endpoint.
 func ControlStartSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/start/%v", id)
