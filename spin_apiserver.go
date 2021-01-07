@@ -93,6 +93,32 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 	return s.getStatus(ctx, pkg)
 }
 
+func (s *spinApiserversrvc) VMUpdate(ctx context.Context, p *spinapiserver.VMUpdatePayload) error {
+	ret := &spinregistry.UpdatedVM{
+		Name:   p.VM.Name,
+		Cpus:   p.VM.Cpus,
+		Memory: p.VM.Memory,
+	}
+
+	for _, image := range p.VM.Images {
+		ret.Images = append(ret.Images, (*spinregistry.Image)(image))
+	}
+
+	err := s.apiOneShot(ctx, &spinbroker.AddPayload{
+		Resource: "emulation",
+		Action:   "write_config",
+		Parameters: map[string]interface{}{
+			"id": p.ID,
+			"vm": ret,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	return s.registry.VMUpdate(ctx, p.ID, ret)
+}
+
 func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPayload) (*spinapiserver.UpdatedVM, error) {
 	vm, err := s.registry.VMGet(ctx, p.ID)
 	if err != nil {

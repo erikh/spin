@@ -31,6 +31,11 @@ func VMGetSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/vm/get/%v", id)
 }
 
+// VMUpdateSpinApiserverPath returns the URL path to the spin-apiserver service vm_update HTTP endpoint.
+func VMUpdateSpinApiserverPath(id uint64) string {
+	return fmt.Sprintf("/vm/update/%v", id)
+}
+
 // ControlStartSpinApiserverPath returns the URL path to the spin-apiserver service control_start HTTP endpoint.
 func ControlStartSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/start/%v", id)

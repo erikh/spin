@@ -23,6 +23,7 @@ type Server struct {
 	VMDelete        http.Handler
 	VMList          http.Handler
 	VMGet           http.Handler
+	VMUpdate        http.Handler
 	ControlStart    http.Handler
 	ControlStop     http.Handler
 	ControlShutdown http.Handler
@@ -64,7 +65,8 @@ func New(
 			{"VMCreate", "POST", "/vm/create"},
 			{"VMDelete", "POST", "/vm/delete/{id}"},
 			{"VMList", "POST", "/vm/list"},
-			{"VMGet", "POST", "/vm/get/{id}"},
+			{"VMGet", "GET", "/vm/get/{id}"},
+			{"VMUpdate", "POST", "/vm/update/{id}"},
 			{"ControlStart", "POST", "/control/start/{id}"},
 			{"ControlStop", "POST", "/control/stop/{id}"},
 			{"ControlShutdown", "POST", "/control/shutdown/{id}"},
@@ -73,6 +75,7 @@ func New(
 		VMDelete:        NewVMDeleteHandler(e.VMDelete, mux, decoder, encoder, errhandler, formatter),
 		VMList:          NewVMListHandler(e.VMList, mux, decoder, encoder, errhandler, formatter),
 		VMGet:           NewVMGetHandler(e.VMGet, mux, decoder, encoder, errhandler, formatter),
+		VMUpdate:        NewVMUpdateHandler(e.VMUpdate, mux, decoder, encoder, errhandler, formatter),
 		ControlStart:    NewControlStartHandler(e.ControlStart, mux, decoder, encoder, errhandler, formatter),
 		ControlStop:     NewControlStopHandler(e.ControlStop, mux, decoder, encoder, errhandler, formatter),
 		ControlShutdown: NewControlShutdownHandler(e.ControlShutdown, mux, decoder, encoder, errhandler, formatter),
@@ -88,6 +91,7 @@ func (s *Server) Use(m func(http.Handler) http.Handler) {
 	s.VMDelete = m(s.VMDelete)
 	s.VMList = m(s.VMList)
 	s.VMGet = m(s.VMGet)
+	s.VMUpdate = m(s.VMUpdate)
 	s.ControlStart = m(s.ControlStart)
 	s.ControlStop = m(s.ControlStop)
 	s.ControlShutdown = m(s.ControlShutdown)
@@ -99,6 +103,7 @@ func Mount(mux goahttp.Muxer, h *Server) {
 	MountVMDeleteHandler(mux, h.VMDelete)
 	MountVMListHandler(mux, h.VMList)
 	MountVMGetHandler(mux, h.VMGet)
+	MountVMUpdateHandler(mux, h.VMUpdate)
 	MountControlStartHandler(mux, h.ControlStart)
 	MountControlStopHandler(mux, h.ControlStop)
 	MountControlShutdownHandler(mux, h.ControlShutdown)
@@ -259,7 +264,7 @@ func MountVMGetHandler(mux goahttp.Muxer, h http.Handler) {
 			h.ServeHTTP(w, r)
 		}
 	}
-	mux.Handle("POST", "/vm/get/{id}", f)
+	mux.Handle("GET", "/vm/get/{id}", f)
 }
 
 // NewVMGetHandler creates a HTTP handler which loads the HTTP request and
@@ -280,6 +285,57 @@ func NewVMGetHandler(
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
 		ctx = context.WithValue(ctx, goa.MethodKey, "vm_get")
+		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
+		payload, err := decodeRequest(r)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		res, err := endpoint(ctx, payload)
+		if err != nil {
+			if err := encodeError(ctx, w, err); err != nil {
+				errhandler(ctx, w, err)
+			}
+			return
+		}
+		if err := encodeResponse(ctx, w, res); err != nil {
+			errhandler(ctx, w, err)
+		}
+	})
+}
+
+// MountVMUpdateHandler configures the mux to serve the "spin-apiserver"
+// service "vm_update" endpoint.
+func MountVMUpdateHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/vm/update/{id}", f)
+}
+
+// NewVMUpdateHandler creates a HTTP handler which loads the HTTP request and
+// calls the "spin-apiserver" service "vm_update" endpoint.
+func NewVMUpdateHandler(
+	endpoint goa.Endpoint,
+	mux goahttp.Muxer,
+	decoder func(*http.Request) goahttp.Decoder,
+	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
+	errhandler func(context.Context, http.ResponseWriter, error),
+	formatter func(err error) goahttp.Statuser,
+) http.Handler {
+	var (
+		decodeRequest  = DecodeVMUpdateRequest(mux, decoder)
+		encodeResponse = EncodeVMUpdateResponse(encoder)
+		encodeError    = goahttp.ErrorEncoder(encoder, formatter)
+	)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
+		ctx = context.WithValue(ctx, goa.MethodKey, "vm_update")
 		ctx = context.WithValue(ctx, goa.ServiceKey, "spin-apiserver")
 		payload, err := decodeRequest(r)
 		if err != nil {

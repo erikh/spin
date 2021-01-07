@@ -44,7 +44,20 @@ var _ = Service("spin-apiserver", func() {
 		Result(UpdatedVM)
 
 		HTTP(func() {
-			POST("/vm/get/{id}")
+			GET("/vm/get/{id}")
+			Response(StatusOK)
+		})
+	})
+
+	Method("vm_update", func() {
+		Payload(func() {
+			Attribute("id", UInt64, "ID of VM to Update")
+			Attribute("vm", UpdatedVM, "VM Manifest to Update")
+			Required("id", "vm")
+		})
+
+		HTTP(func() {
+			POST("/vm/update/{id}")
 			Response(StatusOK)
 		})
 	})

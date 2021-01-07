@@ -62,7 +62,13 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 	return res.([]uint64), nil
 }
 
-// VMList lists the ids of all vms
+// VMUpdate updates a single VM for an ID.
+func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinapiserver.UpdatedVM) error {
+	_, err := c.client.VMUpdate()(ctx, &spinapiserver.VMUpdatePayload{ID: id, VM: vm})
+	return err
+}
+
+// VMGet gets a VM by ID
 func (c *Client) VMGet(ctx context.Context, id uint64) (*spinapiserver.UpdatedVM, error) {
 	res, err := c.client.VMGet()(ctx, &spinapiserver.VMGetPayload{ID: id})
 	if err != nil {

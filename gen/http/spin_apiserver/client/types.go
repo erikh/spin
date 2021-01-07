@@ -25,6 +25,13 @@ type VMCreateRequestBody struct {
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
 }
 
+// VMUpdateRequestBody is the type of the "spin-apiserver" service "vm_update"
+// endpoint HTTP request body.
+type VMUpdateRequestBody struct {
+	// VM Manifest to Update
+	VM *UpdatedVMRequestBody `form:"vm" json:"vm" xml:"vm"`
+}
+
 // VMGetResponseBody is the type of the "spin-apiserver" service "vm_get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
@@ -60,6 +67,28 @@ type ImageResponseBody struct {
 	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
+// UpdatedVMRequestBody is used to define fields on request body types.
+type UpdatedVMRequestBody struct {
+	// Image references
+	Images []*ImageRequestBody `form:"images" json:"images" xml:"images"`
+	// Name of VM; does not need to be unique
+	Name string `form:"name" json:"name" xml:"name"`
+	// CPU count
+	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
+	// Memory (in megabytes)
+	Memory uint `form:"memory" json:"memory" xml:"memory"`
+}
+
+// ImageRequestBody is used to define fields on request body types.
+type ImageRequestBody struct {
+	// Image path
+	Path string `form:"path" json:"path" xml:"path"`
+	// Is this a cdrom image?
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
+}
+
 // NewVMCreateRequestBody builds the HTTP request body from the payload of the
 // "vm_create" endpoint of the "spin-apiserver" service.
 func NewVMCreateRequestBody(p *spinapiserver.CreateVM) *VMCreateRequestBody {
@@ -73,6 +102,16 @@ func NewVMCreateRequestBody(p *spinapiserver.CreateVM) *VMCreateRequestBody {
 		for i, val := range p.Storage {
 			body.Storage[i] = marshalSpinapiserverStorageToStorageRequestBody(val)
 		}
+	}
+	return body
+}
+
+// NewVMUpdateRequestBody builds the HTTP request body from the payload of the
+// "vm_update" endpoint of the "spin-apiserver" service.
+func NewVMUpdateRequestBody(p *spinapiserver.VMUpdatePayload) *VMUpdateRequestBody {
+	body := &VMUpdateRequestBody{}
+	if p.VM != nil {
+		body.VM = marshalSpinapiserverUpdatedVMToUpdatedVMRequestBody(p.VM)
 	}
 	return body
 }
@@ -125,6 +164,15 @@ func ValidateImageResponseBody(body *ImageResponseBody) (err error) {
 	}
 	if body.Cdrom == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
+	}
+	return
+}
+
+// ValidateUpdatedVMRequestBody runs the validations defined on
+// UpdatedVMRequestBody
+func ValidateUpdatedVMRequestBody(body *UpdatedVMRequestBody) (err error) {
+	if body.Images == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
 	}
 	return
 }

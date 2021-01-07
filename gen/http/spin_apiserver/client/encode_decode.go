@@ -200,7 +200,7 @@ func (c *Client) BuildVMGetRequest(ctx context.Context, v interface{}) (*http.Re
 		id = p.ID
 	}
 	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMGetSpinApiserverPath(id)}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
 		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm_get", u.String(), err)
 	}
@@ -247,6 +247,74 @@ func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_get", resp.StatusCode, string(body))
+		}
+	}
+}
+
+// BuildVMUpdateRequest instantiates a HTTP request object with method and path
+// set to call the "spin-apiserver" service "vm_update" endpoint
+func (c *Client) BuildVMUpdateRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		id uint64
+	)
+	{
+		p, ok := v.(*spinapiserver.VMUpdatePayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "vm_update", "*spinapiserver.VMUpdatePayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMUpdateSpinApiserverPath(id)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm_update", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeVMUpdateRequest returns an encoder for requests sent to the
+// spin-apiserver vm_update server.
+func EncodeVMUpdateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*spinapiserver.VMUpdatePayload)
+		if !ok {
+			return goahttp.ErrInvalidType("spin-apiserver", "vm_update", "*spinapiserver.VMUpdatePayload", v)
+		}
+		body := NewVMUpdateRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("spin-apiserver", "vm_update", err)
+		}
+		return nil
+	}
+}
+
+// DecodeVMUpdateResponse returns a decoder for responses returned by the
+// spin-apiserver vm_update endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+func DecodeVMUpdateResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			return nil, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_update", resp.StatusCode, string(body))
 		}
 	}
 }
@@ -439,6 +507,66 @@ func unmarshalImageResponseBodyToSpinapiserverImage(v *ImageResponseBody) *spina
 	res := &spinapiserver.Image{
 		Path:   *v.Path,
 		Cdrom:  *v.Cdrom,
+		Volume: v.Volume,
+	}
+
+	return res
+}
+
+// marshalSpinapiserverUpdatedVMToUpdatedVMRequestBody builds a value of type
+// *UpdatedVMRequestBody from a value of type *spinapiserver.UpdatedVM.
+func marshalSpinapiserverUpdatedVMToUpdatedVMRequestBody(v *spinapiserver.UpdatedVM) *UpdatedVMRequestBody {
+	res := &UpdatedVMRequestBody{
+		Name:   v.Name,
+		Cpus:   v.Cpus,
+		Memory: v.Memory,
+	}
+	if v.Images != nil {
+		res.Images = make([]*ImageRequestBody, len(v.Images))
+		for i, val := range v.Images {
+			res.Images[i] = marshalSpinapiserverImageToImageRequestBody(val)
+		}
+	}
+
+	return res
+}
+
+// marshalSpinapiserverImageToImageRequestBody builds a value of type
+// *ImageRequestBody from a value of type *spinapiserver.Image.
+func marshalSpinapiserverImageToImageRequestBody(v *spinapiserver.Image) *ImageRequestBody {
+	res := &ImageRequestBody{
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
+	}
+
+	return res
+}
+
+// marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM builds a value of type
+// *spinapiserver.UpdatedVM from a value of type *UpdatedVMRequestBody.
+func marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(v *UpdatedVMRequestBody) *spinapiserver.UpdatedVM {
+	res := &spinapiserver.UpdatedVM{
+		Name:   v.Name,
+		Cpus:   v.Cpus,
+		Memory: v.Memory,
+	}
+	if v.Images != nil {
+		res.Images = make([]*spinapiserver.Image, len(v.Images))
+		for i, val := range v.Images {
+			res.Images[i] = marshalImageRequestBodyToSpinapiserverImage(val)
+		}
+	}
+
+	return res
+}
+
+// marshalImageRequestBodyToSpinapiserverImage builds a value of type
+// *spinapiserver.Image from a value of type *ImageRequestBody.
+func marshalImageRequestBodyToSpinapiserverImage(v *ImageRequestBody) *spinapiserver.Image {
+	res := &spinapiserver.Image{
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
 		Volume: v.Volume,
 	}
 

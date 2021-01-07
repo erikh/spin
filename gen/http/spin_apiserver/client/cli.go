@@ -24,7 +24,7 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.Crea
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 10378177161520449758,\n      \"memory\": 3337153339562094883,\n      \"name\": \"Facere animi quas tempora.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 17092856392700368829,\n      \"memory\": 497222928895641055,\n      \"name\": \"Aspernatur vel vel illum voluptatem voluptatibus est.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Esse reprehenderit qui molestias eum voluptatem.\",\n            \"image_size\": 11533824901793082147,\n            \"volume\": \"Occaecati deserunt qui praesentium.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Esse reprehenderit qui molestias eum voluptatem.\",\n            \"image_size\": 11533824901793082147,\n            \"volume\": \"Occaecati deserunt qui praesentium.\"\n         }\n      ]\n   }'")
 		}
 		if body.Storage == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
@@ -77,6 +77,44 @@ func BuildVMGetPayload(spinApiserverVMGetID string) (*spinapiserver.VMGetPayload
 		}
 	}
 	v := &spinapiserver.VMGetPayload{}
+	v.ID = id
+
+	return v, nil
+}
+
+// BuildVMUpdatePayload builds the payload for the spin-apiserver vm_update
+// endpoint from CLI flags.
+func BuildVMUpdatePayload(spinApiserverVMUpdateBody string, spinApiserverVMUpdateID string) (*spinapiserver.VMUpdatePayload, error) {
+	var err error
+	var body VMUpdateRequestBody
+	{
+		err = json.Unmarshal([]byte(spinApiserverVMUpdateBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 3472743333644681302,\n         \"images\": [\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            }\n         ],\n         \"memory\": 639108202290023137,\n         \"name\": \"Quo dolore soluta consectetur.\"\n      }\n   }'")
+		}
+		if body.VM == nil {
+			err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
+		}
+		if body.VM != nil {
+			if err2 := ValidateUpdatedVMRequestBody(body.VM); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+	var id uint64
+	{
+		id, err = strconv.ParseUint(spinApiserverVMUpdateID, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT64")
+		}
+	}
+	v := &spinapiserver.VMUpdatePayload{}
+	if body.VM != nil {
+		v.VM = marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(body.VM)
+	}
 	v.ID = id
 
 	return v, nil

@@ -19,18 +19,20 @@ type Client struct {
 	VMDeleteEndpoint        goa.Endpoint
 	VMListEndpoint          goa.Endpoint
 	VMGetEndpoint           goa.Endpoint
+	VMUpdateEndpoint        goa.Endpoint
 	ControlStartEndpoint    goa.Endpoint
 	ControlStopEndpoint     goa.Endpoint
 	ControlShutdownEndpoint goa.Endpoint
 }
 
 // NewClient initializes a "spin-apiserver" service client given the endpoints.
-func NewClient(vMCreate, vMDelete, vMList, vMGet, controlStart, controlStop, controlShutdown goa.Endpoint) *Client {
+func NewClient(vMCreate, vMDelete, vMList, vMGet, vMUpdate, controlStart, controlStop, controlShutdown goa.Endpoint) *Client {
 	return &Client{
 		VMCreateEndpoint:        vMCreate,
 		VMDeleteEndpoint:        vMDelete,
 		VMListEndpoint:          vMList,
 		VMGetEndpoint:           vMGet,
+		VMUpdateEndpoint:        vMUpdate,
 		ControlStartEndpoint:    controlStart,
 		ControlStopEndpoint:     controlStop,
 		ControlShutdownEndpoint: controlShutdown,
@@ -71,6 +73,12 @@ func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *UpdatedVM, er
 		return
 	}
 	return ires.(*UpdatedVM), nil
+}
+
+// VMUpdate calls the "vm_update" endpoint of the "spin-apiserver" service.
+func (c *Client) VMUpdate(ctx context.Context, p *VMUpdatePayload) (err error) {
+	_, err = c.VMUpdateEndpoint(ctx, p)
+	return
 }
 
 // ControlStart calls the "control_start" endpoint of the "spin-apiserver"

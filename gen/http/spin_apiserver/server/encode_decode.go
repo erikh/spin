@@ -142,6 +142,57 @@ func DecodeVMGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.D
 	}
 }
 
+// EncodeVMUpdateResponse returns an encoder for responses returned by the
+// spin-apiserver vm_update endpoint.
+func EncodeVMUpdateResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		w.WriteHeader(http.StatusOK)
+		return nil
+	}
+}
+
+// DecodeVMUpdateRequest returns a decoder for requests sent to the
+// spin-apiserver vm_update endpoint.
+func DecodeVMUpdateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body VMUpdateRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateVMUpdateRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			id uint64
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, 64)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = v
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewVMUpdatePayload(&body, id)
+
+		return payload, nil
+	}
+}
+
 // EncodeControlStartResponse returns an encoder for responses returned by the
 // spin-apiserver control_start endpoint.
 func EncodeControlStartResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -269,6 +320,34 @@ func marshalSpinapiserverImageToImageResponseBody(v *spinapiserver.Image) *Image
 	res := &ImageResponseBody{
 		Path:   v.Path,
 		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
+	}
+
+	return res
+}
+
+// unmarshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM builds a value of type
+// *spinapiserver.UpdatedVM from a value of type *UpdatedVMRequestBody.
+func unmarshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(v *UpdatedVMRequestBody) *spinapiserver.UpdatedVM {
+	res := &spinapiserver.UpdatedVM{
+		Name:   *v.Name,
+		Cpus:   *v.Cpus,
+		Memory: *v.Memory,
+	}
+	res.Images = make([]*spinapiserver.Image, len(v.Images))
+	for i, val := range v.Images {
+		res.Images[i] = unmarshalImageRequestBodyToSpinapiserverImage(val)
+	}
+
+	return res
+}
+
+// unmarshalImageRequestBodyToSpinapiserverImage builds a value of type
+// *spinapiserver.Image from a value of type *ImageRequestBody.
+func unmarshalImageRequestBodyToSpinapiserverImage(v *ImageRequestBody) *spinapiserver.Image {
+	res := &spinapiserver.Image{
+		Path:   *v.Path,
+		Cdrom:  *v.Cdrom,
 		Volume: v.Volume,
 	}
 

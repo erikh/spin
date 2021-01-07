@@ -25,6 +25,13 @@ type VMCreateRequestBody struct {
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
 }
 
+// VMUpdateRequestBody is the type of the "spin-apiserver" service "vm_update"
+// endpoint HTTP request body.
+type VMUpdateRequestBody struct {
+	// VM Manifest to Update
+	VM *UpdatedVMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
+}
+
 // VMGetResponseBody is the type of the "spin-apiserver" service "vm_get"
 // endpoint HTTP response body.
 type VMGetResponseBody struct {
@@ -58,6 +65,28 @@ type StorageRequestBody struct {
 	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+}
+
+// UpdatedVMRequestBody is used to define fields on request body types.
+type UpdatedVMRequestBody struct {
+	// Image references
+	Images []*ImageRequestBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
+	// Name of VM; does not need to be unique
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// CPU count
+	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
+	// Memory (in megabytes)
+	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
+}
+
+// ImageRequestBody is used to define fields on request body types.
+type ImageRequestBody struct {
+	// Image path
+	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
+	// Is this a cdrom image?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // NewVMGetResponseBody builds the HTTP response body from the result of the
@@ -105,6 +134,16 @@ func NewVMDeletePayload(id uint64) *spinapiserver.VMDeletePayload {
 // NewVMGetPayload builds a spin-apiserver service vm_get endpoint payload.
 func NewVMGetPayload(id uint64) *spinapiserver.VMGetPayload {
 	v := &spinapiserver.VMGetPayload{}
+	v.ID = id
+
+	return v
+}
+
+// NewVMUpdatePayload builds a spin-apiserver service vm_update endpoint
+// payload.
+func NewVMUpdatePayload(body *VMUpdateRequestBody, id uint64) *spinapiserver.VMUpdatePayload {
+	v := &spinapiserver.VMUpdatePayload{}
+	v.VM = unmarshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(body.VM)
 	v.ID = id
 
 	return v
@@ -162,10 +201,60 @@ func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
 	return
 }
 
+// ValidateVMUpdateRequestBody runs the validations defined on
+// vm_update_request_body
+func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
+	if body.VM == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
+	}
+	if body.VM != nil {
+		if err2 := ValidateUpdatedVMRequestBody(body.VM); err2 != nil {
+			err = goa.MergeErrors(err, err2)
+		}
+	}
+	return
+}
+
 // ValidateStorageRequestBody runs the validations defined on StorageRequestBody
 func ValidateStorageRequestBody(body *StorageRequestBody) (err error) {
 	if body.Image == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
+	}
+	if body.Cdrom == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
+	}
+	return
+}
+
+// ValidateUpdatedVMRequestBody runs the validations defined on
+// UpdatedVMRequestBody
+func ValidateUpdatedVMRequestBody(body *UpdatedVMRequestBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Cpus == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cpus", "body"))
+	}
+	if body.Memory == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
+	}
+	if body.Images == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
+	}
+	for _, e := range body.Images {
+		if e != nil {
+			if err2 := ValidateImageRequestBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// ValidateImageRequestBody runs the validations defined on ImageRequestBody
+func ValidateImageRequestBody(body *ImageRequestBody) (err error) {
+	if body.Path == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("path", "body"))
 	}
 	if body.Cdrom == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))

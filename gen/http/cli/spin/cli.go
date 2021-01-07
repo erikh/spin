@@ -26,7 +26,7 @@ import (
 //
 func UsageCommands() string {
 	return `spin-broker (new|add|enqueue|status|next|complete)
-spin-apiserver (vm-create|vm-delete|vm-list|vm-get|control-start|control-stop|control-shutdown)
+spin-apiserver (vm-create|vm-delete|vm-list|vm-get|vm-update|control-start|control-stop|control-shutdown)
 spin-registry (vm-create|vm-update|vm-delete|vm-get|vm-list|storage-volumes-list|storage-volumes-create|storage-volumes-delete|storage-images-list|storage-images-create|storage-images-delete|storage-images-get)
 `
 }
@@ -35,51 +35,50 @@ spin-registry (vm-create|vm-update|vm-delete|vm-get|vm-list|storage-volumes-list
 func UsageExamples() string {
 	return os.Args[0] + ` spin-broker new` + "\n" +
 		os.Args[0] + ` spin-apiserver vm-create --body '{
-      "cpus": 10378177161520449758,
-      "memory": 3337153339562094883,
-      "name": "Facere animi quas tempora.",
+      "cpus": 17092856392700368829,
+      "memory": 497222928895641055,
+      "name": "Aspernatur vel vel illum voluptatem voluptatibus est.",
       "storage": [
          {
             "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
+            "image": "Esse reprehenderit qui molestias eum voluptatem.",
+            "image_size": 11533824901793082147,
+            "volume": "Occaecati deserunt qui praesentium."
          },
          {
             "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
-         },
-         {
-            "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
+            "image": "Esse reprehenderit qui molestias eum voluptatem.",
+            "image_size": 11533824901793082147,
+            "volume": "Occaecati deserunt qui praesentium."
          }
       ]
    }'` + "\n" +
 		os.Args[0] + ` spin-registry vm-create --body '{
-      "cpus": 4597833110689897909,
+      "cpus": 2551606264180670795,
       "images": [
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          },
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          },
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
+         },
+         {
+            "cdrom": true,
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          }
       ],
-      "memory": 1361587778145021448,
-      "name": "Aut minima recusandae et."
+      "memory": 17694085759044319548,
+      "name": "Nobis quia."
    }'` + "\n" +
 		""
 }
@@ -126,6 +125,10 @@ func ParseEndpoint(
 
 		spinApiserverVMGetFlags  = flag.NewFlagSet("vm-get", flag.ExitOnError)
 		spinApiserverVMGetIDFlag = spinApiserverVMGetFlags.String("id", "REQUIRED", "ID of VM to retrieve")
+
+		spinApiserverVMUpdateFlags    = flag.NewFlagSet("vm-update", flag.ExitOnError)
+		spinApiserverVMUpdateBodyFlag = spinApiserverVMUpdateFlags.String("body", "REQUIRED", "")
+		spinApiserverVMUpdateIDFlag   = spinApiserverVMUpdateFlags.String("id", "REQUIRED", "ID of VM to Update")
 
 		spinApiserverControlStartFlags  = flag.NewFlagSet("control-start", flag.ExitOnError)
 		spinApiserverControlStartIDFlag = spinApiserverControlStartFlags.String("id", "REQUIRED", "ID of VM to start")
@@ -186,6 +189,7 @@ func ParseEndpoint(
 	spinApiserverVMDeleteFlags.Usage = spinApiserverVMDeleteUsage
 	spinApiserverVMListFlags.Usage = spinApiserverVMListUsage
 	spinApiserverVMGetFlags.Usage = spinApiserverVMGetUsage
+	spinApiserverVMUpdateFlags.Usage = spinApiserverVMUpdateUsage
 	spinApiserverControlStartFlags.Usage = spinApiserverControlStartUsage
 	spinApiserverControlStopFlags.Usage = spinApiserverControlStopUsage
 	spinApiserverControlShutdownFlags.Usage = spinApiserverControlShutdownUsage
@@ -275,6 +279,9 @@ func ParseEndpoint(
 
 			case "vm-get":
 				epf = spinApiserverVMGetFlags
+
+			case "vm-update":
+				epf = spinApiserverVMUpdateFlags
 
 			case "control-start":
 				epf = spinApiserverControlStartFlags
@@ -384,6 +391,9 @@ func ParseEndpoint(
 			case "vm-get":
 				endpoint = c.VMGet()
 				data, err = spinapiserverc.BuildVMGetPayload(*spinApiserverVMGetIDFlag)
+			case "vm-update":
+				endpoint = c.VMUpdate()
+				data, err = spinapiserverc.BuildVMUpdatePayload(*spinApiserverVMUpdateBodyFlag, *spinApiserverVMUpdateIDFlag)
 			case "control-start":
 				endpoint = c.ControlStart()
 				data, err = spinapiserverc.BuildControlStartPayload(*spinApiserverControlStartIDFlag)
@@ -481,16 +491,17 @@ Add a command to the package
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
-      "action": "Deserunt vitae rerum illum sint.",
+      "action": "Saepe occaecati impedit quas laborum.",
       "dependencies": [
-         "Et autem ut debitis dolores.",
-         "Occaecati impedit quas laborum consequatur."
+         "Fugiat ex consequatur.",
+         "Dignissimos eum.",
+         "Velit quod sit aut."
       ],
       "parameters": {
-         "Odio tenetur aliquid consequatur.": "Quam neque."
+         "Itaque aut dolorem.": "Quibusdam dolor sit."
       },
-      "resource": "Magnam sint ad ut nulla laboriosam."
-   }' --id "Itaque aut dolorem."
+      "resource": "Id et autem ut debitis."
+   }' --id "Natus temporibus fugit occaecati ipsum qui."
 `, os.Args[0])
 }
 
@@ -501,7 +512,7 @@ Enqueue the package into the various resource queues
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker enqueue --id "Mollitia natus temporibus fugit occaecati ipsum qui."
+    `+os.Args[0]+` spin-broker enqueue --id "Voluptatibus nostrum commodi error omnis quis quia."
 `, os.Args[0])
 }
 
@@ -512,7 +523,7 @@ Get the status for a package
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker status --id "Vero alias doloribus impedit impedit qui dolor."
+    `+os.Args[0]+` spin-broker status --id "Quidem qui."
 `, os.Args[0])
 }
 
@@ -523,7 +534,7 @@ Get the next command for a given resource
     -resource STRING: resource type
 
 Example:
-    `+os.Args[0]+` spin-broker next --resource "Aperiam nobis soluta voluptatem."
+    `+os.Args[0]+` spin-broker next --resource "Eos iste illum omnis suscipit."
 `, os.Args[0])
 }
 
@@ -535,9 +546,9 @@ Mark a command as completed with a result status
 
 Example:
     `+os.Args[0]+` spin-broker complete --body '{
-      "id": "Iure aut voluptas qui.",
-      "status": true,
-      "status_reason": "Inventore cupiditate soluta ut corporis sit."
+      "id": "Non sit recusandae eum repellat earum.",
+      "status": false,
+      "status_reason": "Eveniet hic minus facere animi quas tempora."
    }'
 `, os.Args[0])
 }
@@ -554,6 +565,7 @@ COMMAND:
     vm-delete: VMDelete implements vm_delete.
     vm-list: VMList implements vm_list.
     vm-get: VMGet implements vm_get.
+    vm-update: VMUpdate implements vm_update.
     control-start: ControlStart implements control_start.
     control-stop: ControlStop implements control_stop.
     control-shutdown: ControlShutdown implements control_shutdown.
@@ -570,27 +582,21 @@ VMCreate implements vm_create.
 
 Example:
     `+os.Args[0]+` spin-apiserver vm-create --body '{
-      "cpus": 10378177161520449758,
-      "memory": 3337153339562094883,
-      "name": "Facere animi quas tempora.",
+      "cpus": 17092856392700368829,
+      "memory": 497222928895641055,
+      "name": "Aspernatur vel vel illum voluptatem voluptatibus est.",
       "storage": [
          {
             "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
+            "image": "Esse reprehenderit qui molestias eum voluptatem.",
+            "image_size": 11533824901793082147,
+            "volume": "Occaecati deserunt qui praesentium."
          },
          {
             "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
-         },
-         {
-            "cdrom": true,
-            "image": "Provident sint.",
-            "image_size": 867860291963136244,
-            "volume": "Recusandae eum repellat."
+            "image": "Esse reprehenderit qui molestias eum voluptatem.",
+            "image_size": 11533824901793082147,
+            "volume": "Occaecati deserunt qui praesentium."
          }
       ]
    }'
@@ -604,7 +610,7 @@ VMDelete implements vm_delete.
     -id UINT64: ID of VM to delete
 
 Example:
-    `+os.Args[0]+` spin-apiserver vm-delete --id 4502484052131198357
+    `+os.Args[0]+` spin-apiserver vm-delete --id 17947092167867694340
 `, os.Args[0])
 }
 
@@ -625,7 +631,42 @@ VMGet implements vm_get.
     -id UINT64: ID of VM to retrieve
 
 Example:
-    `+os.Args[0]+` spin-apiserver vm-get --id 2989830746371624362
+    `+os.Args[0]+` spin-apiserver vm-get --id 2453152901843734876
+`, os.Args[0])
+}
+
+func spinApiserverVMUpdateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-update -body JSON -id UINT64
+
+VMUpdate implements vm_update.
+    -body JSON: 
+    -id UINT64: ID of VM to Update
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-update --body '{
+      "vm": {
+         "cpus": 3472743333644681302,
+         "images": [
+            {
+               "cdrom": true,
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
+            },
+            {
+               "cdrom": true,
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
+            },
+            {
+               "cdrom": true,
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
+            }
+         ],
+         "memory": 639108202290023137,
+         "name": "Quo dolore soluta consectetur."
+      }
+   }' --id 16411754489742442442
 `, os.Args[0])
 }
 
@@ -636,7 +677,7 @@ ControlStart implements control_start.
     -id UINT64: ID of VM to start
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-start --id 6421225864845588134
+    `+os.Args[0]+` spin-apiserver control-start --id 3022875047415398183
 `, os.Args[0])
 }
 
@@ -647,7 +688,7 @@ ControlStop implements control_stop.
     -id UINT64: ID of VM to stop
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-stop --id 4454238612529928402
+    `+os.Args[0]+` spin-apiserver control-stop --id 11176502060165847513
 `, os.Args[0])
 }
 
@@ -658,7 +699,7 @@ ControlShutdown implements control_shutdown.
     -id UINT64: ID of VM to shutdown
 
 Example:
-    `+os.Args[0]+` spin-apiserver control-shutdown --id 11228093715167016376
+    `+os.Args[0]+` spin-apiserver control-shutdown --id 12308344265677022532
 `, os.Args[0])
 }
 
@@ -695,26 +736,31 @@ Create a VM
 
 Example:
     `+os.Args[0]+` spin-registry vm-create --body '{
-      "cpus": 4597833110689897909,
+      "cpus": 2551606264180670795,
       "images": [
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          },
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          },
          {
             "cdrom": true,
-            "path": "Esse labore voluptas.",
-            "volume": "Iusto adipisci sapiente temporibus."
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
+         },
+         {
+            "cdrom": true,
+            "path": "Dignissimos qui error modi.",
+            "volume": "Corrupti et voluptatibus et et occaecati."
          }
       ],
-      "memory": 1361587778145021448,
-      "name": "Aut minima recusandae et."
+      "memory": 17694085759044319548,
+      "name": "Nobis quia."
    }'
 `, os.Args[0])
 }
@@ -729,28 +775,28 @@ Update a VM
 Example:
     `+os.Args[0]+` spin-registry vm-update --body '{
       "vm": {
-         "cpus": 6629117394574779493,
+         "cpus": 3472743333644681302,
          "images": [
             {
                "cdrom": true,
-               "path": "Esse labore voluptas.",
-               "volume": "Iusto adipisci sapiente temporibus."
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
             },
             {
                "cdrom": true,
-               "path": "Esse labore voluptas.",
-               "volume": "Iusto adipisci sapiente temporibus."
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
             },
             {
                "cdrom": true,
-               "path": "Esse labore voluptas.",
-               "volume": "Iusto adipisci sapiente temporibus."
+               "path": "Dignissimos qui error modi.",
+               "volume": "Corrupti et voluptatibus et et occaecati."
             }
          ],
-         "memory": 2368394357671877291,
-         "name": "Magni voluptas corrupti et voluptatibus et."
+         "memory": 639108202290023137,
+         "name": "Quo dolore soluta consectetur."
       }
-   }' --id 8308809769684407427
+   }' --id 13160086984666010830
 `, os.Args[0])
 }
 
@@ -761,7 +807,7 @@ Delete a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-delete --id 10311184767774815777
+    `+os.Args[0]+` spin-registry vm-delete --id 12531413382890778925
 `, os.Args[0])
 }
 
@@ -772,7 +818,7 @@ Retrieve a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-get --id 12816234567644791298
+    `+os.Args[0]+` spin-registry vm-get --id 1456500719710708694
 `, os.Args[0])
 }
 
@@ -804,8 +850,8 @@ create a new volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-volumes-create --body '{
-      "name": "Molestiae asperiores.",
-      "path": "Temporibus explicabo sit ab quo et quis."
+      "name": "Ut ea excepturi.",
+      "path": "Facilis ad quod."
    }'
 `, os.Args[0])
 }
@@ -818,7 +864,7 @@ delete an existing volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-volumes-delete --body '{
-      "name": "Nulla numquam rerum asperiores corporis aut enim."
+      "name": "Quia facere."
    }'
 `, os.Args[0])
 }
@@ -831,7 +877,7 @@ list all images by volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-list --body '{
-      "volume_name": "Ipsa enim non maxime est."
+      "volume_name": "Sunt nesciunt natus dolorem."
    }'
 `, os.Args[0])
 }
@@ -845,9 +891,9 @@ add an image definition to the registry
 Example:
     `+os.Args[0]+` spin-registry storage-images-create --body '{
       "cdrom": true,
-      "image": "Quia facere.",
-      "image_size": 8415715876711929459,
-      "volume": "Facilis ad quod."
+      "image": "Nostrum qui perferendis rerum molestias.",
+      "image_size": 11387401285549308839,
+      "volume": "Iure qui voluptas."
    }'
 `, os.Args[0])
 }
@@ -860,8 +906,8 @@ remove an image definition from the registry
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-delete --body '{
-      "image_name": "Fugit incidunt tempora.",
-      "volume_name": "Aut quis vel officia."
+      "image_name": "Ipsam dicta accusantium.",
+      "volume_name": "Impedit laboriosam et dolorum tempora inventore officia."
    }'
 `, os.Args[0])
 }
@@ -874,8 +920,8 @@ retrieves an image definition from the registry
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-get --body '{
-      "image_name": "Tempore voluptate voluptas.",
-      "volume_name": "Sed quae ea."
+      "image_name": "Laudantium consectetur assumenda soluta.",
+      "volume_name": "In ea natus tempore."
    }'
 `, os.Args[0])
 }

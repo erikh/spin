@@ -31,6 +31,10 @@ type Client struct {
 	// VMGet Doer is the HTTP client used to make requests to the vm_get endpoint.
 	VMGetDoer goahttp.Doer
 
+	// VMUpdate Doer is the HTTP client used to make requests to the vm_update
+	// endpoint.
+	VMUpdateDoer goahttp.Doer
+
 	// ControlStart Doer is the HTTP client used to make requests to the
 	// control_start endpoint.
 	ControlStartDoer goahttp.Doer
@@ -68,6 +72,7 @@ func NewClient(
 		VMDeleteDoer:        doer,
 		VMListDoer:          doer,
 		VMGetDoer:           doer,
+		VMUpdateDoer:        doer,
 		ControlStartDoer:    doer,
 		ControlStopDoer:     doer,
 		ControlShutdownDoer: doer,
@@ -155,6 +160,30 @@ func (c *Client) VMGet() goa.Endpoint {
 		resp, err := c.VMGetDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_get", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// VMUpdate returns an endpoint that makes HTTP requests to the spin-apiserver
+// service vm_update server.
+func (c *Client) VMUpdate() goa.Endpoint {
+	var (
+		encodeRequest  = EncodeVMUpdateRequest(c.encoder)
+		decodeResponse = DecodeVMUpdateResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildVMUpdateRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.VMUpdateDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("spin-apiserver", "vm_update", err)
 		}
 		return decodeResponse(resp)
 	}

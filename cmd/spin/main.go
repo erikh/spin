@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"text/tabwriter"
 
 	"code.hollensbe.org/erikh/spin/clients/api"
 	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
@@ -49,6 +50,25 @@ func main() {
 			Name:  "vm",
 			Usage: "Manipulate VMs",
 			Subcommands: []*cli.Command{
+				{
+					Name:    "image",
+					Aliases: []string{"i"},
+					Usage:   "Operations on VM images",
+					Subcommands: []*cli.Command{
+						{
+							Name:      "list",
+							Usage:     "list images for the vm",
+							ArgsUsage: "[id]",
+							Action:    vmImageList,
+						},
+						{
+							Name:      "detach",
+							Usage:     "detach an image from a VM by VM ID and image index",
+							ArgsUsage: "[id] [index]",
+							Action:    vmImageDetach,
+						},
+					},
+				},
 				{
 					Name:      "list",
 					Usage:     "List all VMs by ID + Name",
@@ -241,4 +261,60 @@ func get(ctx *cli.Context) error {
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	return enc.Encode(ret)
+}
+
+func vmImageList(ctx *cli.Context) error {
+	if ctx.Args().Len() != 1 {
+		return errors.New("invalid arguments; see --help")
+	}
+
+	id, err := strconv.ParseUint(ctx.Args().First(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	ret, err := getClient(ctx).VMGet(context.Background(), id)
+	if err != nil {
+		return err
+	}
+
+	w := tabwriter.NewWriter(os.Stdout, 2, 2, 2, ' ', 0)
+	fmt.Fprintf(w, "INDEX\tPATH\tCDROM?\n")
+
+	for x, image := range ret.Images {
+		fmt.Fprintf(w, "%d\t%s\t%v\n", x, image.Path, image.Cdrom)
+	}
+
+	return w.Flush()
+}
+
+func vmImageDetach(ctx *cli.Context) error {
+	if ctx.Args().Len() != 2 {
+		return errors.New("invalid arguments; see --help")
+	}
+
+	id, err := strconv.ParseUint(ctx.Args().Get(0), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	index, err := strconv.ParseUint(ctx.Args().Get(1), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	ret, err := getClient(ctx).VMGet(context.Background(), id)
+	if err != nil {
+		return err
+	}
+
+	if uint64(len(ret.Images)) <= index {
+		return errors.New("invalid index")
+	}
+
+	ret.Images = append(ret.Images[:index], ret.Images[index+1:]...)
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+
+	return getClient(ctx).VMUpdate(context.Background(), id, ret)
 }

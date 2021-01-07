@@ -21,6 +21,8 @@ type Service interface {
 	VMList(context.Context) (res []uint64, err error)
 	// VMGet implements vm_get.
 	VMGet(context.Context, *VMGetPayload) (res *UpdatedVM, err error)
+	// VMUpdate implements vm_update.
+	VMUpdate(context.Context, *VMUpdatePayload) (err error)
 	// ControlStart implements control_start.
 	ControlStart(context.Context, *ControlStartPayload) (err error)
 	// ControlStop implements control_stop.
@@ -37,7 +39,7 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [7]string{"vm_create", "vm_delete", "vm_list", "vm_get", "control_start", "control_stop", "control_shutdown"}
+var MethodNames = [8]string{"vm_create", "vm_delete", "vm_list", "vm_get", "vm_update", "control_start", "control_stop", "control_shutdown"}
 
 // CreateVM is the payload type of the spin-apiserver service vm_create method.
 type CreateVM struct {
@@ -74,6 +76,15 @@ type UpdatedVM struct {
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
+}
+
+// VMUpdatePayload is the payload type of the spin-apiserver service vm_update
+// method.
+type VMUpdatePayload struct {
+	// ID of VM to Update
+	ID uint64
+	// VM Manifest to Update
+	VM *UpdatedVM
 }
 
 // ControlStartPayload is the payload type of the spin-apiserver service
