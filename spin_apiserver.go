@@ -93,6 +93,24 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 	return s.getStatus(ctx, pkg)
 }
 
+func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPayload) (*spinapiserver.UpdatedVM, error) {
+	vm, err := s.registry.VMGet(ctx, p.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	ret := &spinapiserver.UpdatedVM{
+		Name:   vm.Name,
+		Cpus:   vm.Cpus,
+		Memory: vm.Memory,
+	}
+
+	for _, image := range vm.Images {
+		ret.Images = append(ret.Images, (*spinapiserver.Image)(image))
+	}
+
+	return ret, nil
+}
 func (s *spinApiserversrvc) VMList(ctx context.Context) ([]uint64, error) {
 	return s.registry.VMList(ctx)
 }

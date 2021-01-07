@@ -186,6 +186,71 @@ func DecodeVMListResponse(decoder func(*http.Response) goahttp.Decoder, restoreB
 	}
 }
 
+// BuildVMGetRequest instantiates a HTTP request object with method and path
+// set to call the "spin-apiserver" service "vm_get" endpoint
+func (c *Client) BuildVMGetRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	var (
+		id uint64
+	)
+	{
+		p, ok := v.(*spinapiserver.VMGetPayload)
+		if !ok {
+			return nil, goahttp.ErrInvalidType("spin-apiserver", "vm_get", "*spinapiserver.VMGetPayload", v)
+		}
+		id = p.ID
+	}
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: VMGetSpinApiserverPath(id)}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("spin-apiserver", "vm_get", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// DecodeVMGetResponse returns a decoder for responses returned by the
+// spin-apiserver vm_get endpoint. restoreBody controls whether the response
+// body should be restored after having been read.
+func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusOK:
+			var (
+				body VMGetResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("spin-apiserver", "vm_get", err)
+			}
+			err = ValidateVMGetResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("spin-apiserver", "vm_get", err)
+			}
+			res := NewVMGetUpdatedVMOK(&body)
+			return res, nil
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_get", resp.StatusCode, string(body))
+		}
+	}
+}
+
 // BuildControlStartRequest instantiates a HTTP request object with method and
 // path set to call the "spin-apiserver" service "control_start" endpoint
 func (c *Client) BuildControlStartRequest(ctx context.Context, v interface{}) (*http.Request, error) {
@@ -363,6 +428,18 @@ func marshalStorageRequestBodyToSpinapiserverStorage(v *StorageRequestBody) *spi
 		Image:     v.Image,
 		ImageSize: v.ImageSize,
 		Cdrom:     v.Cdrom,
+	}
+
+	return res
+}
+
+// unmarshalImageResponseBodyToSpinapiserverImage builds a value of type
+// *spinapiserver.Image from a value of type *ImageResponseBody.
+func unmarshalImageResponseBodyToSpinapiserverImage(v *ImageResponseBody) *spinapiserver.Image {
+	res := &spinapiserver.Image{
+		Path:   *v.Path,
+		Cdrom:  *v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res

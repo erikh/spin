@@ -103,6 +103,45 @@ func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goa
 	}
 }
 
+// EncodeVMGetResponse returns an encoder for responses returned by the
+// spin-apiserver vm_get endpoint.
+func EncodeVMGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*spinapiserver.UpdatedVM)
+		enc := encoder(ctx, w)
+		body := NewVMGetResponseBody(res)
+		w.WriteHeader(http.StatusOK)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeVMGetRequest returns a decoder for requests sent to the spin-apiserver
+// vm_get endpoint.
+func DecodeVMGetRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			id  uint64
+			err error
+
+			params = mux.Vars(r)
+		)
+		{
+			idRaw := params["id"]
+			v, err2 := strconv.ParseUint(idRaw, 10, 64)
+			if err2 != nil {
+				err = goa.MergeErrors(err, goa.InvalidFieldTypeError("id", idRaw, "unsigned integer"))
+			}
+			id = v
+		}
+		if err != nil {
+			return nil, err
+		}
+		payload := NewVMGetPayload(id)
+
+		return payload, nil
+	}
+}
+
 // EncodeControlStartResponse returns an encoder for responses returned by the
 // spin-apiserver control_start endpoint.
 func EncodeControlStartResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
@@ -219,6 +258,18 @@ func unmarshalStorageRequestBodyToSpinapiserverStorage(v *StorageRequestBody) *s
 		Image:     *v.Image,
 		ImageSize: v.ImageSize,
 		Cdrom:     *v.Cdrom,
+	}
+
+	return res
+}
+
+// marshalSpinapiserverImageToImageResponseBody builds a value of type
+// *ImageResponseBody from a value of type *spinapiserver.Image.
+func marshalSpinapiserverImageToImageResponseBody(v *spinapiserver.Image) *ImageResponseBody {
+	res := &ImageResponseBody{
+		Path:   v.Path,
+		Cdrom:  v.Cdrom,
+		Volume: v.Volume,
 	}
 
 	return res

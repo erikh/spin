@@ -19,6 +19,8 @@ type Service interface {
 	VMDelete(context.Context, *VMDeletePayload) (err error)
 	// VMList implements vm_list.
 	VMList(context.Context) (res []uint64, err error)
+	// VMGet implements vm_get.
+	VMGet(context.Context, *VMGetPayload) (res *UpdatedVM, err error)
 	// ControlStart implements control_start.
 	ControlStart(context.Context, *ControlStartPayload) (err error)
 	// ControlStop implements control_stop.
@@ -35,7 +37,7 @@ const ServiceName = "spin-apiserver"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [6]string{"vm_create", "vm_delete", "vm_list", "control_start", "control_stop", "control_shutdown"}
+var MethodNames = [7]string{"vm_create", "vm_delete", "vm_list", "vm_get", "control_start", "control_stop", "control_shutdown"}
 
 // CreateVM is the payload type of the spin-apiserver service vm_create method.
 type CreateVM struct {
@@ -54,6 +56,24 @@ type CreateVM struct {
 type VMDeletePayload struct {
 	// ID of VM to delete
 	ID uint64
+}
+
+// VMGetPayload is the payload type of the spin-apiserver service vm_get method.
+type VMGetPayload struct {
+	// ID of VM to retrieve
+	ID uint64
+}
+
+// UpdatedVM is the result type of the spin-apiserver service vm_get method.
+type UpdatedVM struct {
+	// Image references
+	Images []*Image
+	// Name of VM; does not need to be unique
+	Name string
+	// CPU count
+	Cpus uint
+	// Memory (in megabytes)
+	Memory uint
 }
 
 // ControlStartPayload is the payload type of the spin-apiserver service
@@ -86,4 +106,13 @@ type Storage struct {
 	ImageSize *uint
 	// Is this image a cdrom?
 	Cdrom bool
+}
+
+type Image struct {
+	// Image path
+	Path string
+	// Is this a cdrom image?
+	Cdrom bool
+	// Volume name
+	Volume *string
 }

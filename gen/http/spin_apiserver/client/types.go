@@ -9,6 +9,7 @@ package client
 
 import (
 	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+	goa "goa.design/goa/v3/pkg"
 )
 
 // VMCreateRequestBody is the type of the "spin-apiserver" service "vm_create"
@@ -24,6 +25,19 @@ type VMCreateRequestBody struct {
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
 }
 
+// VMGetResponseBody is the type of the "spin-apiserver" service "vm_get"
+// endpoint HTTP response body.
+type VMGetResponseBody struct {
+	// Image references
+	Images []*ImageResponseBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
+	// Name of VM; does not need to be unique
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// CPU count
+	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
+	// Memory (in megabytes)
+	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
+}
+
 // StorageRequestBody is used to define fields on request body types.
 type StorageRequestBody struct {
 	// Volume name; required if image is not a cdrom
@@ -34,6 +48,16 @@ type StorageRequestBody struct {
 	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+}
+
+// ImageResponseBody is used to define fields on response body types.
+type ImageResponseBody struct {
+	// Image path
+	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
+	// Is this a cdrom image?
+	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
 }
 
 // NewVMCreateRequestBody builds the HTTP request body from the payload of the
@@ -51,4 +75,56 @@ func NewVMCreateRequestBody(p *spinapiserver.CreateVM) *VMCreateRequestBody {
 		}
 	}
 	return body
+}
+
+// NewVMGetUpdatedVMOK builds a "spin-apiserver" service "vm_get" endpoint
+// result from a HTTP "OK" response.
+func NewVMGetUpdatedVMOK(body *VMGetResponseBody) *spinapiserver.UpdatedVM {
+	v := &spinapiserver.UpdatedVM{
+		Name:   *body.Name,
+		Cpus:   *body.Cpus,
+		Memory: *body.Memory,
+	}
+	v.Images = make([]*spinapiserver.Image, len(body.Images))
+	for i, val := range body.Images {
+		v.Images[i] = unmarshalImageResponseBodyToSpinapiserverImage(val)
+	}
+
+	return v
+}
+
+// ValidateVMGetResponseBody runs the validations defined on
+// vm_get_response_body
+func ValidateVMGetResponseBody(body *VMGetResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.Cpus == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cpus", "body"))
+	}
+	if body.Memory == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
+	}
+	if body.Images == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
+	}
+	for _, e := range body.Images {
+		if e != nil {
+			if err2 := ValidateImageResponseBody(e); err2 != nil {
+				err = goa.MergeErrors(err, err2)
+			}
+		}
+	}
+	return
+}
+
+// ValidateImageResponseBody runs the validations defined on ImageResponseBody
+func ValidateImageResponseBody(body *ImageResponseBody) (err error) {
+	if body.Path == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("path", "body"))
+	}
+	if body.Cdrom == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
+	}
+	return
 }

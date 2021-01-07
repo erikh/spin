@@ -26,6 +26,11 @@ func VMListSpinApiserverPath() string {
 	return "/vm/list"
 }
 
+// VMGetSpinApiserverPath returns the URL path to the spin-apiserver service vm_get HTTP endpoint.
+func VMGetSpinApiserverPath(id uint64) string {
+	return fmt.Sprintf("/vm/get/%v", id)
+}
+
 // ControlStartSpinApiserverPath returns the URL path to the spin-apiserver service control_start HTTP endpoint.
 func ControlStartSpinApiserverPath(id uint64) string {
 	return fmt.Sprintf("/control/start/%v", id)

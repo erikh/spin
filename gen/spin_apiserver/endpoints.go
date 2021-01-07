@@ -18,6 +18,7 @@ type Endpoints struct {
 	VMCreate        goa.Endpoint
 	VMDelete        goa.Endpoint
 	VMList          goa.Endpoint
+	VMGet           goa.Endpoint
 	ControlStart    goa.Endpoint
 	ControlStop     goa.Endpoint
 	ControlShutdown goa.Endpoint
@@ -30,6 +31,7 @@ func NewEndpoints(s Service) *Endpoints {
 		VMCreate:        NewVMCreateEndpoint(s),
 		VMDelete:        NewVMDeleteEndpoint(s),
 		VMList:          NewVMListEndpoint(s),
+		VMGet:           NewVMGetEndpoint(s),
 		ControlStart:    NewControlStartEndpoint(s),
 		ControlStop:     NewControlStopEndpoint(s),
 		ControlShutdown: NewControlShutdownEndpoint(s),
@@ -42,6 +44,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 	e.VMCreate = m(e.VMCreate)
 	e.VMDelete = m(e.VMDelete)
 	e.VMList = m(e.VMList)
+	e.VMGet = m(e.VMGet)
 	e.ControlStart = m(e.ControlStart)
 	e.ControlStop = m(e.ControlStop)
 	e.ControlShutdown = m(e.ControlShutdown)
@@ -70,6 +73,15 @@ func NewVMDeleteEndpoint(s Service) goa.Endpoint {
 func NewVMListEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		return s.VMList(ctx)
+	}
+}
+
+// NewVMGetEndpoint returns an endpoint function that calls the method "vm_get"
+// of service "spin-apiserver".
+func NewVMGetEndpoint(s Service) goa.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*VMGetPayload)
+		return s.VMGet(ctx, p)
 	}
 }
 

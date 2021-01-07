@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -53,6 +54,12 @@ func main() {
 					Usage:     "List all VMs by ID + Name",
 					ArgsUsage: " ",
 					Action:    list,
+				},
+				{
+					Name:      "get",
+					Usage:     "Retrieve a VM by ID",
+					ArgsUsage: "[id]",
+					Action:    get,
 				},
 				{
 					Name:      "delete",
@@ -214,4 +221,24 @@ func list(ctx *cli.Context) error {
 	}
 
 	return nil
+}
+
+func get(ctx *cli.Context) error {
+	if ctx.Args().Len() != 1 {
+		return errors.New("invalid arguments; see --help")
+	}
+
+	id, err := strconv.ParseUint(ctx.Args().First(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	ret, err := getClient(ctx).VMGet(context.Background(), id)
+	if err != nil {
+		return err
+	}
+
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	return enc.Encode(ret)
 }

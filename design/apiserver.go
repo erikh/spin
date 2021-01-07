@@ -36,6 +36,19 @@ var _ = Service("spin-apiserver", func() {
 		})
 	})
 
+	Method("vm_get", func() {
+		Payload(func() {
+			Attribute("id", UInt64, "ID of VM to retrieve")
+			Required("id")
+		})
+		Result(UpdatedVM)
+
+		HTTP(func() {
+			POST("/vm/get/{id}")
+			Response(StatusOK)
+		})
+	})
+
 	Method("control_start", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to start")

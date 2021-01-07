@@ -24,7 +24,7 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.Crea
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 4877804636216311250,\n      \"memory\": 4310599689986484391,\n      \"name\": \"Adipisci sapiente.\",\n      \"storage\": [\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 10378177161520449758,\n      \"memory\": 3337153339562094883,\n      \"name\": \"Facere animi quas tempora.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Provident sint.\",\n            \"image_size\": 867860291963136244,\n            \"volume\": \"Recusandae eum repellat.\"\n         }\n      ]\n   }'")
 		}
 		if body.Storage == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
@@ -60,6 +60,23 @@ func BuildVMDeletePayload(spinApiserverVMDeleteID string) (*spinapiserver.VMDele
 		}
 	}
 	v := &spinapiserver.VMDeletePayload{}
+	v.ID = id
+
+	return v, nil
+}
+
+// BuildVMGetPayload builds the payload for the spin-apiserver vm_get endpoint
+// from CLI flags.
+func BuildVMGetPayload(spinApiserverVMGetID string) (*spinapiserver.VMGetPayload, error) {
+	var err error
+	var id uint64
+	{
+		id, err = strconv.ParseUint(spinApiserverVMGetID, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid value for id, must be UINT64")
+		}
+	}
+	v := &spinapiserver.VMGetPayload{}
 	v.ID = id
 
 	return v, nil

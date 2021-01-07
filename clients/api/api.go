@@ -62,6 +62,16 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 	return res.([]uint64), nil
 }
 
+// VMList lists the ids of all vms
+func (c *Client) VMGet(ctx context.Context, id uint64) (*spinapiserver.UpdatedVM, error) {
+	res, err := c.client.VMGet()(ctx, &spinapiserver.VMGetPayload{ID: id})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.(*spinapiserver.UpdatedVM), nil
+}
+
 // ControlStart starts a VM by id.
 func (c *Client) ControlStart(ctx context.Context, id uint64) error {
 	_, err := c.client.ControlStart()(ctx, &spinapiserver.ControlStartPayload{ID: id})

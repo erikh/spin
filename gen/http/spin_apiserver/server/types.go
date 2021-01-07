@@ -25,6 +25,29 @@ type VMCreateRequestBody struct {
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
 }
 
+// VMGetResponseBody is the type of the "spin-apiserver" service "vm_get"
+// endpoint HTTP response body.
+type VMGetResponseBody struct {
+	// Image references
+	Images []*ImageResponseBody `form:"images" json:"images" xml:"images"`
+	// Name of VM; does not need to be unique
+	Name string `form:"name" json:"name" xml:"name"`
+	// CPU count
+	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
+	// Memory (in megabytes)
+	Memory uint `form:"memory" json:"memory" xml:"memory"`
+}
+
+// ImageResponseBody is used to define fields on response body types.
+type ImageResponseBody struct {
+	// Image path
+	Path string `form:"path" json:"path" xml:"path"`
+	// Is this a cdrom image?
+	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
+	// Volume name
+	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
+}
+
 // StorageRequestBody is used to define fields on request body types.
 type StorageRequestBody struct {
 	// Volume name; required if image is not a cdrom
@@ -35,6 +58,23 @@ type StorageRequestBody struct {
 	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
+}
+
+// NewVMGetResponseBody builds the HTTP response body from the result of the
+// "vm_get" endpoint of the "spin-apiserver" service.
+func NewVMGetResponseBody(res *spinapiserver.UpdatedVM) *VMGetResponseBody {
+	body := &VMGetResponseBody{
+		Name:   res.Name,
+		Cpus:   res.Cpus,
+		Memory: res.Memory,
+	}
+	if res.Images != nil {
+		body.Images = make([]*ImageResponseBody, len(res.Images))
+		for i, val := range res.Images {
+			body.Images[i] = marshalSpinapiserverImageToImageResponseBody(val)
+		}
+	}
+	return body
 }
 
 // NewVMCreateCreateVM builds a spin-apiserver service vm_create endpoint
@@ -57,6 +97,14 @@ func NewVMCreateCreateVM(body *VMCreateRequestBody) *spinapiserver.CreateVM {
 // payload.
 func NewVMDeletePayload(id uint64) *spinapiserver.VMDeletePayload {
 	v := &spinapiserver.VMDeletePayload{}
+	v.ID = id
+
+	return v
+}
+
+// NewVMGetPayload builds a spin-apiserver service vm_get endpoint payload.
+func NewVMGetPayload(id uint64) *spinapiserver.VMGetPayload {
+	v := &spinapiserver.VMGetPayload{}
 	v.ID = id
 
 	return v
