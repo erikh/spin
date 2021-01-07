@@ -89,7 +89,7 @@ The architecture is a mix of the following technologies:
 
 - [golang](https://golang.org) is ... you know what golang is.
 - [goa](https://goa.design) is a framework for designing REST and GRPC APIs.
-- [bbolt](https://github.com/etcd/bbolt) is a key/value database system similar to LMDB, just for Golang.
+- [bbolt](https://pkg.go.dev/go.etcd.io/bbolt/) is a key/value database system similar to LMDB, just for Golang.
 
 And it contains the following sub-components:
 
