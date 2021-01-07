@@ -1,16 +1,19 @@
 package emulation
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	"code.hollensbe.org/erikh/spin"
 	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
 	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
 	"code.hollensbe.org/erikh/spin/pkg/agent"
 	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	"code.hollensbe.org/erikh/spin/pkg/qmp"
 	"code.hollensbe.org/erikh/spin/pkg/supervisor"
 	"github.com/mitchellh/go-homedir"
 )
@@ -100,7 +103,15 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 			return ac.Supervisor.Stop(serviceName(*id))
 		},
 		Shutdown: func(c dispatcher.Command) error {
-			return nil
+			id := c.Parameter("id").(*uint64)
+			conn, err := qmp.Dial(ac.monitorPath(*id))
+			if err != nil {
+				return err
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			defer cancel()
+			return qmp.Shutdown(ctx, conn)
 		},
 	}
 }
