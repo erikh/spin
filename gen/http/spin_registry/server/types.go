@@ -63,7 +63,7 @@ type StorageImagesCreateRequestBody struct {
 	// Image filename, no `/` characters
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Image size (in gigabytes); required if image is not a cdrom
-	ImageSize *uint64 `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
+	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
 	// Is this image a cdrom?
 	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
 }

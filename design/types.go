@@ -14,7 +14,7 @@ var Image = Type("Image", func() {
 var Storage = Type("Storage", func() {
 	Attribute("volume", String, "Volume name; required if image is not a cdrom")
 	Attribute("image", String, "Image filename, no `/` characters")
-	Attribute("image_size", UInt64, "Image size (in gigabytes); required if image is not a cdrom")
+	Attribute("image_size", UInt, "Image size (in gigabytes); required if image is not a cdrom")
 	Attribute("cdrom", Boolean, "Is this image a cdrom?")
 	Required("image", "cdrom")
 })
