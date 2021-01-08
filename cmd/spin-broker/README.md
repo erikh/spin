@@ -61,7 +61,7 @@ the package. After enqueuing, you can poll the status for a result. A result of
 the queue is simply empty, and then you can re-poll until something comes.
 Check out the agent `Loop()` implementation for more.
 
-## Toying with the host-path agent
+## Toying with the agents
 
 `make server` then run this script; the files/directories will appear in
 `~/.config/spin` and can be safely deleted after this is done running.
@@ -96,7 +96,7 @@ go run ./cmd/spin-broker message add "${pkg}" emulation write_config id=1 'vm={
     {
       "Path": "/home/erikh/.config/spin/images/test/test.raw",
       "Cdrom": false,
-      "Volume": "test",
+      "Volume": "test"
     },
     {
       "Volume": "test",
