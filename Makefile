@@ -22,10 +22,16 @@ stop-servers:
 	pkill spin-broker || :
 	sleep 1
 
-install:
+react-build:
+	cd ui && yarn build
+
+statik-build: react-build
+	bin/statik -src=ui/build -f
+
+install: statik-build
 	go install -v ./...
 
-install-local:
+install-local: statik-build
 	GOBIN=${PWD}/bin go install -v ./...
 
 servers: stop-servers install-local
@@ -45,12 +51,15 @@ examples:
 lint:
 	bin/golangci-lint run -v
 
-install-deps: update-golangci-lint update-reflex
+install-deps: update-golangci-lint update-reflex update-statik
 
 update-golangci-lint:
 	wget -O- https://github.com/golangci/golangci-lint/releases/download/v$(GOLANGCI_LINT_VERSION)/golangci-lint-$(GOLANGCI_LINT_VERSION)-linux-amd64.tar.gz | tar vxz --strip-components=1 -C bin golangci-lint-$(GOLANGCI_LINT_VERSION)-linux-amd64/golangci-lint
 
 update-reflex:
 	GO111MODULE=off GOBIN=${PWD}/bin go get -u github.com/cespare/reflex
+
+update-statik:
+	GO111MODULE=off GOBIN=${PWD}/bin go get -u github.com/rakyll/statik
 
 .PHONY: gen

@@ -5,14 +5,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"mime"
+	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"text/tabwriter"
 
-	"code.hollensbe.org/erikh/spin/clients/api"
-	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+	"github.com/rakyll/statik/fs"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
+
+	"code.hollensbe.org/erikh/spin/clients/api"
+	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+
+	_ "code.hollensbe.org/erikh/spin/statik"
 )
 
 func main() {
@@ -29,6 +38,11 @@ func main() {
 	}
 
 	app.Commands = []*cli.Command{
+		{
+			Name:   "serve",
+			Usage:  "Serve consoles for your VMs",
+			Action: serve,
+		},
 		{
 			Name:      "view",
 			Usage:     "View a VM's screen in your browser",
@@ -326,6 +340,50 @@ func vmImageDetach(ctx *cli.Context) error {
 	return getClient(ctx).VMUpdate(context.Background(), id, ret)
 }
 
+func serve(ctx *cli.Context) error {
+	staticFilesystem, err := fs.New()
+	if err != nil {
+		return err
+	}
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		u, err := url.Parse(r.RequestURI)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		path := u.Path
+
+		if path == "/" {
+			path = "/index.html"
+		}
+
+		f, err := staticFilesystem.Open(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				http.Error(w, err.Error(), 404)
+			} else {
+				http.Error(w, err.Error(), 500)
+			}
+
+			return
+		}
+
+		w.Header().Add("content-type", mime.TypeByExtension(filepath.Ext(path)))
+
+		if _, err := io.Copy(w, f); err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	}
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler)
+
+	return http.ListenAndServe("localhost:8083", mux)
+}
+
 func view(ctx *cli.Context) error {
 	if ctx.Args().Len() != 1 {
 		return errors.New("invalid arguments; see --help")
@@ -336,5 +394,5 @@ func view(ctx *cli.Context) error {
 		return err
 	}
 
-	return open.Start(fmt.Sprintf("http://localhost:3000?id=%d", id))
+	return open.Start(fmt.Sprintf("http://localhost:8083?id=%d", id))
 }
