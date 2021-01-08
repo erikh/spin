@@ -53,6 +53,14 @@ The [API server](../spin-apiserver) communicates with the broker to issue
 commands to the agents. If you just want to launch a VM, talk to the API
 server.
 
+To issue entries into the queue, you must organize them into a "package". The
+package contains your mini-queue and must be enqueued as a group to enter
+processing, otherwise it dies. Add commands to your package and then enqueue
+the package. After enqueuing, you can poll the status for a result. A result of
+`record_not_found` (type `*goa.ServiceError` in the design) will indicate that
+the queue is simply empty, and then you can re-poll until something comes.
+Check out the agent `Loop()` implementation for more.
+
 ## Toying with the host-path agent
 
 `make server` then run this script; the files/directories will appear in
