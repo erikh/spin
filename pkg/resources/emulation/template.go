@@ -45,6 +45,8 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (
 		"accel=kvm",
 		"-vga",
 		"virtio",
+		"-vnc",
+		fmt.Sprintf("127.0.0.1:0,websocket=127.0.0.1:60%02d", id%100),
 		"-m",
 		fmt.Sprintf("%dM", vm.Memory),
 		"-cpu",

@@ -11,6 +11,7 @@ import (
 
 	"code.hollensbe.org/erikh/spin/clients/api"
 	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,6 +29,12 @@ func main() {
 	}
 
 	app.Commands = []*cli.Command{
+		{
+			Name:      "view",
+			Usage:     "View a VM's screen in your browser",
+			ArgsUsage: "[id]",
+			Action:    view,
+		},
 		{
 			Name:      "start",
 			Usage:     "Start a VM by ID",
@@ -317,4 +324,17 @@ func vmImageDetach(ctx *cli.Context) error {
 	enc.SetIndent("", "  ")
 
 	return getClient(ctx).VMUpdate(context.Background(), id, ret)
+}
+
+func view(ctx *cli.Context) error {
+	if ctx.Args().Len() != 1 {
+		return errors.New("invalid arguments; see --help")
+	}
+
+	id, err := strconv.ParseUint(ctx.Args().First(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	return open.Start(fmt.Sprintf("http://localhost:3000?id=%d", id))
 }
