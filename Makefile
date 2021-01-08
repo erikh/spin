@@ -23,7 +23,7 @@ stop-servers:
 	sleep 1
 
 react-build:
-	cd ui && yarn build
+	cd ui && yarn install && yarn build
 
 statik-build: react-build
 	bin/statik -src=ui/build -f
