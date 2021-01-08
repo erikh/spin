@@ -23,10 +23,47 @@ spin-broker has the following properties:
 - agents are expected to listed on queues named after the resource they manage.
   An example is in [sa-host-path](../agents/sa-host-path).
 
+## Idempotency in a tight package
+
+Queues are modeled through `bbolt` buckets which uses operations that are
+isolated in transactions. Each queue is assigned to a resource - a string that
+identifies the kind of work they are supposed to be performing. A queue is a
+collection of "commands".
+
+A command contains a resource, action, parameters, and dependencies:
+
+- resources are mentioned above; they exist to separate powers between agents,
+  which will be discussed more below.
+- actions are the command name to execute; `argv[0]` if you will.
+- parameters are a key/value map of parameters to send along with the action to
+  the agent. These are typed, and validated for presence as well.
+- dependencies are a list of identifiers (UUIDs currently) that must be
+  satisfied before this queue item can be yielded.
+
+Agents are units of code which read from the broker and carry out its actions,
+one at a time (currently, at least!). Agents consume from a single queue, and
+model an actual resource (storage, network, compute) in behavior.
+
+For example, the storage agent has a `provision volume` action and a
+`create image` action, as well as removal actions. A host path agent implements
+this, but there is no reason a zfs agent cannot be built. Agents do not
+communicate back to the broker, they simply do their work and move on.
+
+The [API server](../spin-apiserver) communicates with the broker to issue
+commands to the agents. If you just want to launch a VM, talk to the API
+server.
+
 ## Toying with the host-path agent
 
 `make server` then run this script; the files/directories will appear in
 `~/.config/spin` and can be safely deleted after this is done running.
+
+This will create the storage and the vm supervisory files, and start the vm.
+Then, it will shut it down first gracefully, then forcefully after 5 seconds.
+
+Please note that the JSON in the example is in an extreme state of flux and may
+become out of date rapidly. Check [the emulation agent's source](../../pkg/resources/emulation)
+for the most updated information on the subject.
 
 ```bash
 #!env bash
@@ -47,16 +84,15 @@ go run ./cmd/spin-broker message add "${pkg}" emulation write_config id=1 'vm={
   "Name": "vm",
   "Cpus": 8,
   "Memory": 8192,
-  "Storage": [
+  "Images": [
     {
+      "Path": "/home/erikh/.config/spin/images/test/test.raw",
+      "Cdrom": false,
       "Volume": "test",
-      "Image": "/home/erikh/.config/spin/images/test/test.raw",
-      "ImageSize": 50
     },
     {
       "Volume": "test",
-      "Image": "/home/erikh/vm-images/isos/manjaro-architect-20.0.3-200607-linux56.iso",
-      "ImageSize": 50,
+      "Path": "/home/erikh/vm-images/isos/manjaro-architect-20.0.3-200607-linux56.iso",
       "Cdrom": true
     }
   ]
