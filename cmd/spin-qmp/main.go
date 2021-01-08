@@ -9,7 +9,7 @@ import (
 	"path"
 	"time"
 
-	"code.hollensbe.org/erikh/spin/pkg/qmp"
+	"github.com/erikh/spin/pkg/qmp"
 	"github.com/urfave/cli/v2"
 )
 

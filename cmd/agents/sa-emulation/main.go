@@ -6,8 +6,8 @@ import (
 	"os"
 	"os/signal"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	"code.hollensbe.org/erikh/spin/pkg/resources/emulation"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	"github.com/erikh/spin/pkg/resources/emulation"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sys/unix"
 )

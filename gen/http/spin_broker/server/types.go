@@ -3,14 +3,14 @@
 // spin-broker HTTP server types
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package server
 
 import (
 	"encoding/json"
 
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
 	goa "goa.design/goa/v3/pkg"
 )
 

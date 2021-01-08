@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
-	"code.hollensbe.org/erikh/spin/pkg/registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/registry"
 )
 
 type spinRegistry struct {

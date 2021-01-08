@@ -14,9 +14,9 @@ import (
 	"syscall"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	"code.hollensbe.org/erikh/spin/pkg/services"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
+	"github.com/erikh/spin/pkg/services"
 	"github.com/urfave/cli/v2"
 )
 

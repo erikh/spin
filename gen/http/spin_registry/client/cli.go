@@ -3,7 +3,7 @@
 // spin-registry HTTP client CLI support package
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package client
 
@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strconv"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	goa "goa.design/goa/v3/pkg"
 )
 

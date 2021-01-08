@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"code.hollensbe.org/erikh/spin/gen/http/spin_broker/client"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	"github.com/erikh/spin/gen/http/spin_broker/client"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
 	goahttp "goa.design/goa/v3/http"
 )
 

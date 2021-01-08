@@ -1,6 +1,6 @@
 package storage
 
-import "code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+import "github.com/erikh/spin/pkg/agent/dispatcher"
 
 // ResourceType encapuslates our standard resource type, for all storage
 // agents.

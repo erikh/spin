@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"code.hollensbe.org/erikh/spin/gen/http/spin_registry/client"
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/gen/http/spin_registry/client"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	goahttp "goa.design/goa/v3/http"
 )
 

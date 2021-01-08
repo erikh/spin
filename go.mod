@@ -1,4 +1,4 @@
-module code.hollensbe.org/erikh/spin
+module github.com/erikh/spin
 
 go 1.15
 

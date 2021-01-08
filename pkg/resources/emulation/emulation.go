@@ -1,8 +1,8 @@
 package emulation
 
 import (
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
 )
 
 // ResourceType encapuslates our standard resource type, for all storage

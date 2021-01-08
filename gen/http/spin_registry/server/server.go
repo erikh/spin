@@ -3,7 +3,7 @@
 // spin-registry HTTP server
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package server
 
@@ -11,7 +11,7 @@ import (
 	"context"
 	"net/http"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

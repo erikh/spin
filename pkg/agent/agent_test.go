@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
-	"code.hollensbe.org/erikh/spin/pkg/services"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
+	"github.com/erikh/spin/pkg/services"
 	goa "goa.design/goa/v3/pkg"
 )
 

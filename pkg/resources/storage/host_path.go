@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	"code.hollensbe.org/erikh/spin/pkg/agent"
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	"github.com/erikh/spin/pkg/agent"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
 )
 
 func hostPathDispatcher(basePath string) DispatcherConfig {

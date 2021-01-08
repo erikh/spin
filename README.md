@@ -23,8 +23,8 @@ quick start, try this script on for size:
 ```bash
 #!/usr/bin/env bash
 
-go get -d code.hollensbe.org/erikh/spin
-cd $GOPATH/code.hollensbe.org/erikh/spin
+go get -d github.com/erikh/spin
+cd $GOPATH/github.com/erikh/spin
 make servers
 make install-local
 ```

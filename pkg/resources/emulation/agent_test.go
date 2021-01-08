@@ -10,11 +10,11 @@ import (
 	"testing"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
-	"code.hollensbe.org/erikh/spin/pkg/services"
-	"code.hollensbe.org/erikh/spin/pkg/supervisor"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/services"
+	"github.com/erikh/spin/pkg/supervisor"
 	goa "goa.design/goa/v3/pkg"
 )
 

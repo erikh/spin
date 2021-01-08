@@ -3,7 +3,7 @@
 // spin-broker HTTP server encoders and decoders
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package server
 
@@ -12,7 +12,7 @@ import (
 	"io"
 	"net/http"
 
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

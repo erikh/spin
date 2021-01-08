@@ -3,7 +3,7 @@
 // spin-registry service
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package spinregistry
 

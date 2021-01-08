@@ -42,11 +42,11 @@ servers: stop-servers install-local
 	bin/sa-host-path &
 
 gen:
-	go run goa.design/goa/v3/cmd/goa gen code.hollensbe.org/erikh/spin/design
+	go run goa.design/goa/v3/cmd/goa gen github.com/erikh/spin/design
 	goimports -w $$(find . -name '*.go' -type f)
 
 examples:
-	go run goa.design/goa/v3/cmd/goa example code.hollensbe.org/erikh/spin/design
+	go run goa.design/goa/v3/cmd/goa example github.com/erikh/spin/design
 
 lint:
 	bin/golangci-lint run -v

@@ -3,7 +3,7 @@
 // spin-apiserver HTTP client encoders and decoders
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package client
 
@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"net/url"
 
-	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
 	goahttp "goa.design/goa/v3/http"
 )
 

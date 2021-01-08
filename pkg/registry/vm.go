@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	"go.etcd.io/bbolt"
 )
 

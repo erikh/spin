@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
 	"github.com/google/uuid"
 	"go.etcd.io/bbolt"
 )

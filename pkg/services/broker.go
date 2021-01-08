@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"code.hollensbe.org/erikh/spin"
-	spinbrokersvr "code.hollensbe.org/erikh/spin/gen/http/spin_broker/server"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	"github.com/erikh/spin"
+	spinbrokersvr "github.com/erikh/spin/gen/http/spin_broker/server"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"

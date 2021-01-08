@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
 	goa "goa.design/goa/v3/pkg"
 )
 

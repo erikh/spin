@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	"code.hollensbe.org/erikh/spin/pkg/resources/storage"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	"github.com/erikh/spin/pkg/resources/storage"
 	"github.com/mitchellh/go-homedir"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sys/unix"

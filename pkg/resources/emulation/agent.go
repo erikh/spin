@@ -8,13 +8,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"code.hollensbe.org/erikh/spin"
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
-	"code.hollensbe.org/erikh/spin/pkg/agent"
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
-	"code.hollensbe.org/erikh/spin/pkg/qmp"
-	"code.hollensbe.org/erikh/spin/pkg/supervisor"
+	"github.com/erikh/spin"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/agent"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
+	"github.com/erikh/spin/pkg/qmp"
+	"github.com/erikh/spin/pkg/supervisor"
 	"github.com/mitchellh/go-homedir"
 )
 

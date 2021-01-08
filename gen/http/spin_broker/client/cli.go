@@ -3,7 +3,7 @@
 // spin-broker HTTP client CLI support package
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package client
 
@@ -11,7 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
 )
 
 // BuildAddPayload builds the payload for the spin-broker add endpoint from CLI

@@ -18,10 +18,10 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v2"
 
-	"code.hollensbe.org/erikh/spin/clients/api"
-	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
+	"github.com/erikh/spin/clients/api"
+	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
 
-	_ "code.hollensbe.org/erikh/spin/statik"
+	_ "github.com/erikh/spin/statik"
 )
 
 func main() {

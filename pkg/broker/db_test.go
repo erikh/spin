@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"testing"
 
-	"code.hollensbe.org/erikh/spin/pkg/agent/dispatcher"
-	"code.hollensbe.org/erikh/spin/pkg/testutil"
+	"github.com/erikh/spin/pkg/agent/dispatcher"
+	"github.com/erikh/spin/pkg/testutil"
 )
 
 func makeDB(t *testing.T) *DB {

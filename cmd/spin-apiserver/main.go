@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	registryclient "code.hollensbe.org/erikh/spin/clients/registry"
-	"code.hollensbe.org/erikh/spin/pkg/services"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	registryclient "github.com/erikh/spin/clients/registry"
+	"github.com/erikh/spin/pkg/services"
 	"github.com/urfave/cli/v2"
 )
 

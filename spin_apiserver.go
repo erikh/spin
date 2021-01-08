@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	brokerclient "code.hollensbe.org/erikh/spin/clients/broker"
-	registryclient "code.hollensbe.org/erikh/spin/clients/registry"
-	spinapiserver "code.hollensbe.org/erikh/spin/gen/spin_apiserver"
-	spinbroker "code.hollensbe.org/erikh/spin/gen/spin_broker"
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	brokerclient "github.com/erikh/spin/clients/broker"
+	registryclient "github.com/erikh/spin/clients/registry"
+	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
+	spinbroker "github.com/erikh/spin/gen/spin_broker"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	goa "goa.design/goa/v3/pkg"
 )
 

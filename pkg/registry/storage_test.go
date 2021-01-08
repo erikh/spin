@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 )
 
 func TestStorageVolumeDBCRUD(t *testing.T) {

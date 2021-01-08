@@ -3,7 +3,7 @@
 // spin HTTP client CLI support package
 //
 // Command:
-// $ goa gen code.hollensbe.org/erikh/spin/design
+// $ goa gen github.com/erikh/spin/design
 
 package cli
 
@@ -13,9 +13,9 @@ import (
 	"net/http"
 	"os"
 
-	spinapiserverc "code.hollensbe.org/erikh/spin/gen/http/spin_apiserver/client"
-	spinbrokerc "code.hollensbe.org/erikh/spin/gen/http/spin_broker/client"
-	spinregistryc "code.hollensbe.org/erikh/spin/gen/http/spin_registry/client"
+	spinapiserverc "github.com/erikh/spin/gen/http/spin_apiserver/client"
+	spinbrokerc "github.com/erikh/spin/gen/http/spin_broker/client"
+	spinregistryc "github.com/erikh/spin/gen/http/spin_registry/client"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
-	spinregistry "code.hollensbe.org/erikh/spin/gen/spin_registry"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	"github.com/mitchellh/go-homedir"
 )
 
