@@ -22,8 +22,11 @@ stop-servers:
 	pkill spin-broker || :
 	sleep 1
 
+react-install:
+	cd ui && yarn install
+
 react-build:
-	cd ui && yarn install && yarn build
+	cd ui && yarn build
 
 statik-build: react-build
 	bin/statik -src=ui/build -f
@@ -51,7 +54,7 @@ examples:
 lint:
 	bin/golangci-lint run -v
 
-install-deps: update-golangci-lint update-reflex update-statik
+install-deps: update-golangci-lint update-reflex update-statik react-install
 
 update-golangci-lint:
 	wget -O- https://github.com/golangci/golangci-lint/releases/download/v$(GOLANGCI_LINT_VERSION)/golangci-lint-$(GOLANGCI_LINT_VERSION)-linux-amd64.tar.gz | tar vxz --strip-components=1 -C bin golangci-lint-$(GOLANGCI_LINT_VERSION)-linux-amd64/golangci-lint
