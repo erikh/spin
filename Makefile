@@ -1,6 +1,6 @@
 GOLANGCI_LINT_VERSION := 1.34.1
 
-test: gen lint
+test: gen statik-build lint
 	go test -v ./...
 
 autotest:
@@ -31,7 +31,7 @@ react-build:
 statik-build: react-build
 	bin/statik -src=ui/build -f
 
-install: statik-build test
+install: test
 	go install -v ./...
 
 install-local: statik-build
