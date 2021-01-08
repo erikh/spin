@@ -49,6 +49,11 @@ spin vm create --cdrom ~/path/to/some.iso my_cool_image test
 # the id above is the id of the vm newly created; it can be started like so:
 spin start 1
 
+# to access it, you can get a console by starting the console server and
+# viewing a specific console (will open a link in your browser):
+spin serve &
+spin view 1
+
 # stop and shutdown have a distinction; stop will force terminate through
 # systemd if shutdown doesn't succeed; shutdown will merely try to stop it
 # through normal ACPI shutdown signals.
