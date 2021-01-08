@@ -28,7 +28,7 @@ react-build:
 statik-build: react-build
 	bin/statik -src=ui/build -f
 
-install: statik-build
+install: statik-build test
 	go install -v ./...
 
 install-local: statik-build
