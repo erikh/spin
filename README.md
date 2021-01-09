@@ -37,7 +37,9 @@ following ideas:
 (please note the servers must be running, provided by `make servers`)
 
 ```bash
-# this is necessary to create vms for now, soon this will not be
+# these first few steps are necessary to create vms for now, soon this will not be
+mkdir -p ~/.config/spin/images/test
+
 # first argument is the name of the volume, second is the path to the volume's files
 spin-registry message storage volume create test ~/.config/spin/images/test
 
