@@ -18,13 +18,20 @@ set of golang ones.
 ## Installation and Usage
 
 For installations, we only support "development mode" at the moment. For a
-quick start, try this script on for size:
+quick start, try this script on for size. You will need the following tools to
+build the binaries:
+
+- [golang](golang.org)
+- [yarn](https://yarnpkg.com/)
+
+Most other things will be installed by the `make install-deps` task automatically.
 
 ```bash
 #!/usr/bin/env bash
 
 go get -d github.com/erikh/spin
 cd $GOPATH/github.com/erikh/spin
+make install-deps
 make servers
 make install-local
 ```
