@@ -7,7 +7,7 @@ autotest:
 	@echo 1>&2
 	@echo 1>&2 '`make update-reflex` to use this task'
 	@echo 1>&2
-	bin/reflex -r '\.go$$' -R '^(gen|goa[0-9]+)/' make test
+	bin/reflex -r '\.go$$' -R '^(statik|gen|goa[0-9]+)/' make test
 
 test-all: gen
 	go test -v ./... -count 1
