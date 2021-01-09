@@ -43,7 +43,7 @@ func TestRunTemplate(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			tc.SpinQMP = "<spin-qmp>/"
+			tc.SpinQMP = "<spin-qmp>"
 
 			result, err := runTemplate(tc)
 			if err != nil {

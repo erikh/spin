@@ -1,0 +1,14 @@
+ 
+[Unit]
+Description=Virtual Machine #1: storage-image
+
+[Service]
+Type=simple
+ExecStart=/bin/qemu-system-x86_64 -nodefaults -chardev socket,server,nowait,id=char0,path=<monitordir>/1 -mon chardev=char0,mode=control,pretty=on -machine accel=kvm -vga virtio -vnc 127.0.0.1:0,websocket=127.0.0.1:6001 -m 1024M -cpu kvm64 -smp cpus=1,cores=2,maxcpus=2 -nic user -drive driver=raw,if=virtio,file=path/to/image.raw,cache=none,media=disk,index=0 -drive file=path/to/cdrom.img,media=cdrom,index=1 
+ExecStop=<spin-qmp> shutdown /home/erikh/.config/spin/monitors/1
+TimeoutStopSec=30
+KillSignal=SIGCONT
+FinalKillSignal=SIGKILL
+
+[Install]
+WantedBy=default.target

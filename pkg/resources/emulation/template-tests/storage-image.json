@@ -1,0 +1,14 @@
+{
+  "Name": "storage-image",
+  "Cpus": 2,
+  "Memory": 1024,
+  "Images": [
+    {
+      "Path": "path/to/image.raw"
+    },
+    {
+      "Path": "path/to/cdrom.img",
+      "Cdrom": true
+    }
+  ]
+}
