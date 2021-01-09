@@ -9,7 +9,7 @@ class App extends React.Component {
 
     var rfb = new RFB(
       document.getElementById("root"),
-      sprintf("ws://127.0.0.1:60%02d", id)
+      sprintf("ws://127.0.0.1:60%02d", id%100)
     );
     rfb.resizeSession = true;
     rfb.scaleViewport = true;
