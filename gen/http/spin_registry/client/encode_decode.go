@@ -796,6 +796,14 @@ func marshalSpinregistryUpdatedVMToUpdatedVMRequestBody(v *spinregistry.UpdatedV
 			res.Images[i] = marshalSpinregistryImageToImageRequestBody(val)
 		}
 	}
+	if v.Ports != nil {
+		res.Ports = make(map[uint]string, len(v.Ports))
+		for key, val := range v.Ports {
+			tk := key
+			tv := val
+			res.Ports[tk] = tv
+		}
+	}
 
 	return res
 }
@@ -812,6 +820,14 @@ func marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBody)
 		res.Images = make([]*spinregistry.Image, len(v.Images))
 		for i, val := range v.Images {
 			res.Images[i] = marshalImageRequestBodyToSpinregistryImage(val)
+		}
+	}
+	if v.Ports != nil {
+		res.Ports = make(map[uint]string, len(v.Ports))
+		for key, val := range v.Ports {
+			tk := key
+			tv := val
+			res.Ports[tk] = tv
 		}
 	}
 

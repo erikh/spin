@@ -24,7 +24,7 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.Crea
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMCreateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 17092856392700368829,\n      \"memory\": 497222928895641055,\n      \"name\": \"Aspernatur vel vel illum voluptatem voluptatibus est.\",\n      \"storage\": [\n         {\n            \"cdrom\": true,\n            \"image\": \"Esse reprehenderit qui molestias eum voluptatem.\",\n            \"image_size\": 11533824901793082147,\n            \"volume\": \"Occaecati deserunt qui praesentium.\"\n         },\n         {\n            \"cdrom\": true,\n            \"image\": \"Esse reprehenderit qui molestias eum voluptatem.\",\n            \"image_size\": 11533824901793082147,\n            \"volume\": \"Occaecati deserunt qui praesentium.\"\n         }\n      ]\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 4877804636216311250,\n      \"memory\": 4310599689986484391,\n      \"name\": \"Adipisci sapiente.\",\n      \"ports\": {\n         \"450430995601564002\": \"Et qui fugit quis dignissimos qui.\",\n         \"8415388083871949362\": \"Magni voluptas corrupti et voluptatibus et.\"\n      },\n      \"storage\": [\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         }\n      ]\n   }'")
 		}
 		if body.Storage == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
@@ -42,6 +42,14 @@ func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.Crea
 		v.Storage = make([]*spinapiserver.Storage, len(body.Storage))
 		for i, val := range body.Storage {
 			v.Storage[i] = marshalStorageRequestBodyToSpinapiserverStorage(val)
+		}
+	}
+	if body.Ports != nil {
+		v.Ports = make(map[uint]string, len(body.Ports))
+		for key, val := range body.Ports {
+			tk := key
+			tv := val
+			v.Ports[tk] = tv
 		}
 	}
 
@@ -90,7 +98,7 @@ func BuildVMUpdatePayload(spinApiserverVMUpdateBody string, spinApiserverVMUpdat
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 3472743333644681302,\n         \"images\": [\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Dignissimos qui error modi.\",\n               \"volume\": \"Corrupti et voluptatibus et et occaecati.\"\n            }\n         ],\n         \"memory\": 639108202290023137,\n         \"name\": \"Quo dolore soluta consectetur.\"\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 1235757894805898603,\n         \"images\": [\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            }\n         ],\n         \"memory\": 11516433357545643392,\n         \"name\": \"Rerum asperiores corporis aut.\",\n         \"ports\": {\n            \"8213131886962674554\": \"Maxime est voluptatem quia.\"\n         }\n      }\n   }'")
 		}
 		if body.VM == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))

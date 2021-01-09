@@ -442,6 +442,14 @@ func unmarshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBod
 	for i, val := range v.Images {
 		res.Images[i] = unmarshalImageRequestBodyToSpinregistryImage(val)
 	}
+	if v.Ports != nil {
+		res.Ports = make(map[uint]string, len(v.Ports))
+		for key, val := range v.Ports {
+			tk := key
+			tv := val
+			res.Ports[tk] = tv
+		}
+	}
 
 	return res
 }

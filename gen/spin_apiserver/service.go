@@ -51,6 +51,8 @@ type CreateVM struct {
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string
 }
 
 // VMDeletePayload is the payload type of the spin-apiserver service vm_delete
@@ -76,6 +78,8 @@ type UpdatedVM struct {
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string
 }
 
 // VMUpdatePayload is the payload type of the spin-apiserver service vm_update

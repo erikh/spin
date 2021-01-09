@@ -54,7 +54,7 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (
 		"-smp",
 		fmt.Sprintf("cpus=1,cores=%d,maxcpus=%d", vm.Cpus, vm.Cpus),
 		"-nic",
-		"user",
+		fmt.Sprintf("user%s", hostfwdRules(vm)),
 	}
 
 	for i, storage := range vm.Images {
@@ -88,6 +88,16 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (
 	}
 
 	return tc, nil
+}
+
+func hostfwdRules(vm *spinregistry.UpdatedVM) string {
+	str := ""
+
+	for guest, hostaddr := range vm.Ports {
+		str += fmt.Sprintf(",hostfwd=tcp:%s-:%d", hostaddr, guest)
+	}
+
+	return str
 }
 
 func runTemplate(tc templateConfig) (string, error) { // nolint

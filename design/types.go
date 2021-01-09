@@ -24,6 +24,7 @@ var VMBase = Type("VMBase", func() {
 	Attribute("name", String, "Name of VM; does not need to be unique")
 	Attribute("cpus", UInt, "CPU count")
 	Attribute("memory", UInt, "Memory (in megabytes)")
+	Attribute("ports", MapOf(UInt, String), "Ports to map to this vm: guest -> host addr:port")
 })
 
 // CreateVM is a standalone VM for creation purposes.

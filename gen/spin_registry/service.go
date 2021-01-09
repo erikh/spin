@@ -59,6 +59,8 @@ type UpdatedVM struct {
 	Cpus uint
 	// Memory (in megabytes)
 	Memory uint
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string
 }
 
 // UpdateVM is the payload type of the spin-registry service vm_update method.

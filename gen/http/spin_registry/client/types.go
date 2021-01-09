@@ -23,6 +23,8 @@ type VMCreateRequestBody struct {
 	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
 	// Memory (in megabytes)
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
 }
 
 // VMUpdateRequestBody is the type of the "spin-registry" service "vm_update"
@@ -97,6 +99,8 @@ type VMGetResponseBody struct {
 	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
 	// Memory (in megabytes)
 	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
 }
 
 // StorageImagesCreateResponseBody is the type of the "spin-registry" service
@@ -141,6 +145,8 @@ type UpdatedVMRequestBody struct {
 	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
 	// Memory (in megabytes)
 	Memory uint `form:"memory" json:"memory" xml:"memory"`
+	// Ports to map to this vm: guest -> host addr:port
+	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
 }
 
 // ImageResponseBody is used to define fields on response body types.
@@ -165,6 +171,14 @@ func NewVMCreateRequestBody(p *spinregistry.UpdatedVM) *VMCreateRequestBody {
 		body.Images = make([]*ImageRequestBody, len(p.Images))
 		for i, val := range p.Images {
 			body.Images[i] = marshalSpinregistryImageToImageRequestBody(val)
+		}
+	}
+	if p.Ports != nil {
+		body.Ports = make(map[uint]string, len(p.Ports))
+		for key, val := range p.Ports {
+			tk := key
+			tv := val
+			body.Ports[tk] = tv
 		}
 	}
 	return body
@@ -255,6 +269,14 @@ func NewVMGetUpdatedVMOK(body *VMGetResponseBody) *spinregistry.UpdatedVM {
 	v.Images = make([]*spinregistry.Image, len(body.Images))
 	for i, val := range body.Images {
 		v.Images[i] = unmarshalImageResponseBodyToSpinregistryImage(val)
+	}
+	if body.Ports != nil {
+		v.Ports = make(map[uint]string, len(body.Ports))
+		for key, val := range body.Ports {
+			tk := key
+			tv := val
+			v.Ports[tk] = tv
+		}
 	}
 
 	return v
