@@ -1,13 +1,82 @@
 package emulation
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/andreyvit/diff"
+	spinregistry "github.com/erikh/spin/gen/spin_registry"
 )
 
-func TestTemplate(t *testing.T) {
+const testPath = "template-tests"
+
+func TestRunTemplate(t *testing.T) {
+	ac := AgentConfig{
+		SystemDir:  "<systemdir>/",
+		MonitorDir: "<monitordir>/",
+	}
+
+	infos, err := ioutil.ReadDir(testPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, info := range infos {
+		if filepath.Ext(info.Name()) == ".json" {
+			content, err := ioutil.ReadFile(filepath.Join(testPath, info.Name()))
+			if err != nil {
+				t.Fatalf("Error reading %q: %v", info.Name(), err)
+			}
+
+			var vm spinregistry.UpdatedVM
+			if err := json.Unmarshal(content, &vm); err != nil {
+				t.Fatalf("Error parsing %q: %v", info.Name(), err)
+			}
+
+			tc, err := vmToTemplateConfig(ac, 1, &vm)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			tc.SpinQMP = "<spin-qmp>/"
+
+			result, err := runTemplate(tc)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			fn := fmt.Sprintf("%s.service", filepath.Join(testPath, strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))))
+			if fi, err := os.Stat(fn); err != nil && os.IsNotExist(err) {
+				if err := ioutil.WriteFile(fn, []byte(result), 0600); err != nil {
+					t.Fatal(err)
+				}
+
+				t.Log("template generated, skipped this iteration")
+				continue
+			} else if err != nil {
+				t.Fatal(err)
+			} else if fi.Mode()&os.ModeType != 0 {
+				t.Fatalf("%q result file was not a file", fi.Name())
+			}
+
+			content, err = ioutil.ReadFile(fn)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if result != string(content) {
+				t.Fatalf("%q mismatched on template generation:\n%s", info.Name(), diff.LineDiff(result, string(content)))
+			}
+		}
+	}
+}
+
+func TestTemplateConfig(t *testing.T) {
 	for key, tc := range templateInputs {
 		result, err := runTemplate(tc)
 		if err != nil {
