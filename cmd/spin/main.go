@@ -182,7 +182,7 @@ func create(ctx *cli.Context) error {
 			Name:   name,
 			CPUs:   ctx.Uint("cpus"),
 			Memory: ctx.Uint("memory"),
-			Ports:  map[uint]string{},
+			Ports:  vm.PortMap{},
 		},
 		Storage: []vm.Storage{
 			{
@@ -211,7 +211,7 @@ func create(ctx *cli.Context) error {
 			return err
 		}
 
-		v.Ports[uint(guestPort)] = parts[1]
+		v.Ports[uint16(guestPort)] = parts[1]
 	}
 
 	id, err := getClient(ctx).VMCreate(context.Background(), v)
