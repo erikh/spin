@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	"go.etcd.io/bbolt"
 )
 
@@ -52,8 +52,8 @@ func (db *DB) StorageVolumeList() (map[string]string, error) {
 }
 
 // StorageImageCreate creates an image within a volume.
-func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, error) {
-	if s.Cdrom {
+func (db *DB) StorageImageCreate(s *vm.Storage) (*vm.Image, error) {
+	if s.CDROM {
 		return nil, errors.New("cannot create cdrom images")
 	}
 
@@ -61,7 +61,7 @@ func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, 
 		return nil, errors.New("volume cannot be nil")
 	}
 
-	image := &spinregistry.Image{}
+	image := &vm.Image{}
 
 	return image, db.db.Update(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(*s.Volume))
@@ -80,7 +80,7 @@ func (db *DB) StorageImageCreate(s *spinregistry.Storage) (*spinregistry.Image, 
 		}
 
 		image.Path = filepath.Join(string(volPath), s.Image)
-		image.Cdrom = false
+		image.CDROM = false
 		image.Volume = s.Volume
 
 		content, err := json.Marshal(image)
@@ -109,9 +109,9 @@ func (db *DB) StorageImageDelete(volume, image string) error {
 	})
 }
 
-// StorageImageGet will retrieve an image from the volume as a *spinregistry.Storage.
-func (db *DB) StorageImageGet(volume, image string) (*spinregistry.Image, error) {
-	var s spinregistry.Image
+// StorageImageGet will retrieve an image from the volume as a *vm.Image.
+func (db *DB) StorageImageGet(volume, image string) (*vm.Image, error) {
+	var s vm.Image
 
 	return &s, db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(storageBucket)).Bucket([]byte(volume))

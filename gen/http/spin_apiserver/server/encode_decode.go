@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"strconv"
 
-	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -35,7 +35,7 @@ func EncodeVMCreateResponse(encoder func(context.Context, http.ResponseWriter) g
 func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
 	return func(r *http.Request) (interface{}, error) {
 		var (
-			body VMCreateRequestBody
+			body *vm.Create
 			err  error
 		)
 		err = decoder(r).Decode(&body)
@@ -45,11 +45,7 @@ func DecodeVMCreateRequest(mux goahttp.Muxer, decoder func(*http.Request) goahtt
 			}
 			return nil, goa.DecodePayloadError(err.Error())
 		}
-		err = ValidateVMCreateRequestBody(&body)
-		if err != nil {
-			return nil, err
-		}
-		payload := NewVMCreateCreateVM(&body)
+		payload := body
 
 		return payload, nil
 	}
@@ -107,9 +103,9 @@ func EncodeVMListResponse(encoder func(context.Context, http.ResponseWriter) goa
 // spin-apiserver vm_get endpoint.
 func EncodeVMGetResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
 	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
-		res := v.(*spinapiserver.UpdatedVM)
+		res := v.(*vm.Transient)
 		enc := encoder(ctx, w)
-		body := NewVMGetResponseBody(res)
+		body := res
 		w.WriteHeader(http.StatusOK)
 		return enc.Encode(body)
 	}
@@ -299,65 +295,4 @@ func DecodeControlShutdownRequest(mux goahttp.Muxer, decoder func(*http.Request)
 
 		return payload, nil
 	}
-}
-
-// unmarshalStorageRequestBodyToSpinapiserverStorage builds a value of type
-// *spinapiserver.Storage from a value of type *StorageRequestBody.
-func unmarshalStorageRequestBodyToSpinapiserverStorage(v *StorageRequestBody) *spinapiserver.Storage {
-	res := &spinapiserver.Storage{
-		Volume:    v.Volume,
-		Image:     *v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     *v.Cdrom,
-	}
-
-	return res
-}
-
-// marshalSpinapiserverImageToImageResponseBody builds a value of type
-// *ImageResponseBody from a value of type *spinapiserver.Image.
-func marshalSpinapiserverImageToImageResponseBody(v *spinapiserver.Image) *ImageResponseBody {
-	res := &ImageResponseBody{
-		Path:   v.Path,
-		Cdrom:  v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
-}
-
-// unmarshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM builds a value of type
-// *spinapiserver.UpdatedVM from a value of type *UpdatedVMRequestBody.
-func unmarshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(v *UpdatedVMRequestBody) *spinapiserver.UpdatedVM {
-	res := &spinapiserver.UpdatedVM{
-		Name:   *v.Name,
-		Cpus:   *v.Cpus,
-		Memory: *v.Memory,
-	}
-	res.Images = make([]*spinapiserver.Image, len(v.Images))
-	for i, val := range v.Images {
-		res.Images[i] = unmarshalImageRequestBodyToSpinapiserverImage(val)
-	}
-	if v.Ports != nil {
-		res.Ports = make(map[uint]string, len(v.Ports))
-		for key, val := range v.Ports {
-			tk := key
-			tv := val
-			res.Ports[tk] = tv
-		}
-	}
-
-	return res
-}
-
-// unmarshalImageRequestBodyToSpinapiserverImage builds a value of type
-// *spinapiserver.Image from a value of type *ImageRequestBody.
-func unmarshalImageRequestBodyToSpinapiserverImage(v *ImageRequestBody) *spinapiserver.Image {
-	res := &spinapiserver.Image{
-		Path:   *v.Path,
-		Cdrom:  *v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/erikh/spin/gen/http/spin_registry/client"
 	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -37,7 +38,7 @@ func New(cc Config) *Client {
 }
 
 // VMCreate creates a new vm.
-func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.UpdatedVM) (uint64, error) {
+func (c *Client) VMCreate(ctx context.Context, vm *vm.Transient) (uint64, error) {
 	pkg, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
@@ -47,7 +48,7 @@ func (c *Client) VMCreate(ctx context.Context, vm *spinregistry.UpdatedVM) (uint
 }
 
 // VMUpdate updates a vm by id.
-func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinregistry.UpdatedVM) error {
+func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *vm.Transient) error {
 	_, err := c.client.VMUpdate()(ctx, &spinregistry.UpdateVM{ID: id, VM: vm})
 	return err
 }
@@ -59,13 +60,13 @@ func (c *Client) VMDelete(ctx context.Context, id uint64) error {
 }
 
 // VMGet retrieves a vm by id.
-func (c *Client) VMGet(ctx context.Context, id uint64) (*spinregistry.UpdatedVM, error) {
-	vm, err := c.client.VMGet()(ctx, &spinregistry.VMGetPayload{ID: id})
+func (c *Client) VMGet(ctx context.Context, id uint64) (*vm.Transient, error) {
+	ret, err := c.client.VMGet()(ctx, &spinregistry.VMGetPayload{ID: id})
 	if err != nil {
 		return nil, err
 	}
 
-	return vm.(*spinregistry.UpdatedVM), nil
+	return ret.(*vm.Transient), nil
 }
 
 // VMList retrieves all IDs of all VMs.
@@ -111,7 +112,7 @@ func (c *Client) StorageImageList(ctx context.Context, name string) ([]string, e
 }
 
 // StorageImageGet retrieves an image by name w/ volume name.
-func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName string) (*spinregistry.Storage, error) {
+func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName string) (*vm.Storage, error) {
 	res, err := c.client.StorageImagesGet()(ctx, &spinregistry.StorageImagesGetPayload{
 		VolumeName: volumeName,
 		ImageName:  imageName,
@@ -120,17 +121,17 @@ func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName stri
 		return nil, err
 	}
 
-	return res.(*spinregistry.Storage), nil
+	return res.(*vm.Storage), nil
 }
 
 // StorageImageCreate creates an image
-func (c *Client) StorageImageCreate(ctx context.Context, s *spinregistry.Storage) (*spinregistry.Image, error) {
+func (c *Client) StorageImageCreate(ctx context.Context, s *vm.Storage) (*vm.Image, error) {
 	img, err := c.client.StorageImagesCreate()(ctx, s)
 	if err != nil {
 		return nil, err
 	}
 
-	return img.(*spinregistry.Image), nil
+	return img.(*vm.Image), nil
 }
 
 // StorageImageDelete deletes an image by name & volume name

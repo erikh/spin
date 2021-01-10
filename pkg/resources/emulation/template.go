@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -34,7 +34,7 @@ type templateConfig struct {
 	Home    string
 }
 
-func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (templateConfig, error) {
+func vmToTemplateConfig(ac AgentConfig, id uint64, vm *vm.Transient) (templateConfig, error) {
 	args := []string{
 		"-nodefaults",
 		"-chardev",
@@ -52,13 +52,13 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (
 		"-cpu",
 		"kvm64",
 		"-smp",
-		fmt.Sprintf("cpus=1,cores=%d,maxcpus=%d", vm.Cpus, vm.Cpus),
+		fmt.Sprintf("cpus=1,cores=%d,maxcpus=%d", vm.CPUs, vm.CPUs),
 		"-nic",
 		fmt.Sprintf("user%s", hostfwdRules(vm)),
 	}
 
 	for i, storage := range vm.Images {
-		if storage.Cdrom {
+		if storage.CDROM {
 			args = append(args,
 				"-drive",
 				fmt.Sprintf("file=%s,media=cdrom,index=%d", storage.Path, i),
@@ -90,7 +90,7 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *spinregistry.UpdatedVM) (
 	return tc, nil
 }
 
-func hostfwdRules(vm *spinregistry.UpdatedVM) string {
+func hostfwdRules(vm *vm.Transient) string {
 	str := ""
 
 	for guest, hostaddr := range vm.Ports {

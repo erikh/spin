@@ -133,7 +133,7 @@ paths:
             type: array
             items:
               type: string
-              example: Commodi accusamus veritatis quos.
+              example: Cupiditate perspiciatis voluptas quia.
       schemes:
       - http
   /new:
@@ -212,22 +212,14 @@ paths:
       description: add an image definition to the registry
       operationId: spin-registry#storage_images_create
       parameters:
-      - name: storage_images_create_request_body
+      - name: any
         in: body
         required: true
-        schema:
-          $ref: '#/definitions/SpinRegistryStorageImagesCreateRequestBody'
-          required:
-          - image
-          - cdrom
+        schema: {}
       responses:
         "200":
           description: OK response.
-          schema:
-            $ref: '#/definitions/SpinRegistryStorageImagesCreateResponseBody'
-            required:
-            - path
-            - cdrom
+          schema: {}
       schemes:
       - http
   /storage/images/delete:
@@ -270,11 +262,7 @@ paths:
       responses:
         "200":
           description: OK response.
-          schema:
-            $ref: '#/definitions/SpinRegistryStorageImagesGetResponseBody'
-            required:
-            - path
-            - cdrom
+          schema: {}
       schemes:
       - http
   /storage/images/list:
@@ -299,7 +287,7 @@ paths:
             type: array
             items:
               type: string
-              example: Corporis nam.
+              example: Illum molestiae voluptates natus.
       schemes:
       - http
   /storage/volumes/create:
@@ -366,16 +354,11 @@ paths:
       description: Create a VM
       operationId: spin-registry#vm_create
       parameters:
-      - name: vm_create_request_body
+      - name: any
         in: body
+        description: vm type
         required: true
-        schema:
-          $ref: '#/definitions/SpinRegistryVMCreateRequestBody'
-          required:
-          - name
-          - cpus
-          - memory
-          - images
+        schema: {}
       responses:
         "200":
           description: OK response.
@@ -418,13 +401,7 @@ paths:
       responses:
         "200":
           description: OK response.
-          schema:
-            $ref: '#/definitions/SpinRegistryVMGetResponseBody'
-            required:
-            - name
-            - cpus
-            - memory
-            - images
+          schema: {}
       schemes:
       - http
   /vm/list:
@@ -441,7 +418,7 @@ paths:
             type: array
             items:
               type: integer
-              example: 11055455870090139273
+              example: 11574219435560685003
               format: int64
       schemes:
       - http
@@ -457,7 +434,7 @@ paths:
             type: array
             items:
               type: integer
-              example: 16162782905924696272
+              example: 17355596937229660577
               format: int64
       schemes:
       - http
@@ -487,206 +464,15 @@ paths:
       schemes:
       - http
 definitions:
-  ImageRequestBody:
-    title: ImageRequestBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this a cdrom image?
-        example: true
-      path:
-        type: string
-        description: Image path
-        example: Doloremque et iusto.
-      volume:
-        type: string
-        description: Volume name
-        example: Similique aliquid corrupti amet numquam sed totam.
-    example:
-      cdrom: false
-      path: Minima omnis.
-      volume: Ut quidem aut et qui.
-    required:
-    - path
-    - cdrom
-  ImageResponseBody:
-    title: ImageResponseBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this a cdrom image?
-        example: false
-      path:
-        type: string
-        description: Image path
-        example: Veritatis aut architecto deleniti incidunt.
-      volume:
-        type: string
-        description: Volume name
-        example: Tempora quisquam inventore inventore qui nihil.
-    example:
-      cdrom: false
-      path: Natus consectetur.
-      volume: Et nesciunt et molestiae.
-    required:
-    - path
-    - cdrom
-  SpinApiserverVMCreateRequestBody:
-    title: SpinApiserverVMCreateRequestBody
-    type: object
-    properties:
-      cpus:
-        type: integer
-        description: CPU count
-        example: 827813068308857193
-        format: int64
-      memory:
-        type: integer
-        description: Memory (in megabytes)
-        example: 2639635305187102420
-        format: int64
-      name:
-        type: string
-        description: Name of VM; does not need to be unique
-        example: Veniam soluta eum laudantium.
-      ports:
-        type: object
-        description: 'Ports to map to this vm: guest -> host addr:port'
-        example:
-          13249802869037512027: Qui ad aut possimus quisquam harum.
-        additionalProperties: true
-      storage:
-        type: array
-        items:
-          $ref: '#/definitions/StorageRequestBody'
-        description: Storage references
-        example:
-        - cdrom: false
-          image: Esse labore voluptas.
-          image_size: 4373530742914524004
-          volume: Rerum porro eius.
-        - cdrom: false
-          image: Esse labore voluptas.
-          image_size: 4373530742914524004
-          volume: Rerum porro eius.
-        - cdrom: false
-          image: Esse labore voluptas.
-          image_size: 4373530742914524004
-          volume: Rerum porro eius.
-    example:
-      cpus: 16743863857589963181
-      memory: 9222926294244299631
-      name: Natus quasi quia vel ut.
-      ports:
-        6037338872195264093: Quos vel in modi rerum.
-      storage:
-      - cdrom: false
-        image: Esse labore voluptas.
-        image_size: 4373530742914524004
-        volume: Rerum porro eius.
-      - cdrom: false
-        image: Esse labore voluptas.
-        image_size: 4373530742914524004
-        volume: Rerum porro eius.
-      - cdrom: false
-        image: Esse labore voluptas.
-        image_size: 4373530742914524004
-        volume: Rerum porro eius.
-    required:
-    - name
-    - cpus
-    - memory
-    - storage
-  SpinApiserverVMGetResponseBody:
-    title: SpinApiserverVMGetResponseBody
-    type: object
-    properties:
-      cpus:
-        type: integer
-        description: CPU count
-        example: 6630383005671600344
-        format: int64
-      images:
-        type: array
-        items:
-          $ref: '#/definitions/ImageResponseBody'
-        description: Image references
-        example:
-        - cdrom: false
-          path: Assumenda pariatur.
-          volume: Nobis quia.
-        - cdrom: false
-          path: Assumenda pariatur.
-          volume: Nobis quia.
-      memory:
-        type: integer
-        description: Memory (in megabytes)
-        example: 8629926544877524812
-        format: int64
-      name:
-        type: string
-        description: Name of VM; does not need to be unique
-        example: Animi dolorem totam omnis molestiae voluptatum rerum.
-      ports:
-        type: object
-        description: 'Ports to map to this vm: guest -> host addr:port'
-        example:
-          15250316450076326828: Voluptatem est.
-        additionalProperties: true
-    example:
-      cpus: 710111403244910451
-      images:
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      memory: 8901734024100363251
-      name: Blanditiis consequatur consequuntur praesentium consequatur.
-      ports:
-        6724682511515004255: Accusantium labore.
-        7027084381674330812: Consequuntur tempora dolorem quibusdam minus.
-        10331482834864607323: Ab nulla quis exercitationem voluptatem.
-    required:
-    - name
-    - cpus
-    - memory
-    - images
   SpinApiserverVMUpdateRequestBody:
     title: SpinApiserverVMUpdateRequestBody
     type: object
     properties:
       vm:
-        $ref: '#/definitions/UpdatedVMRequestBody'
+        description: VM Manifest to Update
+        example: Illo ratione totam.
     example:
-      vm:
-        cpus: 1235757894805898603
-        images:
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        memory: 11516433357545643392
-        name: Rerum asperiores corporis aut.
-        ports:
-          8213131886962674554: Maxime est voluptatem quia.
+      vm: Quis deleniti illum quod est.
     required:
     - vm
   SpinBrokerAddRequestBody:
@@ -696,38 +482,38 @@ definitions:
       action:
         type: string
         description: Action name
-        example: Exercitationem incidunt quae est velit eaque mollitia.
+        example: Ut quo ipsum.
       dependencies:
         type: array
         items:
           type: string
-          example: Qui ea qui omnis qui sit et.
+          example: Enim quos numquam recusandae ut.
         description: Dependency UUIDs
         example:
-        - Enim ut voluptas ullam quas aliquam.
-        - Quaerat illo molestiae.
-        - Cupiditate perspiciatis voluptas quia.
-        - Adipisci et provident.
+        - Fugit odio excepturi non voluptate.
+        - Qui consectetur nihil omnis voluptas.
+        - Ut laboriosam.
       parameters:
         type: object
         description: Action parameters
         example:
-          Similique qui qui.: Minima nemo omnis quia deleniti.
+          Facilis enim autem doloribus sunt ut quos.: Ut ex molestiae quod distinctio voluptatibus.
+          Itaque non quis quae.: Accusantium laboriosam sunt minima saepe architecto.
         additionalProperties: true
       resource:
         type: string
         description: Resource name
-        example: Quia ut laboriosam beatae itaque omnis.
+        example: Aperiam laborum sint aut dolores atque.
     example:
-      action: Qui sit nihil.
+      action: Incidunt quae est velit eaque mollitia.
       dependencies:
-      - Aperiam impedit autem.
-      - Ut quidem numquam provident occaecati animi saepe.
+      - Ea qui omnis qui.
+      - Et vel.
+      - Enim ut voluptas ullam quas aliquam.
+      - Quaerat illo molestiae.
       parameters:
-        Commodi placeat exercitationem nostrum est totam.: Eligendi quod voluptas sed.
-        Repudiandae eos.: Quibusdam error dolorem.
-        Sequi voluptatem culpa unde ut.: Aut ut illum.
-      resource: Ea iusto modi aspernatur.
+        Similique qui qui.: Minima nemo omnis quia deleniti.
+      resource: Itaque omnis fuga.
     required:
     - resource
     - action
@@ -738,19 +524,19 @@ definitions:
       id:
         type: string
         description: Command ID
-        example: Voluptas non officiis.
+        example: Accusantium consequuntur.
       status:
         type: boolean
         description: status of work
-        example: true
+        example: false
       status_reason:
         type: string
         description: reason of success/failure
-        example: Quia quisquam hic est quisquam.
+        example: Inventore sed.
     example:
-      id: Quae incidunt nulla sit.
+      id: Deserunt dicta eaque reiciendis autem.
       status: true
-      status_reason: Voluptas dolorem.
+      status_reason: Esse blanditiis qui repellendus voluptate.
     required:
     - id
     - status
@@ -784,12 +570,12 @@ definitions:
         example: false
     description: next_record_not_found_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: false
+      temporary: true
+      timeout: true
     required:
     - name
     - id
@@ -804,30 +590,29 @@ definitions:
       action:
         type: string
         description: action name
-        example: Et inventore.
+        example: Quibusdam error dolorem.
       parameters:
         type: object
         description: Action parameters
         example:
-          Deserunt dicta eaque reiciendis autem.: Accusamus esse blanditiis.
-          Repellendus voluptate voluptas.: In inventore.
-          Sequi temporibus.: Inventore cupiditate commodi aut asperiores quidem sit.
+          Aperiam impedit autem.: Ut quidem numquam provident occaecati animi saepe.
         additionalProperties: true
       resource:
         type: string
         description: resource type
-        example: Aliquid blanditiis repudiandae adipisci accusantium consequuntur.
+        example: Illum nulla repudiandae eos.
       uuid:
         type: string
         description: Command ID
-        example: Eum officiis sit quis itaque ducimus qui.
+        example: Ut quia aut.
     example:
-      action: Officia animi fugiat excepturi sed nisi aut.
+      action: Officia voluptas voluptate.
       parameters:
-        Quae illum.: Voluptates natus neque qui iusto ex et.
-        Saepe in repudiandae reiciendis eveniet repudiandae.: Perferendis impedit.
-      resource: At sed necessitatibus et asperiores earum hic.
-      uuid: Deleniti cum repudiandae veniam vel provident.
+        Animi quos.: Qui explicabo quaerat officiis.
+        Deleniti maxime possimus vero omnis sed.: Sint delectus quis et recusandae nobis.
+        Molestiae nihil tempora.: Officiis sit quis itaque.
+      resource: Et quisquam.
+      uuid: Commodi accusamus veritatis quos.
     required:
     - uuid
     - resource
@@ -866,8 +651,8 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: false
+      temporary: false
+      timeout: true
     required:
     - name
     - id
@@ -882,73 +667,21 @@ definitions:
       causer:
         type: string
         description: Failure causer as UUID (if any)
-        example: In animi quos voluptatem qui explicabo.
+        example: Ea iusto modi aspernatur.
       reason:
         type: string
         description: Failure reason (if any)
-        example: Quisquam ex officia voluptas voluptate.
+        example: Et provident.
       status:
         type: boolean
         description: Pass/Fail status
-        example: true
+        example: false
     example:
-      causer: Qui sint delectus quis.
-      reason: Voluptatum deleniti maxime possimus vero omnis.
-      status: false
+      causer: Est totam quasi eligendi quod.
+      reason: Sit nihil libero libero commodi placeat exercitationem.
+      status: true
     required:
     - status
-  SpinRegistryStorageImagesCreateRequestBody:
-    title: SpinRegistryStorageImagesCreateRequestBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this image a cdrom?
-        example: false
-      image:
-        type: string
-        description: Image filename, no `/` characters
-        example: Molestias officiis accusamus rerum facilis.
-      image_size:
-        type: integer
-        description: Image size (in gigabytes); required if image is not a cdrom
-        example: 6936064503355869647
-        format: int64
-      volume:
-        type: string
-        description: Volume name; required if image is not a cdrom
-        example: Illo eos repudiandae et vel corporis.
-    example:
-      cdrom: false
-      image: Voluptas et omnis enim.
-      image_size: 12004874832024600777
-      volume: Placeat odio ea et minima cum.
-    required:
-    - image
-    - cdrom
-  SpinRegistryStorageImagesCreateResponseBody:
-    title: SpinRegistryStorageImagesCreateResponseBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this a cdrom image?
-        example: false
-      path:
-        type: string
-        description: Image path
-        example: Expedita voluptatem reiciendis voluptatem dicta.
-      volume:
-        type: string
-        description: Volume name
-        example: Qui ipsa et magnam sed.
-    example:
-      cdrom: true
-      path: Quam non.
-      volume: Distinctio eveniet assumenda temporibus a.
-    required:
-    - path
-    - cdrom
   SpinRegistryStorageImagesDeleteRequestBody:
     title: SpinRegistryStorageImagesDeleteRequestBody
     type: object
@@ -956,14 +689,14 @@ definitions:
       image_name:
         type: string
         description: name of image
-        example: Tempora fugit qui doloremque.
+        example: Reprehenderit quo ab iure nihil.
       volume_name:
         type: string
         description: name of volume
-        example: Reprehenderit dolorum non qui.
+        example: Reiciendis eveniet repudiandae reiciendis perferendis impedit reiciendis.
     example:
-      image_name: Facere reprehenderit consequuntur inventore reiciendis tempora est.
-      volume_name: Eius corporis occaecati aut adipisci.
+      image_name: Est quisquam inventore quae.
+      volume_name: Non officiis molestiae nostrum quia quisquam.
     required:
     - volume_name
     - image_name
@@ -974,40 +707,17 @@ definitions:
       image_name:
         type: string
         description: name of image
-        example: Repellat cupiditate odit commodi veniam corrupti.
+        example: Minima voluptas dolorem et corporis quo dolores.
       volume_name:
         type: string
         description: name of volume
-        example: Veniam fugit in.
+        example: Nulla sit.
     example:
-      image_name: Molestiae voluptatem quos inventore aut.
-      volume_name: Consequatur eos aut laborum at.
+      image_name: Sequi molestiae inventore aut consequatur officiis perspiciatis.
+      volume_name: Odit tenetur cupiditate amet fugiat.
     required:
     - volume_name
     - image_name
-  SpinRegistryStorageImagesGetResponseBody:
-    title: SpinRegistryStorageImagesGetResponseBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this a cdrom image?
-        example: false
-      path:
-        type: string
-        description: Image path
-        example: Et quia consequatur magnam officia.
-      volume:
-        type: string
-        description: Volume name
-        example: Vel ipsum autem et et placeat.
-    example:
-      cdrom: false
-      path: Officiis velit hic unde assumenda praesentium.
-      volume: Eum nihil dicta optio.
-    required:
-    - path
-    - cdrom
   SpinRegistryStorageImagesListRequestBody:
     title: SpinRegistryStorageImagesListRequestBody
     type: object
@@ -1015,9 +725,9 @@ definitions:
       volume_name:
         type: string
         description: name of volume to list images for
-        example: Deserunt modi qui voluptatem placeat.
+        example: Qui iusto ex.
     example:
-      volume_name: Ullam dolore ea at ut.
+      volume_name: Doloremque saepe in.
     required:
     - volume_name
   SpinRegistryStorageVolumesCreateRequestBody:
@@ -1027,14 +737,14 @@ definitions:
       name:
         type: string
         description: name of volume
-        example: Quis sed voluptas omnis.
+        example: Quidem sit facilis.
       path:
         type: string
         description: path to volume
-        example: Qui quibusdam odio est nulla eum.
+        example: Cum repudiandae veniam vel.
     example:
-      name: Cupiditate neque eos aperiam.
-      path: Sunt doloremque.
+      name: Quae at sed necessitatibus et.
+      path: Earum hic sequi.
     required:
     - name
     - path
@@ -1045,254 +755,19 @@ definitions:
       name:
         type: string
         description: name of volume
-        example: Sint ut perspiciatis.
+        example: Animi fugiat excepturi sed.
     example:
-      name: Quos maxime ut error facilis modi autem.
+      name: Aut tempore aliquam.
     required:
     - name
-  SpinRegistryVMCreateRequestBody:
-    title: SpinRegistryVMCreateRequestBody
-    type: object
-    properties:
-      cpus:
-        type: integer
-        description: CPU count
-        example: 7960362848282598736
-        format: int64
-      images:
-        type: array
-        items:
-          $ref: '#/definitions/ImageRequestBody'
-        description: Image references
-        example:
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-      memory:
-        type: integer
-        description: Memory (in megabytes)
-        example: 696022035535720389
-        format: int64
-      name:
-        type: string
-        description: Name of VM; does not need to be unique
-        example: Fugit adipisci aliquid aliquam.
-      ports:
-        type: object
-        description: 'Ports to map to this vm: guest -> host addr:port'
-        example:
-          4047906078158329845: Est quia nemo suscipit alias.
-          5522998880503880554: Aliquam nobis dicta dignissimos optio quisquam.
-        additionalProperties: true
-    example:
-      cpus: 6521501625636069185
-      images:
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      memory: 8803024106508117673
-      name: Ut id aut dolores.
-      ports:
-        17656810983404926439: Nisi placeat quasi consequatur ut sed.
-    required:
-    - name
-    - cpus
-    - memory
-    - images
-  SpinRegistryVMGetResponseBody:
-    title: SpinRegistryVMGetResponseBody
-    type: object
-    properties:
-      cpus:
-        type: integer
-        description: CPU count
-        example: 6381698118855045955
-        format: int64
-      images:
-        type: array
-        items:
-          $ref: '#/definitions/ImageResponseBody'
-        description: Image references
-        example:
-        - cdrom: false
-          path: Assumenda pariatur.
-          volume: Nobis quia.
-        - cdrom: false
-          path: Assumenda pariatur.
-          volume: Nobis quia.
-        - cdrom: false
-          path: Assumenda pariatur.
-          volume: Nobis quia.
-      memory:
-        type: integer
-        description: Memory (in megabytes)
-        example: 11692559188285813327
-        format: int64
-      name:
-        type: string
-        description: Name of VM; does not need to be unique
-        example: Ut modi sint quo.
-      ports:
-        type: object
-        description: 'Ports to map to this vm: guest -> host addr:port'
-        example:
-          3030823960754760868: Ut optio nemo.
-          4375529905132579729: Libero ea repudiandae.
-        additionalProperties: true
-    example:
-      cpus: 17106812839344055104
-      images:
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      - cdrom: false
-        path: Assumenda pariatur.
-        volume: Nobis quia.
-      memory: 18276940718251142926
-      name: Similique eligendi veniam.
-      ports:
-        4958259689897901043: Unde sed commodi.
-        7636634391002491891: Voluptas laborum.
-        13898844425479384601: Ipsum minima fugit vero.
-    required:
-    - name
-    - cpus
-    - memory
-    - images
   SpinRegistryVMUpdateRequestBody:
     title: SpinRegistryVMUpdateRequestBody
     type: object
     properties:
       vm:
-        $ref: '#/definitions/UpdatedVMRequestBody'
+        description: vm to update
+        example: Perspiciatis in.
     example:
-      vm:
-        cpus: 1235757894805898603
-        images:
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        memory: 11516433357545643392
-        name: Rerum asperiores corporis aut.
-        ports:
-          8213131886962674554: Maxime est voluptatem quia.
+      vm: Delectus sequi temporibus repudiandae inventore cupiditate commodi.
     required:
     - vm
-  StorageRequestBody:
-    title: StorageRequestBody
-    type: object
-    properties:
-      cdrom:
-        type: boolean
-        description: Is this image a cdrom?
-        example: true
-      image:
-        type: string
-        description: Image filename, no `/` characters
-        example: Rerum odit.
-      image_size:
-        type: integer
-        description: Image size (in gigabytes); required if image is not a cdrom
-        example: 3731676477825233066
-        format: int64
-      volume:
-        type: string
-        description: Volume name; required if image is not a cdrom
-        example: Corporis quo.
-    example:
-      cdrom: false
-      image: Officiis perspiciatis.
-      image_size: 12097151193832539624
-      volume: Fugiat sapiente sequi molestiae inventore aut.
-    required:
-    - image
-    - cdrom
-  UpdatedVMRequestBody:
-    title: UpdatedVMRequestBody
-    type: object
-    properties:
-      cpus:
-        type: integer
-        description: CPU count
-        example: 1715928827592478753
-        format: int64
-      images:
-        type: array
-        items:
-          $ref: '#/definitions/ImageRequestBody'
-        description: Image references
-        example:
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-        - cdrom: true
-          path: Explicabo sit ab.
-          volume: Quis quidem nulla.
-      memory:
-        type: integer
-        description: Memory (in megabytes)
-        example: 3574204186687680349
-        format: int64
-      name:
-        type: string
-        description: Name of VM; does not need to be unique
-        example: Labore accusantium ut itaque odio explicabo perferendis.
-      ports:
-        type: object
-        description: 'Ports to map to this vm: guest -> host addr:port'
-        example:
-          16613239315514824321: Adipisci tempora.
-        additionalProperties: true
-    example:
-      cpus: 5691607402281797891
-      images:
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      - cdrom: true
-        path: Explicabo sit ab.
-        volume: Quis quidem nulla.
-      memory: 5917043672075731270
-      name: Id rerum hic.
-      ports:
-        3984617861639826381: Odio quia voluptas deserunt.
-        9507820352880056900: Illum enim sequi soluta omnis deleniti autem.
-        11438016409281173653: Dignissimos nihil soluta necessitatibus voluptas.
-    required:
-    - name
-    - cpus
-    - memory
-    - images

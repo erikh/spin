@@ -22,7 +22,7 @@ func BuildAddPayload(spinBrokerAddBody string, spinBrokerAddID string) (*spinbro
 	{
 		err = json.Unmarshal([]byte(spinBrokerAddBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Voluptatem quibusdam dolor.\",\n      \"dependencies\": [\n         \"Adipisci est incidunt sequi.\",\n         \"Maxime aut non.\"\n      ],\n      \"parameters\": {\n         \"Mollitia natus temporibus fugit occaecati ipsum qui.\": \"Non aut molestiae deleniti ad dolorem eos.\",\n         \"Porro fugiat ex consequatur provident dignissimos.\": \"Possimus velit quod sit.\"\n      },\n      \"resource\": \"Quaerat itaque aut.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"action\": \"Ratione et ex tempore ipsum in.\",\n      \"dependencies\": [\n         \"Itaque tenetur labore quia distinctio aperiam.\",\n         \"Soluta voluptatem minima natus.\",\n         \"Consequatur voluptatem.\",\n         \"Eos iste illum omnis suscipit.\"\n      ],\n      \"parameters\": {\n         \"Doloribus impedit.\": \"Qui dolor ex consequatur.\",\n         \"Maiores ut voluptatem sed et consectetur.\": \"Repellat vero.\",\n         \"Ut hic assumenda assumenda ullam qui.\": \"Quidem qui.\"\n      },\n      \"resource\": \"Voluptatibus nostrum commodi error omnis quis quia.\"\n   }'")
 		}
 	}
 	var id string
@@ -99,7 +99,7 @@ func BuildCompletePayload(spinBrokerCompleteBody string) (*spinbroker.CompletePa
 	{
 		err = json.Unmarshal([]byte(spinBrokerCompleteBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Occaecati enim in aut vero.\",\n      \"status\": true,\n      \"status_reason\": \"Quis omnis suscipit est et dicta id.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"id\": \"Similique corrupti ab soluta vel qui vel.\",\n      \"status\": true,\n      \"status_reason\": \"Nihil autem dolorem soluta quisquam.\"\n   }'")
 		}
 	}
 	v := &spinbroker.CompletePayload{

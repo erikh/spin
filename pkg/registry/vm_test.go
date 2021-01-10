@@ -4,14 +4,16 @@ import (
 	"reflect"
 	"testing"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 )
 
 func TestVMDBCRUD(t *testing.T) {
 	db := makeDB(t)
 
-	vm := &spinregistry.UpdatedVM{
-		Name: "foo",
+	vm := &vm.Transient{
+		Core: vm.Core{
+			Name: "foo",
+		},
 	}
 
 	id, err := db.VMCreate(vm)
@@ -32,7 +34,7 @@ func TestVMDBCRUD(t *testing.T) {
 		t.Fatal("vms were not equal")
 	}
 
-	vm.Cpus = 1 // set something differently to test update
+	vm.CPUs = 1 // set something differently to test update
 
 	if err := db.VMUpdate(id, vm); err != nil {
 		t.Fatal(err)
@@ -112,7 +114,7 @@ func TestVMDBCRUDTable(t *testing.T) {
 		},
 		"update non-existent": {
 			call: func(db *DB) error {
-				return db.VMUpdate(1, &spinregistry.UpdatedVM{})
+				return db.VMUpdate(1, &vm.Transient{})
 			},
 		},
 	}

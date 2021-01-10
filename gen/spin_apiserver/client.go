@@ -10,6 +10,7 @@ package spinapiserver
 import (
 	"context"
 
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -40,7 +41,7 @@ func NewClient(vMCreate, vMDelete, vMList, vMGet, vMUpdate, controlStart, contro
 }
 
 // VMCreate calls the "vm_create" endpoint of the "spin-apiserver" service.
-func (c *Client) VMCreate(ctx context.Context, p *CreateVM) (res uint64, err error) {
+func (c *Client) VMCreate(ctx context.Context, p *vm.Create) (res uint64, err error) {
 	var ires interface{}
 	ires, err = c.VMCreateEndpoint(ctx, p)
 	if err != nil {
@@ -66,13 +67,13 @@ func (c *Client) VMList(ctx context.Context) (res []uint64, err error) {
 }
 
 // VMGet calls the "vm_get" endpoint of the "spin-apiserver" service.
-func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *UpdatedVM, err error) {
+func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *vm.Transient, err error) {
 	var ires interface{}
 	ires, err = c.VMGetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*UpdatedVM), nil
+	return ires.(*vm.Transient), nil
 }
 
 // VMUpdate calls the "vm_update" endpoint of the "spin-apiserver" service.

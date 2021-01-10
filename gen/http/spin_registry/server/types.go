@@ -9,29 +9,15 @@ package server
 
 import (
 	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
-
-// VMCreateRequestBody is the type of the "spin-registry" service "vm_create"
-// endpoint HTTP request body.
-type VMCreateRequestBody struct {
-	// Image references
-	Images []*ImageRequestBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
-	// Name of VM; does not need to be unique
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// CPU count
-	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
-	// Memory (in megabytes)
-	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Ports to map to this vm: guest -> host addr:port
-	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
-}
 
 // VMUpdateRequestBody is the type of the "spin-registry" service "vm_update"
 // endpoint HTTP request body.
 type VMUpdateRequestBody struct {
-	// VM to publish
-	VM *UpdatedVMRequestBody `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
+	// vm to update
+	VM *vm.Transient `form:"vm,omitempty" json:"vm,omitempty" xml:"vm,omitempty"`
 }
 
 // StorageVolumesCreateRequestBody is the type of the "spin-registry" service
@@ -57,19 +43,6 @@ type StorageImagesListRequestBody struct {
 	VolumeName *string `form:"volume_name,omitempty" json:"volume_name,omitempty" xml:"volume_name,omitempty"`
 }
 
-// StorageImagesCreateRequestBody is the type of the "spin-registry" service
-// "storage_images_create" endpoint HTTP request body.
-type StorageImagesCreateRequestBody struct {
-	// Volume name; required if image is not a cdrom
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-	// Image filename, no `/` characters
-	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
-	// Image size (in gigabytes); required if image is not a cdrom
-	ImageSize *uint `form:"image_size,omitempty" json:"image_size,omitempty" xml:"image_size,omitempty"`
-	// Is this image a cdrom?
-	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
-}
-
 // StorageImagesDeleteRequestBody is the type of the "spin-registry" service
 // "storage_images_delete" endpoint HTTP request body.
 type StorageImagesDeleteRequestBody struct {
@@ -88,154 +61,12 @@ type StorageImagesGetRequestBody struct {
 	ImageName *string `form:"image_name,omitempty" json:"image_name,omitempty" xml:"image_name,omitempty"`
 }
 
-// VMGetResponseBody is the type of the "spin-registry" service "vm_get"
-// endpoint HTTP response body.
-type VMGetResponseBody struct {
-	// Image references
-	Images []*ImageResponseBody `form:"images" json:"images" xml:"images"`
-	// Name of VM; does not need to be unique
-	Name string `form:"name" json:"name" xml:"name"`
-	// CPU count
-	Cpus uint `form:"cpus" json:"cpus" xml:"cpus"`
-	// Memory (in megabytes)
-	Memory uint `form:"memory" json:"memory" xml:"memory"`
-	// Ports to map to this vm: guest -> host addr:port
-	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
-}
-
-// StorageImagesCreateResponseBody is the type of the "spin-registry" service
-// "storage_images_create" endpoint HTTP response body.
-type StorageImagesCreateResponseBody struct {
-	// Image path
-	Path string `form:"path" json:"path" xml:"path"`
-	// Is this a cdrom image?
-	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
-	// Volume name
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-}
-
-// StorageImagesGetResponseBody is the type of the "spin-registry" service
-// "storage_images_get" endpoint HTTP response body.
-type StorageImagesGetResponseBody struct {
-	// Image path
-	Path string `form:"path" json:"path" xml:"path"`
-	// Is this a cdrom image?
-	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
-	// Volume name
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-}
-
-// ImageResponseBody is used to define fields on response body types.
-type ImageResponseBody struct {
-	// Image path
-	Path string `form:"path" json:"path" xml:"path"`
-	// Is this a cdrom image?
-	Cdrom bool `form:"cdrom" json:"cdrom" xml:"cdrom"`
-	// Volume name
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-}
-
-// ImageRequestBody is used to define fields on request body types.
-type ImageRequestBody struct {
-	// Image path
-	Path *string `form:"path,omitempty" json:"path,omitempty" xml:"path,omitempty"`
-	// Is this a cdrom image?
-	Cdrom *bool `form:"cdrom,omitempty" json:"cdrom,omitempty" xml:"cdrom,omitempty"`
-	// Volume name
-	Volume *string `form:"volume,omitempty" json:"volume,omitempty" xml:"volume,omitempty"`
-}
-
-// UpdatedVMRequestBody is used to define fields on request body types.
-type UpdatedVMRequestBody struct {
-	// Image references
-	Images []*ImageRequestBody `form:"images,omitempty" json:"images,omitempty" xml:"images,omitempty"`
-	// Name of VM; does not need to be unique
-	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
-	// CPU count
-	Cpus *uint `form:"cpus,omitempty" json:"cpus,omitempty" xml:"cpus,omitempty"`
-	// Memory (in megabytes)
-	Memory *uint `form:"memory,omitempty" json:"memory,omitempty" xml:"memory,omitempty"`
-	// Ports to map to this vm: guest -> host addr:port
-	Ports map[uint]string `form:"ports,omitempty" json:"ports,omitempty" xml:"ports,omitempty"`
-}
-
-// NewVMGetResponseBody builds the HTTP response body from the result of the
-// "vm_get" endpoint of the "spin-registry" service.
-func NewVMGetResponseBody(res *spinregistry.UpdatedVM) *VMGetResponseBody {
-	body := &VMGetResponseBody{
-		Name:   res.Name,
-		Cpus:   res.Cpus,
-		Memory: res.Memory,
-	}
-	if res.Images != nil {
-		body.Images = make([]*ImageResponseBody, len(res.Images))
-		for i, val := range res.Images {
-			body.Images[i] = marshalSpinregistryImageToImageResponseBody(val)
-		}
-	}
-	if res.Ports != nil {
-		body.Ports = make(map[uint]string, len(res.Ports))
-		for key, val := range res.Ports {
-			tk := key
-			tv := val
-			body.Ports[tk] = tv
-		}
-	}
-	return body
-}
-
-// NewStorageImagesCreateResponseBody builds the HTTP response body from the
-// result of the "storage_images_create" endpoint of the "spin-registry"
-// service.
-func NewStorageImagesCreateResponseBody(res *spinregistry.Image) *StorageImagesCreateResponseBody {
-	body := &StorageImagesCreateResponseBody{
-		Path:   res.Path,
-		Cdrom:  res.Cdrom,
-		Volume: res.Volume,
-	}
-	return body
-}
-
-// NewStorageImagesGetResponseBody builds the HTTP response body from the
-// result of the "storage_images_get" endpoint of the "spin-registry" service.
-func NewStorageImagesGetResponseBody(res *spinregistry.Image) *StorageImagesGetResponseBody {
-	body := &StorageImagesGetResponseBody{
-		Path:   res.Path,
-		Cdrom:  res.Cdrom,
-		Volume: res.Volume,
-	}
-	return body
-}
-
-// NewVMCreateUpdatedVM builds a spin-registry service vm_create endpoint
-// payload.
-func NewVMCreateUpdatedVM(body *VMCreateRequestBody) *spinregistry.UpdatedVM {
-	v := &spinregistry.UpdatedVM{
-		Name:   *body.Name,
-		Cpus:   *body.Cpus,
-		Memory: *body.Memory,
-	}
-	v.Images = make([]*spinregistry.Image, len(body.Images))
-	for i, val := range body.Images {
-		v.Images[i] = unmarshalImageRequestBodyToSpinregistryImage(val)
-	}
-	if body.Ports != nil {
-		v.Ports = make(map[uint]string, len(body.Ports))
-		for key, val := range body.Ports {
-			tk := key
-			tv := val
-			v.Ports[tk] = tv
-		}
-	}
-
-	return v
-}
-
 // NewVMUpdateUpdateVM builds a spin-registry service vm_update endpoint
 // payload.
 func NewVMUpdateUpdateVM(body *VMUpdateRequestBody, id uint64) *spinregistry.UpdateVM {
-	v := &spinregistry.UpdateVM{}
-	v.VM = unmarshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(body.VM)
+	v := &spinregistry.UpdateVM{
+		VM: body.VM,
+	}
 	v.ID = id
 
 	return v
@@ -288,19 +119,6 @@ func NewStorageImagesListPayload(body *StorageImagesListRequestBody) *spinregist
 	return v
 }
 
-// NewStorageImagesCreateStorage builds a spin-registry service
-// storage_images_create endpoint payload.
-func NewStorageImagesCreateStorage(body *StorageImagesCreateRequestBody) *spinregistry.Storage {
-	v := &spinregistry.Storage{
-		Volume:    body.Volume,
-		Image:     *body.Image,
-		ImageSize: body.ImageSize,
-		Cdrom:     *body.Cdrom,
-	}
-
-	return v
-}
-
 // NewStorageImagesDeletePayload builds a spin-registry service
 // storage_images_delete endpoint payload.
 func NewStorageImagesDeletePayload(body *StorageImagesDeleteRequestBody) *spinregistry.StorageImagesDeletePayload {
@@ -323,41 +141,11 @@ func NewStorageImagesGetPayload(body *StorageImagesGetRequestBody) *spinregistry
 	return v
 }
 
-// ValidateVMCreateRequestBody runs the validations defined on
-// vm_create_request_body
-func ValidateVMCreateRequestBody(body *VMCreateRequestBody) (err error) {
-	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	if body.Cpus == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cpus", "body"))
-	}
-	if body.Memory == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
-	}
-	if body.Images == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
-	}
-	for _, e := range body.Images {
-		if e != nil {
-			if err2 := ValidateImageRequestBody(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
-	}
-	return
-}
-
 // ValidateVMUpdateRequestBody runs the validations defined on
 // vm_update_request_body
 func ValidateVMUpdateRequestBody(body *VMUpdateRequestBody) (err error) {
 	if body.VM == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
-	}
-	if body.VM != nil {
-		if err2 := ValidateUpdatedVMRequestBody(body.VM); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
 	}
 	return
 }
@@ -392,18 +180,6 @@ func ValidateStorageImagesListRequestBody(body *StorageImagesListRequestBody) (e
 	return
 }
 
-// ValidateStorageImagesCreateRequestBody runs the validations defined on
-// storage_images_create_request_body
-func ValidateStorageImagesCreateRequestBody(body *StorageImagesCreateRequestBody) (err error) {
-	if body.Image == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("image", "body"))
-	}
-	if body.Cdrom == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
-	}
-	return
-}
-
 // ValidateStorageImagesDeleteRequestBody runs the validations defined on
 // storage_images_delete_request_body
 func ValidateStorageImagesDeleteRequestBody(body *StorageImagesDeleteRequestBody) (err error) {
@@ -424,42 +200,6 @@ func ValidateStorageImagesGetRequestBody(body *StorageImagesGetRequestBody) (err
 	}
 	if body.ImageName == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("image_name", "body"))
-	}
-	return
-}
-
-// ValidateImageRequestBody runs the validations defined on ImageRequestBody
-func ValidateImageRequestBody(body *ImageRequestBody) (err error) {
-	if body.Path == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("path", "body"))
-	}
-	if body.Cdrom == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cdrom", "body"))
-	}
-	return
-}
-
-// ValidateUpdatedVMRequestBody runs the validations defined on
-// UpdatedVMRequestBody
-func ValidateUpdatedVMRequestBody(body *UpdatedVMRequestBody) (err error) {
-	if body.Name == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
-	}
-	if body.Cpus == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("cpus", "body"))
-	}
-	if body.Memory == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("memory", "body"))
-	}
-	if body.Images == nil {
-		err = goa.MergeErrors(err, goa.MissingFieldError("images", "body"))
-	}
-	for _, e := range body.Images {
-		if e != nil {
-			if err2 := ValidateImageRequestBody(e); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
-		}
 	}
 	return
 }

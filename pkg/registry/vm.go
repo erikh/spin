@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	"go.etcd.io/bbolt"
 )
 
 // VMCreate creates a vm and returns its id, which is auto-generated.
-func (db *DB) VMCreate(vm *spinregistry.UpdatedVM) (uint64, error) {
+func (db *DB) VMCreate(vm *vm.Transient) (uint64, error) {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return 0, err
@@ -33,8 +33,8 @@ func (db *DB) VMCreate(vm *spinregistry.UpdatedVM) (uint64, error) {
 }
 
 // VMGet retrieves the vm at the id specified.
-func (db *DB) VMGet(id uint64) (*spinregistry.UpdatedVM, error) {
-	var vm spinregistry.UpdatedVM
+func (db *DB) VMGet(id uint64) (*vm.Transient, error) {
+	var vm vm.Transient
 
 	return &vm, db.db.View(func(tx *bbolt.Tx) error {
 		bucket := tx.Bucket([]byte(vmBucket))
@@ -62,7 +62,7 @@ func (db *DB) VMDelete(id uint64) error {
 }
 
 // VMUpdate replaces the id with the new vm definition.
-func (db *DB) VMUpdate(id uint64, vm *spinregistry.UpdatedVM) error {
+func (db *DB) VMUpdate(id uint64, vm *vm.Transient) error {
 	content, err := json.Marshal(vm)
 	if err != nil {
 		return err

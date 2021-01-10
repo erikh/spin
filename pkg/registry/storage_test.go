@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 )
 
 func TestStorageVolumeDBCRUD(t *testing.T) {
@@ -62,7 +62,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 
 	volumeName := "test"
 
-	image := &spinregistry.Storage{
+	image := &vm.Storage{
 		Image:     "test.raw",
 		Volume:    &volumeName,
 		ImageSize: makeUintPtr(50),
@@ -130,7 +130,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 	imageList := []string{"test1.raw", "test2.raw", "test3.raw"}
 
 	for _, imgName := range imageList {
-		image := &spinregistry.Storage{
+		image := &vm.Storage{
 			Image:     imgName,
 			Volume:    &volumeName,
 			ImageSize: makeUintPtr(50),

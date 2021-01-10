@@ -13,7 +13,9 @@ var _ = Service("spin-registry", func() {
 
 	Method("vm_create", func() {
 		Description("Create a VM")
-		Payload(UpdatedVM)
+		Payload(Any, "vm type", func() {
+			Meta("struct:field:type", "*vm.Transient", "github.com/erikh/spin/pkg/vm")
+		})
 		Result(UInt64)
 
 		HTTP(func() {
@@ -51,7 +53,9 @@ var _ = Service("spin-registry", func() {
 			Attribute("id", UInt64, "ID of VM to remove")
 			Required("id")
 		})
-		Result(UpdatedVM)
+		Result(Any, "vm type", func() {
+			Meta("struct:field:type", "*vm.Transient", "github.com/erikh/spin/pkg/vm")
+		})
 
 		HTTP(func() {
 			GET("/vm/get/{id}")
@@ -134,8 +138,12 @@ var _ = Service("spin-registry", func() {
 	Method("storage_images_create", func() {
 		Description("add an image definition to the registry")
 
-		Payload(Storage)
-		Result(Image)
+		Payload(Any, func() {
+			Meta("struct:field:type", "*vm.Storage", "github.com/erikh/spin/pkg/vm")
+		})
+		Result(Any, func() {
+			Meta("struct:field:type", "*vm.Image", "github.com/erikh/spin/pkg/vm")
+		})
 
 		HTTP(func() {
 			POST("/storage/images/create")
@@ -167,7 +175,9 @@ var _ = Service("spin-registry", func() {
 			Required("volume_name", "image_name")
 		})
 
-		Result(Image)
+		Result(Any, func() {
+			Meta("struct:field:type", "*vm.Image", "github.com/erikh/spin/pkg/vm")
+		})
 
 		HTTP(func() {
 			GET("/storage/images/get")

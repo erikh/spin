@@ -10,6 +10,7 @@ package spinregistry
 import (
 	"context"
 
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -48,7 +49,7 @@ func NewClient(vMCreate, vMUpdate, vMDelete, vMGet, vMList, storageVolumesList, 
 }
 
 // VMCreate calls the "vm_create" endpoint of the "spin-registry" service.
-func (c *Client) VMCreate(ctx context.Context, p *UpdatedVM) (res uint64, err error) {
+func (c *Client) VMCreate(ctx context.Context, p *vm.Transient) (res uint64, err error) {
 	var ires interface{}
 	ires, err = c.VMCreateEndpoint(ctx, p)
 	if err != nil {
@@ -70,13 +71,13 @@ func (c *Client) VMDelete(ctx context.Context, p *VMDeletePayload) (err error) {
 }
 
 // VMGet calls the "vm_get" endpoint of the "spin-registry" service.
-func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *UpdatedVM, err error) {
+func (c *Client) VMGet(ctx context.Context, p *VMGetPayload) (res *vm.Transient, err error) {
 	var ires interface{}
 	ires, err = c.VMGetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*UpdatedVM), nil
+	return ires.(*vm.Transient), nil
 }
 
 // VMList calls the "vm_list" endpoint of the "spin-registry" service.
@@ -127,13 +128,13 @@ func (c *Client) StorageImagesList(ctx context.Context, p *StorageImagesListPayl
 
 // StorageImagesCreate calls the "storage_images_create" endpoint of the
 // "spin-registry" service.
-func (c *Client) StorageImagesCreate(ctx context.Context, p *Storage) (res *Image, err error) {
+func (c *Client) StorageImagesCreate(ctx context.Context, p *vm.Storage) (res *vm.Image, err error) {
 	var ires interface{}
 	ires, err = c.StorageImagesCreateEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*Image), nil
+	return ires.(*vm.Image), nil
 }
 
 // StorageImagesDelete calls the "storage_images_delete" endpoint of the
@@ -145,11 +146,11 @@ func (c *Client) StorageImagesDelete(ctx context.Context, p *StorageImagesDelete
 
 // StorageImagesGet calls the "storage_images_get" endpoint of the
 // "spin-registry" service.
-func (c *Client) StorageImagesGet(ctx context.Context, p *StorageImagesGetPayload) (res *Image, err error) {
+func (c *Client) StorageImagesGet(ctx context.Context, p *StorageImagesGetPayload) (res *vm.Image, err error) {
 	var ires interface{}
 	ires, err = c.StorageImagesGetEndpoint(ctx, p)
 	if err != nil {
 		return
 	}
-	return ires.(*Image), nil
+	return ires.(*vm.Image), nil
 }

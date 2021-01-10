@@ -6,7 +6,9 @@ var _ = Service("spin-apiserver", func() {
 	Description("Bridge between the outer-facing UIs and the internals")
 
 	Method("vm_create", func() {
-		Payload(CreateVM)
+		Payload(Any, "vm type", func() {
+			Meta("struct:field:type", "*vm.Create", "github.com/erikh/spin/pkg/vm")
+		})
 		Result(UInt64)
 
 		HTTP(func() {
@@ -41,7 +43,9 @@ var _ = Service("spin-apiserver", func() {
 			Attribute("id", UInt64, "ID of VM to retrieve")
 			Required("id")
 		})
-		Result(UpdatedVM)
+		Result(Any, "vm type", func() {
+			Meta("struct:field:type", "*vm.Transient", "github.com/erikh/spin/pkg/vm")
+		})
 
 		HTTP(func() {
 			GET("/vm/get/{id}")
@@ -52,7 +56,9 @@ var _ = Service("spin-apiserver", func() {
 	Method("vm_update", func() {
 		Payload(func() {
 			Attribute("id", UInt64, "ID of VM to Update")
-			Attribute("vm", UpdatedVM, "VM Manifest to Update")
+			Attribute("vm", Any, "VM Manifest to Update", func() {
+				Meta("struct:field:type", "*vm.Transient", "github.com/erikh/spin/pkg/vm")
+			})
 			Required("id", "vm")
 		})
 

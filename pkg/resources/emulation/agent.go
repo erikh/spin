@@ -10,11 +10,11 @@ import (
 
 	"github.com/erikh/spin"
 	brokerclient "github.com/erikh/spin/clients/broker"
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	"github.com/erikh/spin/pkg/agent"
 	"github.com/erikh/spin/pkg/agent/dispatcher"
 	"github.com/erikh/spin/pkg/qmp"
 	"github.com/erikh/spin/pkg/supervisor"
+	"github.com/erikh/spin/pkg/vm"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -54,7 +54,7 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
 			id := c.Parameter("id").(*uint64)
-			vm := c.Parameter("vm").(*spinregistry.UpdatedVM)
+			vm := c.Parameter("vm").(*vm.Transient)
 
 			tc, err := vmToTemplateConfig(ac, *id, vm)
 			if err != nil {

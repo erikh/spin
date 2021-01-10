@@ -13,7 +13,7 @@ import (
 	registryclient "github.com/erikh/spin/clients/registry"
 	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
 	spinbroker "github.com/erikh/spin/gen/spin_broker"
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -32,13 +32,15 @@ func NewSpinApiserver(logger *log.Logger, broker *brokerclient.Client, registry 
 	}
 }
 
-func toRegistryVM(p *spinapiserver.CreateVM, images []*spinregistry.Image) *spinregistry.UpdatedVM {
-	return &spinregistry.UpdatedVM{
-		Name:   p.Name,
-		Cpus:   p.Cpus,
-		Memory: p.Memory,
+func toRegistryVM(p *vm.Create, images []vm.Image) *vm.Transient {
+	return &vm.Transient{
+		Core: vm.Core{
+			Name:   p.Name,
+			CPUs:   p.CPUs,
+			Memory: p.Memory,
+			Ports:  p.Ports,
+		},
 		Images: images,
-		Ports:  p.Ports,
 	}
 }
 
@@ -95,15 +97,14 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 }
 
 func (s *spinApiserversrvc) VMUpdate(ctx context.Context, p *spinapiserver.VMUpdatePayload) error {
-	ret := &spinregistry.UpdatedVM{
-		Name:   p.VM.Name,
-		Cpus:   p.VM.Cpus,
-		Memory: p.VM.Memory,
-		Ports:  p.VM.Ports,
-	}
-
-	for _, image := range p.VM.Images {
-		ret.Images = append(ret.Images, (*spinregistry.Image)(image))
+	ret := &vm.Transient{
+		Core: vm.Core{
+			Name:   p.VM.Name,
+			CPUs:   p.VM.CPUs,
+			Memory: p.VM.Memory,
+			Ports:  p.VM.Ports,
+		},
+		Images: p.VM.Images,
 	}
 
 	err := s.apiOneShot(ctx, &spinbroker.AddPayload{
@@ -121,21 +122,20 @@ func (s *spinApiserversrvc) VMUpdate(ctx context.Context, p *spinapiserver.VMUpd
 	return s.registry.VMUpdate(ctx, p.ID, ret)
 }
 
-func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPayload) (*spinapiserver.UpdatedVM, error) {
-	vm, err := s.registry.VMGet(ctx, p.ID)
+func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPayload) (*vm.Transient, error) {
+	v, err := s.registry.VMGet(ctx, p.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	ret := &spinapiserver.UpdatedVM{
-		Name:   vm.Name,
-		Cpus:   vm.Cpus,
-		Memory: vm.Memory,
-		Ports:  vm.Ports,
-	}
-
-	for _, image := range vm.Images {
-		ret.Images = append(ret.Images, (*spinapiserver.Image)(image))
+	ret := &vm.Transient{
+		Core: vm.Core{
+			Name:   v.Name,
+			CPUs:   v.CPUs,
+			Memory: v.Memory,
+			Ports:  v.Ports,
+		},
+		Images: v.Images,
 	}
 
 	return ret, nil
@@ -145,28 +145,29 @@ func (s *spinApiserversrvc) VMList(ctx context.Context) ([]uint64, error) {
 	return s.registry.VMList(ctx)
 }
 
-func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.CreateVM) (uint64, error) {
-	images := []*spinregistry.Image{}
+func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *vm.Create) (uint64, error) {
+	images := []vm.Image{}
 
 	for _, storage := range p.Storage {
-		if !storage.Cdrom && strings.Contains(storage.Image, "/") {
+		if !storage.CDROM && strings.Contains(storage.Image, "/") {
 			return 0, errors.New("images cannot contain path components")
 		}
 	}
 
 	for _, storage := range p.Storage {
-		if storage.Cdrom {
-			images = append(images, &spinregistry.Image{
+		if storage.CDROM {
+			images = append(images, vm.Image{
 				Path:  storage.Image,
-				Cdrom: true,
+				CDROM: true,
 			})
 		} else {
-			img, err := s.registry.StorageImageCreate(ctx, (*spinregistry.Storage)(storage))
+			stor := storage
+			img, err := s.registry.StorageImageCreate(ctx, &stor)
 			if err != nil {
 				return 0, err
 			}
 
-			images = append(images, img)
+			images = append(images, *img)
 		}
 	}
 
@@ -184,7 +185,7 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *spinapiserver.Creat
 	storids := []string{}
 
 	for _, stor := range p.Storage {
-		if !stor.Cdrom {
+		if !stor.CDROM {
 			storid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
 				ID:       pkg,
 				Resource: "storage",
@@ -254,7 +255,7 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 	storids := []string{}
 
 	for _, stor := range vm.Images {
-		if !stor.Cdrom {
+		if !stor.CDROM {
 			uuid, err := s.broker.Add(ctx, &spinbroker.AddPayload{
 				ID:       pkg,
 				Resource: "storage",
@@ -294,7 +295,7 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 	}
 
 	for _, stor := range vm.Images {
-		if !stor.Cdrom {
+		if !stor.CDROM {
 			if err := s.registry.StorageImageDelete(ctx, *stor.Volume, filepath.Base(stor.Path)); err != nil {
 				return err
 			}

@@ -8,6 +8,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 	spinapiserverc "github.com/erikh/spin/gen/http/spin_apiserver/client"
 	spinbrokerc "github.com/erikh/spin/gen/http/spin_broker/client"
 	spinregistryc "github.com/erikh/spin/gen/http/spin_registry/client"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 	goa "goa.design/goa/v3/pkg"
 )
@@ -25,66 +27,17 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `spin-broker (new|add|enqueue|status|next|complete)
-spin-apiserver (vm-create|vm-delete|vm-list|vm-get|vm-update|control-start|control-stop|control-shutdown)
+	return `spin-apiserver (vm-create|vm-delete|vm-list|vm-get|vm-update|control-start|control-stop|control-shutdown)
+spin-broker (new|add|enqueue|status|next|complete)
 spin-registry (vm-create|vm-update|vm-delete|vm-get|vm-list|storage-volumes-list|storage-volumes-create|storage-volumes-delete|storage-images-list|storage-images-create|storage-images-delete|storage-images-get)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
-	return os.Args[0] + ` spin-broker new` + "\n" +
-		os.Args[0] + ` spin-apiserver vm-create --body '{
-      "cpus": 4877804636216311250,
-      "memory": 4310599689986484391,
-      "name": "Adipisci sapiente.",
-      "ports": {
-         "450430995601564002": "Et qui fugit quis dignissimos qui.",
-         "8415388083871949362": "Magni voluptas corrupti et voluptatibus et."
-      },
-      "storage": [
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         },
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         },
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         }
-      ]
-   }'` + "\n" +
-		os.Args[0] + ` spin-registry vm-create --body '{
-      "cpus": 3494718681231017913,
-      "images": [
-         {
-            "cdrom": true,
-            "path": "Explicabo sit ab.",
-            "volume": "Quis quidem nulla."
-         },
-         {
-            "cdrom": true,
-            "path": "Explicabo sit ab.",
-            "volume": "Quis quidem nulla."
-         }
-      ],
-      "memory": 6880761490829133714,
-      "name": "Et alias vel ratione vitae.",
-      "ports": {
-         "15873164629935296188": "Aliquam sit necessitatibus pariatur quam.",
-         "16634640335248646168": "Ut ea excepturi.",
-         "3864378703353671460": "Et ipsa."
-      }
-   }'` + "\n" +
+	return os.Args[0] + ` spin-apiserver vm-create --p "Sint voluptatem eaque nesciunt."` + "\n" +
+		os.Args[0] + ` spin-broker new` + "\n" +
+		os.Args[0] + ` spin-registry vm-create --p "Totam ullam possimus."` + "\n" +
 		""
 }
 
@@ -98,30 +51,10 @@ func ParseEndpoint(
 	restore bool,
 ) (goa.Endpoint, interface{}, error) {
 	var (
-		spinBrokerFlags = flag.NewFlagSet("spin-broker", flag.ContinueOnError)
-
-		spinBrokerNewFlags = flag.NewFlagSet("new", flag.ExitOnError)
-
-		spinBrokerAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
-		spinBrokerAddBodyFlag = spinBrokerAddFlags.String("body", "REQUIRED", "")
-		spinBrokerAddIDFlag   = spinBrokerAddFlags.String("id", "REQUIRED", "Package ID")
-
-		spinBrokerEnqueueFlags  = flag.NewFlagSet("enqueue", flag.ExitOnError)
-		spinBrokerEnqueueIDFlag = spinBrokerEnqueueFlags.String("id", "REQUIRED", "Package ID")
-
-		spinBrokerStatusFlags  = flag.NewFlagSet("status", flag.ExitOnError)
-		spinBrokerStatusIDFlag = spinBrokerStatusFlags.String("id", "REQUIRED", "Package ID")
-
-		spinBrokerNextFlags        = flag.NewFlagSet("next", flag.ExitOnError)
-		spinBrokerNextResourceFlag = spinBrokerNextFlags.String("resource", "REQUIRED", "resource type")
-
-		spinBrokerCompleteFlags    = flag.NewFlagSet("complete", flag.ExitOnError)
-		spinBrokerCompleteBodyFlag = spinBrokerCompleteFlags.String("body", "REQUIRED", "")
-
 		spinApiserverFlags = flag.NewFlagSet("spin-apiserver", flag.ContinueOnError)
 
-		spinApiserverVMCreateFlags    = flag.NewFlagSet("vm-create", flag.ExitOnError)
-		spinApiserverVMCreateBodyFlag = spinApiserverVMCreateFlags.String("body", "REQUIRED", "")
+		spinApiserverVMCreateFlags = flag.NewFlagSet("vm-create", flag.ExitOnError)
+		spinApiserverVMCreatePFlag = spinApiserverVMCreateFlags.String("p", "REQUIRED", "vm type")
 
 		spinApiserverVMDeleteFlags  = flag.NewFlagSet("vm-delete", flag.ExitOnError)
 		spinApiserverVMDeleteIDFlag = spinApiserverVMDeleteFlags.String("id", "REQUIRED", "ID of VM to delete")
@@ -144,10 +77,30 @@ func ParseEndpoint(
 		spinApiserverControlShutdownFlags  = flag.NewFlagSet("control-shutdown", flag.ExitOnError)
 		spinApiserverControlShutdownIDFlag = spinApiserverControlShutdownFlags.String("id", "REQUIRED", "ID of VM to shutdown")
 
+		spinBrokerFlags = flag.NewFlagSet("spin-broker", flag.ContinueOnError)
+
+		spinBrokerNewFlags = flag.NewFlagSet("new", flag.ExitOnError)
+
+		spinBrokerAddFlags    = flag.NewFlagSet("add", flag.ExitOnError)
+		spinBrokerAddBodyFlag = spinBrokerAddFlags.String("body", "REQUIRED", "")
+		spinBrokerAddIDFlag   = spinBrokerAddFlags.String("id", "REQUIRED", "Package ID")
+
+		spinBrokerEnqueueFlags  = flag.NewFlagSet("enqueue", flag.ExitOnError)
+		spinBrokerEnqueueIDFlag = spinBrokerEnqueueFlags.String("id", "REQUIRED", "Package ID")
+
+		spinBrokerStatusFlags  = flag.NewFlagSet("status", flag.ExitOnError)
+		spinBrokerStatusIDFlag = spinBrokerStatusFlags.String("id", "REQUIRED", "Package ID")
+
+		spinBrokerNextFlags        = flag.NewFlagSet("next", flag.ExitOnError)
+		spinBrokerNextResourceFlag = spinBrokerNextFlags.String("resource", "REQUIRED", "resource type")
+
+		spinBrokerCompleteFlags    = flag.NewFlagSet("complete", flag.ExitOnError)
+		spinBrokerCompleteBodyFlag = spinBrokerCompleteFlags.String("body", "REQUIRED", "")
+
 		spinRegistryFlags = flag.NewFlagSet("spin-registry", flag.ContinueOnError)
 
-		spinRegistryVMCreateFlags    = flag.NewFlagSet("vm-create", flag.ExitOnError)
-		spinRegistryVMCreateBodyFlag = spinRegistryVMCreateFlags.String("body", "REQUIRED", "")
+		spinRegistryVMCreateFlags = flag.NewFlagSet("vm-create", flag.ExitOnError)
+		spinRegistryVMCreatePFlag = spinRegistryVMCreateFlags.String("p", "REQUIRED", "vm type")
 
 		spinRegistryVMUpdateFlags    = flag.NewFlagSet("vm-update", flag.ExitOnError)
 		spinRegistryVMUpdateBodyFlag = spinRegistryVMUpdateFlags.String("body", "REQUIRED", "")
@@ -172,8 +125,8 @@ func ParseEndpoint(
 		spinRegistryStorageImagesListFlags    = flag.NewFlagSet("storage-images-list", flag.ExitOnError)
 		spinRegistryStorageImagesListBodyFlag = spinRegistryStorageImagesListFlags.String("body", "REQUIRED", "")
 
-		spinRegistryStorageImagesCreateFlags    = flag.NewFlagSet("storage-images-create", flag.ExitOnError)
-		spinRegistryStorageImagesCreateBodyFlag = spinRegistryStorageImagesCreateFlags.String("body", "REQUIRED", "")
+		spinRegistryStorageImagesCreateFlags = flag.NewFlagSet("storage-images-create", flag.ExitOnError)
+		spinRegistryStorageImagesCreatePFlag = spinRegistryStorageImagesCreateFlags.String("p", "REQUIRED", "*vm.Storage is the payload type of the spin-registry service storage_images_create method.")
 
 		spinRegistryStorageImagesDeleteFlags    = flag.NewFlagSet("storage-images-delete", flag.ExitOnError)
 		spinRegistryStorageImagesDeleteBodyFlag = spinRegistryStorageImagesDeleteFlags.String("body", "REQUIRED", "")
@@ -181,14 +134,6 @@ func ParseEndpoint(
 		spinRegistryStorageImagesGetFlags    = flag.NewFlagSet("storage-images-get", flag.ExitOnError)
 		spinRegistryStorageImagesGetBodyFlag = spinRegistryStorageImagesGetFlags.String("body", "REQUIRED", "")
 	)
-	spinBrokerFlags.Usage = spinBrokerUsage
-	spinBrokerNewFlags.Usage = spinBrokerNewUsage
-	spinBrokerAddFlags.Usage = spinBrokerAddUsage
-	spinBrokerEnqueueFlags.Usage = spinBrokerEnqueueUsage
-	spinBrokerStatusFlags.Usage = spinBrokerStatusUsage
-	spinBrokerNextFlags.Usage = spinBrokerNextUsage
-	spinBrokerCompleteFlags.Usage = spinBrokerCompleteUsage
-
 	spinApiserverFlags.Usage = spinApiserverUsage
 	spinApiserverVMCreateFlags.Usage = spinApiserverVMCreateUsage
 	spinApiserverVMDeleteFlags.Usage = spinApiserverVMDeleteUsage
@@ -198,6 +143,14 @@ func ParseEndpoint(
 	spinApiserverControlStartFlags.Usage = spinApiserverControlStartUsage
 	spinApiserverControlStopFlags.Usage = spinApiserverControlStopUsage
 	spinApiserverControlShutdownFlags.Usage = spinApiserverControlShutdownUsage
+
+	spinBrokerFlags.Usage = spinBrokerUsage
+	spinBrokerNewFlags.Usage = spinBrokerNewUsage
+	spinBrokerAddFlags.Usage = spinBrokerAddUsage
+	spinBrokerEnqueueFlags.Usage = spinBrokerEnqueueUsage
+	spinBrokerStatusFlags.Usage = spinBrokerStatusUsage
+	spinBrokerNextFlags.Usage = spinBrokerNextUsage
+	spinBrokerCompleteFlags.Usage = spinBrokerCompleteUsage
 
 	spinRegistryFlags.Usage = spinRegistryUsage
 	spinRegistryVMCreateFlags.Usage = spinRegistryVMCreateUsage
@@ -228,10 +181,10 @@ func ParseEndpoint(
 	{
 		svcn = flag.Arg(0)
 		switch svcn {
-		case "spin-broker":
-			svcf = spinBrokerFlags
 		case "spin-apiserver":
 			svcf = spinApiserverFlags
+		case "spin-broker":
+			svcf = spinBrokerFlags
 		case "spin-registry":
 			svcf = spinRegistryFlags
 		default:
@@ -249,28 +202,6 @@ func ParseEndpoint(
 	{
 		epn = svcf.Arg(0)
 		switch svcn {
-		case "spin-broker":
-			switch epn {
-			case "new":
-				epf = spinBrokerNewFlags
-
-			case "add":
-				epf = spinBrokerAddFlags
-
-			case "enqueue":
-				epf = spinBrokerEnqueueFlags
-
-			case "status":
-				epf = spinBrokerStatusFlags
-
-			case "next":
-				epf = spinBrokerNextFlags
-
-			case "complete":
-				epf = spinBrokerCompleteFlags
-
-			}
-
 		case "spin-apiserver":
 			switch epn {
 			case "vm-create":
@@ -296,6 +227,28 @@ func ParseEndpoint(
 
 			case "control-shutdown":
 				epf = spinApiserverControlShutdownFlags
+
+			}
+
+		case "spin-broker":
+			switch epn {
+			case "new":
+				epf = spinBrokerNewFlags
+
+			case "add":
+				epf = spinBrokerAddFlags
+
+			case "enqueue":
+				epf = spinBrokerEnqueueFlags
+
+			case "status":
+				epf = spinBrokerStatusFlags
+
+			case "next":
+				epf = spinBrokerNextFlags
+
+			case "complete":
+				epf = spinBrokerCompleteFlags
 
 			}
 
@@ -359,34 +312,18 @@ func ParseEndpoint(
 	)
 	{
 		switch svcn {
-		case "spin-broker":
-			c := spinbrokerc.NewClient(scheme, host, doer, enc, dec, restore)
-			switch epn {
-			case "new":
-				endpoint = c.New()
-				data = nil
-			case "add":
-				endpoint = c.Add()
-				data, err = spinbrokerc.BuildAddPayload(*spinBrokerAddBodyFlag, *spinBrokerAddIDFlag)
-			case "enqueue":
-				endpoint = c.Enqueue()
-				data, err = spinbrokerc.BuildEnqueuePayload(*spinBrokerEnqueueIDFlag)
-			case "status":
-				endpoint = c.Status()
-				data, err = spinbrokerc.BuildStatusPayload(*spinBrokerStatusIDFlag)
-			case "next":
-				endpoint = c.Next()
-				data, err = spinbrokerc.BuildNextPayload(*spinBrokerNextResourceFlag)
-			case "complete":
-				endpoint = c.Complete()
-				data, err = spinbrokerc.BuildCompletePayload(*spinBrokerCompleteBodyFlag)
-			}
 		case "spin-apiserver":
 			c := spinapiserverc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
 			case "vm-create":
 				endpoint = c.VMCreate()
-				data, err = spinapiserverc.BuildVMCreatePayload(*spinApiserverVMCreateBodyFlag)
+				var err error
+				var val *vm.Create
+				err = json.Unmarshal([]byte(*spinApiserverVMCreatePFlag), &val)
+				data = val
+				if err != nil {
+					return nil, nil, fmt.Errorf("invalid JSON for spinApiserverVMCreatePFlag, \nerror: %s, \nexample of valid JSON:\n%s", err, "\"Sint voluptatem eaque nesciunt.\"")
+				}
 			case "vm-delete":
 				endpoint = c.VMDelete()
 				data, err = spinapiserverc.BuildVMDeletePayload(*spinApiserverVMDeleteIDFlag)
@@ -409,12 +346,40 @@ func ParseEndpoint(
 				endpoint = c.ControlShutdown()
 				data, err = spinapiserverc.BuildControlShutdownPayload(*spinApiserverControlShutdownIDFlag)
 			}
+		case "spin-broker":
+			c := spinbrokerc.NewClient(scheme, host, doer, enc, dec, restore)
+			switch epn {
+			case "new":
+				endpoint = c.New()
+				data = nil
+			case "add":
+				endpoint = c.Add()
+				data, err = spinbrokerc.BuildAddPayload(*spinBrokerAddBodyFlag, *spinBrokerAddIDFlag)
+			case "enqueue":
+				endpoint = c.Enqueue()
+				data, err = spinbrokerc.BuildEnqueuePayload(*spinBrokerEnqueueIDFlag)
+			case "status":
+				endpoint = c.Status()
+				data, err = spinbrokerc.BuildStatusPayload(*spinBrokerStatusIDFlag)
+			case "next":
+				endpoint = c.Next()
+				data, err = spinbrokerc.BuildNextPayload(*spinBrokerNextResourceFlag)
+			case "complete":
+				endpoint = c.Complete()
+				data, err = spinbrokerc.BuildCompletePayload(*spinBrokerCompleteBodyFlag)
+			}
 		case "spin-registry":
 			c := spinregistryc.NewClient(scheme, host, doer, enc, dec, restore)
 			switch epn {
 			case "vm-create":
 				endpoint = c.VMCreate()
-				data, err = spinregistryc.BuildVMCreatePayload(*spinRegistryVMCreateBodyFlag)
+				var err error
+				var val *vm.Transient
+				err = json.Unmarshal([]byte(*spinRegistryVMCreatePFlag), &val)
+				data = val
+				if err != nil {
+					return nil, nil, fmt.Errorf("invalid JSON for spinRegistryVMCreatePFlag, \nerror: %s, \nexample of valid JSON:\n%s", err, "\"Totam ullam possimus.\"")
+				}
 			case "vm-update":
 				endpoint = c.VMUpdate()
 				data, err = spinregistryc.BuildVMUpdatePayload(*spinRegistryVMUpdateBodyFlag, *spinRegistryVMUpdateIDFlag)
@@ -441,7 +406,13 @@ func ParseEndpoint(
 				data, err = spinregistryc.BuildStorageImagesListPayload(*spinRegistryStorageImagesListBodyFlag)
 			case "storage-images-create":
 				endpoint = c.StorageImagesCreate()
-				data, err = spinregistryc.BuildStorageImagesCreatePayload(*spinRegistryStorageImagesCreateBodyFlag)
+				var err error
+				var val *vm.Storage
+				err = json.Unmarshal([]byte(*spinRegistryStorageImagesCreatePFlag), &val)
+				data = val
+				if err != nil {
+					return nil, nil, fmt.Errorf("invalid JSON for spinRegistryStorageImagesCreatePFlag, \nerror: %s, \nexample of valid JSON:\n%s", err, "\"Harum et tempora rem qui quia.\"")
+				}
 			case "storage-images-delete":
 				endpoint = c.StorageImagesDelete()
 				data, err = spinregistryc.BuildStorageImagesDeletePayload(*spinRegistryStorageImagesDeleteBodyFlag)
@@ -456,6 +427,117 @@ func ParseEndpoint(
 	}
 
 	return endpoint, data, nil
+}
+
+// spin-apiserverUsage displays the usage of the spin-apiserver command and its
+// subcommands.
+func spinApiserverUsage() {
+	fmt.Fprintf(os.Stderr, `Bridge between the outer-facing UIs and the internals
+Usage:
+    %s [globalflags] spin-apiserver COMMAND [flags]
+
+COMMAND:
+    vm-create: VMCreate implements vm_create.
+    vm-delete: VMDelete implements vm_delete.
+    vm-list: VMList implements vm_list.
+    vm-get: VMGet implements vm_get.
+    vm-update: VMUpdate implements vm_update.
+    control-start: ControlStart implements control_start.
+    control-stop: ControlStop implements control_stop.
+    control-shutdown: ControlShutdown implements control_shutdown.
+
+Additional help:
+    %s spin-apiserver COMMAND --help
+`, os.Args[0], os.Args[0])
+}
+func spinApiserverVMCreateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-create -p JSON
+
+VMCreate implements vm_create.
+    -p JSON: vm type
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-create --p "Sint voluptatem eaque nesciunt."
+`, os.Args[0])
+}
+
+func spinApiserverVMDeleteUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-delete -id UINT64
+
+VMDelete implements vm_delete.
+    -id UINT64: ID of VM to delete
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-delete --id 2023740713132676550
+`, os.Args[0])
+}
+
+func spinApiserverVMListUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-list
+
+VMList implements vm_list.
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-list
+`, os.Args[0])
+}
+
+func spinApiserverVMGetUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-get -id UINT64
+
+VMGet implements vm_get.
+    -id UINT64: ID of VM to retrieve
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-get --id 4195343960293373762
+`, os.Args[0])
+}
+
+func spinApiserverVMUpdateUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-update -body JSON -id UINT64
+
+VMUpdate implements vm_update.
+    -body JSON: 
+    -id UINT64: ID of VM to Update
+
+Example:
+    `+os.Args[0]+` spin-apiserver vm-update --body '{
+      "vm": "Velit quod sit aut."
+   }' --id 733713902106748183
+`, os.Args[0])
+}
+
+func spinApiserverControlStartUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-start -id UINT64
+
+ControlStart implements control_start.
+    -id UINT64: ID of VM to start
+
+Example:
+    `+os.Args[0]+` spin-apiserver control-start --id 8936611056264777206
+`, os.Args[0])
+}
+
+func spinApiserverControlStopUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-stop -id UINT64
+
+ControlStop implements control_stop.
+    -id UINT64: ID of VM to stop
+
+Example:
+    `+os.Args[0]+` spin-apiserver control-stop --id 6074513243022522510
+`, os.Args[0])
+}
+
+func spinApiserverControlShutdownUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-shutdown -id UINT64
+
+ControlShutdown implements control_shutdown.
+    -id UINT64: ID of VM to shutdown
+
+Example:
+    `+os.Args[0]+` spin-apiserver control-shutdown --id 8513268017440565107
+`, os.Args[0])
 }
 
 // spin-brokerUsage displays the usage of the spin-broker command and its
@@ -496,17 +578,20 @@ Add a command to the package
 
 Example:
     `+os.Args[0]+` spin-broker add --body '{
-      "action": "Voluptatem quibusdam dolor.",
+      "action": "Ratione et ex tempore ipsum in.",
       "dependencies": [
-         "Adipisci est incidunt sequi.",
-         "Maxime aut non."
+         "Itaque tenetur labore quia distinctio aperiam.",
+         "Soluta voluptatem minima natus.",
+         "Consequatur voluptatem.",
+         "Eos iste illum omnis suscipit."
       ],
       "parameters": {
-         "Mollitia natus temporibus fugit occaecati ipsum qui.": "Non aut molestiae deleniti ad dolorem eos.",
-         "Porro fugiat ex consequatur provident dignissimos.": "Possimus velit quod sit."
+         "Doloribus impedit.": "Qui dolor ex consequatur.",
+         "Maiores ut voluptatem sed et consectetur.": "Repellat vero.",
+         "Ut hic assumenda assumenda ullam qui.": "Quidem qui."
       },
-      "resource": "Quaerat itaque aut."
-   }' --id "Voluptatibus nostrum commodi error omnis quis quia."
+      "resource": "Voluptatibus nostrum commodi error omnis quis quia."
+   }' --id "Repellendus eaque nesciunt quia."
 `, os.Args[0])
 }
 
@@ -517,7 +602,7 @@ Enqueue the package into the various resource queues
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker enqueue --id "Vero alias doloribus impedit impedit qui dolor."
+    `+os.Args[0]+` spin-broker enqueue --id "Unde inventore cupiditate soluta."
 `, os.Args[0])
 }
 
@@ -528,7 +613,7 @@ Get the status for a package
     -id STRING: Package ID
 
 Example:
-    `+os.Args[0]+` spin-broker status --id "Consequatur quo exercitationem occaecati magnam molestiae qui."
+    `+os.Args[0]+` spin-broker status --id "Minima cum delectus occaecati enim."
 `, os.Args[0])
 }
 
@@ -539,7 +624,7 @@ Get the next command for a given resource
     -resource STRING: resource type
 
 Example:
-    `+os.Args[0]+` spin-broker next --resource "Sint eveniet hic minus facere."
+    `+os.Args[0]+` spin-broker next --resource "Iusto adipisci sapiente temporibus."
 `, os.Args[0])
 }
 
@@ -551,178 +636,10 @@ Mark a command as completed with a result status
 
 Example:
     `+os.Args[0]+` spin-broker complete --body '{
-      "id": "Occaecati enim in aut vero.",
+      "id": "Similique corrupti ab soluta vel qui vel.",
       "status": true,
-      "status_reason": "Quis omnis suscipit est et dicta id."
+      "status_reason": "Nihil autem dolorem soluta quisquam."
    }'
-`, os.Args[0])
-}
-
-// spin-apiserverUsage displays the usage of the spin-apiserver command and its
-// subcommands.
-func spinApiserverUsage() {
-	fmt.Fprintf(os.Stderr, `Bridge between the outer-facing UIs and the internals
-Usage:
-    %s [globalflags] spin-apiserver COMMAND [flags]
-
-COMMAND:
-    vm-create: VMCreate implements vm_create.
-    vm-delete: VMDelete implements vm_delete.
-    vm-list: VMList implements vm_list.
-    vm-get: VMGet implements vm_get.
-    vm-update: VMUpdate implements vm_update.
-    control-start: ControlStart implements control_start.
-    control-stop: ControlStop implements control_stop.
-    control-shutdown: ControlShutdown implements control_shutdown.
-
-Additional help:
-    %s spin-apiserver COMMAND --help
-`, os.Args[0], os.Args[0])
-}
-func spinApiserverVMCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-create -body JSON
-
-VMCreate implements vm_create.
-    -body JSON: 
-
-Example:
-    `+os.Args[0]+` spin-apiserver vm-create --body '{
-      "cpus": 4877804636216311250,
-      "memory": 4310599689986484391,
-      "name": "Adipisci sapiente.",
-      "ports": {
-         "450430995601564002": "Et qui fugit quis dignissimos qui.",
-         "8415388083871949362": "Magni voluptas corrupti et voluptatibus et."
-      },
-      "storage": [
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         },
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         },
-         {
-            "cdrom": false,
-            "image": "Esse labore voluptas.",
-            "image_size": 4373530742914524004,
-            "volume": "Rerum porro eius."
-         }
-      ]
-   }'
-`, os.Args[0])
-}
-
-func spinApiserverVMDeleteUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-delete -id UINT64
-
-VMDelete implements vm_delete.
-    -id UINT64: ID of VM to delete
-
-Example:
-    `+os.Args[0]+` spin-apiserver vm-delete --id 17449359103542256966
-`, os.Args[0])
-}
-
-func spinApiserverVMListUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-list
-
-VMList implements vm_list.
-
-Example:
-    `+os.Args[0]+` spin-apiserver vm-list
-`, os.Args[0])
-}
-
-func spinApiserverVMGetUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-get -id UINT64
-
-VMGet implements vm_get.
-    -id UINT64: ID of VM to retrieve
-
-Example:
-    `+os.Args[0]+` spin-apiserver vm-get --id 8488601982994826162
-`, os.Args[0])
-}
-
-func spinApiserverVMUpdateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver vm-update -body JSON -id UINT64
-
-VMUpdate implements vm_update.
-    -body JSON: 
-    -id UINT64: ID of VM to Update
-
-Example:
-    `+os.Args[0]+` spin-apiserver vm-update --body '{
-      "vm": {
-         "cpus": 1235757894805898603,
-         "images": [
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            }
-         ],
-         "memory": 11516433357545643392,
-         "name": "Rerum asperiores corporis aut.",
-         "ports": {
-            "8213131886962674554": "Maxime est voluptatem quia."
-         }
-      }
-   }' --id 16415707358456514425
-`, os.Args[0])
-}
-
-func spinApiserverControlStartUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-start -id UINT64
-
-ControlStart implements control_start.
-    -id UINT64: ID of VM to start
-
-Example:
-    `+os.Args[0]+` spin-apiserver control-start --id 3646417082302603797
-`, os.Args[0])
-}
-
-func spinApiserverControlStopUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-stop -id UINT64
-
-ControlStop implements control_stop.
-    -id UINT64: ID of VM to stop
-
-Example:
-    `+os.Args[0]+` spin-apiserver control-stop --id 2120158282477202454
-`, os.Args[0])
-}
-
-func spinApiserverControlShutdownUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-apiserver control-shutdown -id UINT64
-
-ControlShutdown implements control_shutdown.
-    -id UINT64: ID of VM to shutdown
-
-Example:
-    `+os.Args[0]+` spin-apiserver control-shutdown --id 4860122827698173193
 `, os.Args[0])
 }
 
@@ -752,34 +669,13 @@ Additional help:
 `, os.Args[0], os.Args[0])
 }
 func spinRegistryVMCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry vm-create -p JSON
 
 Create a VM
-    -body JSON: 
+    -p JSON: vm type
 
 Example:
-    `+os.Args[0]+` spin-registry vm-create --body '{
-      "cpus": 3494718681231017913,
-      "images": [
-         {
-            "cdrom": true,
-            "path": "Explicabo sit ab.",
-            "volume": "Quis quidem nulla."
-         },
-         {
-            "cdrom": true,
-            "path": "Explicabo sit ab.",
-            "volume": "Quis quidem nulla."
-         }
-      ],
-      "memory": 6880761490829133714,
-      "name": "Et alias vel ratione vitae.",
-      "ports": {
-         "15873164629935296188": "Aliquam sit necessitatibus pariatur quam.",
-         "16634640335248646168": "Ut ea excepturi.",
-         "3864378703353671460": "Et ipsa."
-      }
-   }'
+    `+os.Args[0]+` spin-registry vm-create --p "Totam ullam possimus."
 `, os.Args[0])
 }
 
@@ -792,37 +688,8 @@ Update a VM
 
 Example:
     `+os.Args[0]+` spin-registry vm-update --body '{
-      "vm": {
-         "cpus": 1235757894805898603,
-         "images": [
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            },
-            {
-               "cdrom": true,
-               "path": "Explicabo sit ab.",
-               "volume": "Quis quidem nulla."
-            }
-         ],
-         "memory": 11516433357545643392,
-         "name": "Rerum asperiores corporis aut.",
-         "ports": {
-            "8213131886962674554": "Maxime est voluptatem quia."
-         }
-      }
-   }' --id 652749444953284667
+      "vm": "Nulla numquam rerum asperiores corporis aut enim."
+   }' --id 11516433357545643392
 `, os.Args[0])
 }
 
@@ -833,7 +700,7 @@ Delete a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-delete --id 657503760843554531
+    `+os.Args[0]+` spin-registry vm-delete --id 8213131886962674554
 `, os.Args[0])
 }
 
@@ -844,7 +711,7 @@ Retrieve a VM by ID
     -id UINT64: ID of VM to remove
 
 Example:
-    `+os.Args[0]+` spin-registry vm-get --id 8415715876711929459
+    `+os.Args[0]+` spin-registry vm-get --id 4016035756909591635
 `, os.Args[0])
 }
 
@@ -876,8 +743,8 @@ create a new volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-volumes-create --body '{
-      "name": "Inventore officia voluptatem ipsam dicta accusantium magnam.",
-      "path": "Ea natus tempore distinctio laudantium."
+      "name": "Fugit incidunt tempora.",
+      "path": "Sed quae ea."
    }'
 `, os.Args[0])
 }
@@ -890,7 +757,7 @@ delete an existing volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-volumes-delete --body '{
-      "name": "Assumenda soluta repellendus eaque neque vel accusamus."
+      "name": "Tempore voluptate voluptas."
    }'
 `, os.Args[0])
 }
@@ -903,24 +770,19 @@ list all images by volume
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-list --body '{
-      "volume_name": "Nihil eius molestiae."
+      "volume_name": "Mollitia eius hic."
    }'
 `, os.Args[0])
 }
 
 func spinRegistryStorageImagesCreateUsage() {
-	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-create -body JSON
+	fmt.Fprintf(os.Stderr, `%s [flags] spin-registry storage-images-create -p JSON
 
 add an image definition to the registry
-    -body JSON: 
+    -p JSON: *vm.Storage is the payload type of the spin-registry service storage_images_create method.
 
 Example:
-    `+os.Args[0]+` spin-registry storage-images-create --body '{
-      "cdrom": true,
-      "image": "Excepturi ut quo ipsum ea.",
-      "image_size": 11424779710864672078,
-      "volume": "Aut dolores."
-   }'
+    `+os.Args[0]+` spin-registry storage-images-create --p "Harum et tempora rem qui quia."
 `, os.Args[0])
 }
 
@@ -932,8 +794,8 @@ remove an image definition from the registry
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-delete --body '{
-      "image_name": "Laboriosam sunt minima saepe architecto.",
-      "volume_name": "Non quis quae nihil."
+      "image_name": "Nihil eius molestiae.",
+      "volume_name": "Assumenda soluta repellendus eaque neque vel accusamus."
    }'
 `, os.Args[0])
 }
@@ -946,8 +808,8 @@ retrieves an image definition from the registry
 
 Example:
     `+os.Args[0]+` spin-registry storage-images-get --body '{
-      "image_name": "Laboriosam fugit.",
-      "volume_name": "Enim quos numquam recusandae ut."
+      "image_name": "Ex natus dicta aliquid sint provident sint.",
+      "volume_name": "Consequatur nemo autem ab delectus amet."
    }'
 `, os.Args[0])
 }

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/andreyvit/diff"
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 )
 
 const testPath = "template-tests"
@@ -33,7 +33,7 @@ func TestRunTemplate(t *testing.T) {
 				t.Fatalf("Error reading %q: %v", info.Name(), err)
 			}
 
-			var vm spinregistry.UpdatedVM
+			var vm vm.Transient
 			if err := json.Unmarshal(content, &vm); err != nil {
 				t.Fatalf("Error parsing %q: %v", info.Name(), err)
 			}

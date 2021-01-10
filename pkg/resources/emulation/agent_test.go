@@ -12,9 +12,9 @@ import (
 
 	brokerclient "github.com/erikh/spin/clients/broker"
 	spinbroker "github.com/erikh/spin/gen/spin_broker"
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	"github.com/erikh/spin/pkg/services"
 	"github.com/erikh/spin/pkg/supervisor"
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -35,11 +35,13 @@ var testTable = map[string]test{
 		commands: []command{{
 			Action: "write_config",
 			Parameters: map[string]interface{}{
-				"vm": &spinregistry.UpdatedVM{
-					Name:   "foo",
-					Cpus:   1,
-					Memory: 1024,
-					Images: []*spinregistry.Image{
+				"vm": &vm.Transient{
+					Core: vm.Core{
+						Name:   "foo",
+						CPUs:   1,
+						Memory: 1024,
+					},
+					Images: []vm.Image{
 						{
 							Path: "test.raw",
 						},
@@ -53,11 +55,13 @@ var testTable = map[string]test{
 			Action: "write_config",
 			Parameters: map[string]interface{}{
 				"id": 1,
-				"vm": &spinregistry.UpdatedVM{
-					Name:   "foo",
-					Cpus:   1,
-					Memory: 1024,
-					Images: []*spinregistry.Image{
+				"vm": &vm.Transient{
+					Core: vm.Core{
+						Name:   "foo",
+						CPUs:   1,
+						Memory: 1024,
+					},
+					Images: []vm.Image{
 						{
 							Path: "test.raw",
 						},
@@ -119,11 +123,13 @@ var testTable = map[string]test{
 				Action: "write_config",
 				Parameters: map[string]interface{}{
 					"id": 1,
-					"vm": &spinregistry.UpdatedVM{
-						Name:   "foo",
-						Cpus:   1,
-						Memory: 1024,
-						Images: []*spinregistry.Image{
+					"vm": &vm.Transient{
+						Core: vm.Core{
+							Name:   "foo",
+							CPUs:   1,
+							Memory: 1024,
+						},
+						Images: []vm.Image{
 							{
 								Path: "test.raw",
 							},

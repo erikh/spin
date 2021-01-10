@@ -15,6 +15,7 @@ import (
 	"net/url"
 
 	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -37,11 +38,11 @@ func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http
 // spin-apiserver vm_create server.
 func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*spinapiserver.CreateVM)
+		p, ok := v.(*vm.Create)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-apiserver", "vm_create", "*spinapiserver.CreateVM", v)
+			return goahttp.ErrInvalidType("spin-apiserver", "vm_create", "*vm.Create", v)
 		}
-		body := NewVMCreateRequestBody(p)
+		body := p
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("spin-apiserver", "vm_create", err)
 		}
@@ -231,19 +232,14 @@ func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body VMGetResponseBody
+				body *vm.Transient
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("spin-apiserver", "vm_get", err)
 			}
-			err = ValidateVMGetResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("spin-apiserver", "vm_get", err)
-			}
-			res := NewVMGetUpdatedVMOK(&body)
-			return res, nil
+			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "vm_get", resp.StatusCode, string(body))
@@ -473,118 +469,4 @@ func DecodeControlShutdownResponse(decoder func(*http.Response) goahttp.Decoder,
 			return nil, goahttp.ErrInvalidResponse("spin-apiserver", "control_shutdown", resp.StatusCode, string(body))
 		}
 	}
-}
-
-// marshalSpinapiserverStorageToStorageRequestBody builds a value of type
-// *StorageRequestBody from a value of type *spinapiserver.Storage.
-func marshalSpinapiserverStorageToStorageRequestBody(v *spinapiserver.Storage) *StorageRequestBody {
-	res := &StorageRequestBody{
-		Volume:    v.Volume,
-		Image:     v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
-	}
-
-	return res
-}
-
-// marshalStorageRequestBodyToSpinapiserverStorage builds a value of type
-// *spinapiserver.Storage from a value of type *StorageRequestBody.
-func marshalStorageRequestBodyToSpinapiserverStorage(v *StorageRequestBody) *spinapiserver.Storage {
-	res := &spinapiserver.Storage{
-		Volume:    v.Volume,
-		Image:     v.Image,
-		ImageSize: v.ImageSize,
-		Cdrom:     v.Cdrom,
-	}
-
-	return res
-}
-
-// unmarshalImageResponseBodyToSpinapiserverImage builds a value of type
-// *spinapiserver.Image from a value of type *ImageResponseBody.
-func unmarshalImageResponseBodyToSpinapiserverImage(v *ImageResponseBody) *spinapiserver.Image {
-	res := &spinapiserver.Image{
-		Path:   *v.Path,
-		Cdrom:  *v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
-}
-
-// marshalSpinapiserverUpdatedVMToUpdatedVMRequestBody builds a value of type
-// *UpdatedVMRequestBody from a value of type *spinapiserver.UpdatedVM.
-func marshalSpinapiserverUpdatedVMToUpdatedVMRequestBody(v *spinapiserver.UpdatedVM) *UpdatedVMRequestBody {
-	res := &UpdatedVMRequestBody{
-		Name:   v.Name,
-		Cpus:   v.Cpus,
-		Memory: v.Memory,
-	}
-	if v.Images != nil {
-		res.Images = make([]*ImageRequestBody, len(v.Images))
-		for i, val := range v.Images {
-			res.Images[i] = marshalSpinapiserverImageToImageRequestBody(val)
-		}
-	}
-	if v.Ports != nil {
-		res.Ports = make(map[uint]string, len(v.Ports))
-		for key, val := range v.Ports {
-			tk := key
-			tv := val
-			res.Ports[tk] = tv
-		}
-	}
-
-	return res
-}
-
-// marshalSpinapiserverImageToImageRequestBody builds a value of type
-// *ImageRequestBody from a value of type *spinapiserver.Image.
-func marshalSpinapiserverImageToImageRequestBody(v *spinapiserver.Image) *ImageRequestBody {
-	res := &ImageRequestBody{
-		Path:   v.Path,
-		Cdrom:  v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
-}
-
-// marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM builds a value of type
-// *spinapiserver.UpdatedVM from a value of type *UpdatedVMRequestBody.
-func marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(v *UpdatedVMRequestBody) *spinapiserver.UpdatedVM {
-	res := &spinapiserver.UpdatedVM{
-		Name:   v.Name,
-		Cpus:   v.Cpus,
-		Memory: v.Memory,
-	}
-	if v.Images != nil {
-		res.Images = make([]*spinapiserver.Image, len(v.Images))
-		for i, val := range v.Images {
-			res.Images[i] = marshalImageRequestBodyToSpinapiserverImage(val)
-		}
-	}
-	if v.Ports != nil {
-		res.Ports = make(map[uint]string, len(v.Ports))
-		for key, val := range v.Ports {
-			tk := key
-			tv := val
-			res.Ports[tk] = tv
-		}
-	}
-
-	return res
-}
-
-// marshalImageRequestBodyToSpinapiserverImage builds a value of type
-// *spinapiserver.Image from a value of type *ImageRequestBody.
-func marshalImageRequestBodyToSpinapiserverImage(v *ImageRequestBody) *spinapiserver.Image {
-	res := &spinapiserver.Image{
-		Path:   v.Path,
-		Cdrom:  v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
 }

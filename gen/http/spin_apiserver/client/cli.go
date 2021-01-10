@@ -16,46 +16,6 @@ import (
 	goa "goa.design/goa/v3/pkg"
 )
 
-// BuildVMCreatePayload builds the payload for the spin-apiserver vm_create
-// endpoint from CLI flags.
-func BuildVMCreatePayload(spinApiserverVMCreateBody string) (*spinapiserver.CreateVM, error) {
-	var err error
-	var body VMCreateRequestBody
-	{
-		err = json.Unmarshal([]byte(spinApiserverVMCreateBody), &body)
-		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"cpus\": 4877804636216311250,\n      \"memory\": 4310599689986484391,\n      \"name\": \"Adipisci sapiente.\",\n      \"ports\": {\n         \"450430995601564002\": \"Et qui fugit quis dignissimos qui.\",\n         \"8415388083871949362\": \"Magni voluptas corrupti et voluptatibus et.\"\n      },\n      \"storage\": [\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         },\n         {\n            \"cdrom\": false,\n            \"image\": \"Esse labore voluptas.\",\n            \"image_size\": 4373530742914524004,\n            \"volume\": \"Rerum porro eius.\"\n         }\n      ]\n   }'")
-		}
-		if body.Storage == nil {
-			err = goa.MergeErrors(err, goa.MissingFieldError("storage", "body"))
-		}
-		if err != nil {
-			return nil, err
-		}
-	}
-	v := &spinapiserver.CreateVM{
-		Name:   body.Name,
-		Cpus:   body.Cpus,
-		Memory: body.Memory,
-	}
-	if body.Storage != nil {
-		v.Storage = make([]*spinapiserver.Storage, len(body.Storage))
-		for i, val := range body.Storage {
-			v.Storage[i] = marshalStorageRequestBodyToSpinapiserverStorage(val)
-		}
-	}
-	if body.Ports != nil {
-		v.Ports = make(map[uint]string, len(body.Ports))
-		for key, val := range body.Ports {
-			tk := key
-			tv := val
-			v.Ports[tk] = tv
-		}
-	}
-
-	return v, nil
-}
-
 // BuildVMDeletePayload builds the payload for the spin-apiserver vm_delete
 // endpoint from CLI flags.
 func BuildVMDeletePayload(spinApiserverVMDeleteID string) (*spinapiserver.VMDeletePayload, error) {
@@ -98,15 +58,10 @@ func BuildVMUpdatePayload(spinApiserverVMUpdateBody string, spinApiserverVMUpdat
 	{
 		err = json.Unmarshal([]byte(spinApiserverVMUpdateBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": {\n         \"cpus\": 1235757894805898603,\n         \"images\": [\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            },\n            {\n               \"cdrom\": true,\n               \"path\": \"Explicabo sit ab.\",\n               \"volume\": \"Quis quidem nulla.\"\n            }\n         ],\n         \"memory\": 11516433357545643392,\n         \"name\": \"Rerum asperiores corporis aut.\",\n         \"ports\": {\n            \"8213131886962674554\": \"Maxime est voluptatem quia.\"\n         }\n      }\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"vm\": \"Velit quod sit aut.\"\n   }'")
 		}
 		if body.VM == nil {
 			err = goa.MergeErrors(err, goa.MissingFieldError("vm", "body"))
-		}
-		if body.VM != nil {
-			if err2 := ValidateUpdatedVMRequestBody(body.VM); err2 != nil {
-				err = goa.MergeErrors(err, err2)
-			}
 		}
 		if err != nil {
 			return nil, err
@@ -119,9 +74,8 @@ func BuildVMUpdatePayload(spinApiserverVMUpdateBody string, spinApiserverVMUpdat
 			return nil, fmt.Errorf("invalid value for id, must be UINT64")
 		}
 	}
-	v := &spinapiserver.VMUpdatePayload{}
-	if body.VM != nil {
-		v.VM = marshalUpdatedVMRequestBodyToSpinapiserverUpdatedVM(body.VM)
+	v := &spinapiserver.VMUpdatePayload{
+		VM: body.VM,
 	}
 	v.ID = id
 

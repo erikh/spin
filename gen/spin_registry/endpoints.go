@@ -10,6 +10,7 @@ package spinregistry
 import (
 	"context"
 
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -68,7 +69,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 // "vm_create" of service "spin-registry".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*UpdatedVM)
+		p := req.(*vm.Transient)
 		return s.VMCreate(ctx, p)
 	}
 }
@@ -147,7 +148,7 @@ func NewStorageImagesListEndpoint(s Service) goa.Endpoint {
 // method "storage_images_create" of service "spin-registry".
 func NewStorageImagesCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*Storage)
+		p := req.(*vm.Storage)
 		return s.StorageImagesCreate(ctx, p)
 	}
 }

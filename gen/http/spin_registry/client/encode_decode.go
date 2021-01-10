@@ -15,6 +15,7 @@ import (
 	"net/url"
 
 	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -37,11 +38,11 @@ func (c *Client) BuildVMCreateRequest(ctx context.Context, v interface{}) (*http
 // spin-registry vm_create server.
 func EncodeVMCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*spinregistry.UpdatedVM)
+		p, ok := v.(*vm.Transient)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-registry", "vm_create", "*spinregistry.UpdatedVM", v)
+			return goahttp.ErrInvalidType("spin-registry", "vm_create", "*vm.Transient", v)
 		}
-		body := NewVMCreateRequestBody(p)
+		body := p
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("spin-registry", "vm_create", err)
 		}
@@ -249,19 +250,14 @@ func DecodeVMGetResponse(decoder func(*http.Response) goahttp.Decoder, restoreBo
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body VMGetResponseBody
+				body *vm.Transient
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("spin-registry", "vm_get", err)
 			}
-			err = ValidateVMGetResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("spin-registry", "vm_get", err)
-			}
-			res := NewVMGetUpdatedVMOK(&body)
-			return res, nil
+			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-registry", "vm_get", resp.StatusCode, string(body))
@@ -575,11 +571,11 @@ func (c *Client) BuildStorageImagesCreateRequest(ctx context.Context, v interfac
 // spin-registry storage_images_create server.
 func EncodeStorageImagesCreateRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
 	return func(req *http.Request, v interface{}) error {
-		p, ok := v.(*spinregistry.Storage)
+		p, ok := v.(*vm.Storage)
 		if !ok {
-			return goahttp.ErrInvalidType("spin-registry", "storage_images_create", "*spinregistry.Storage", v)
+			return goahttp.ErrInvalidType("spin-registry", "storage_images_create", "*vm.Storage", v)
 		}
-		body := NewStorageImagesCreateRequestBody(p)
+		body := p
 		if err := encoder(req).Encode(&body); err != nil {
 			return goahttp.ErrEncodingError("spin-registry", "storage_images_create", err)
 		}
@@ -607,19 +603,14 @@ func DecodeStorageImagesCreateResponse(decoder func(*http.Response) goahttp.Deco
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body StorageImagesCreateResponseBody
+				body *vm.Image
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("spin-registry", "storage_images_create", err)
 			}
-			err = ValidateStorageImagesCreateResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("spin-registry", "storage_images_create", err)
-			}
-			res := NewStorageImagesCreateImageOK(&body)
-			return res, nil
+			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage_images_create", resp.StatusCode, string(body))
@@ -738,110 +729,17 @@ func DecodeStorageImagesGetResponse(decoder func(*http.Response) goahttp.Decoder
 		switch resp.StatusCode {
 		case http.StatusOK:
 			var (
-				body StorageImagesGetResponseBody
+				body *vm.Image
 				err  error
 			)
 			err = decoder(resp).Decode(&body)
 			if err != nil {
 				return nil, goahttp.ErrDecodingError("spin-registry", "storage_images_get", err)
 			}
-			err = ValidateStorageImagesGetResponseBody(&body)
-			if err != nil {
-				return nil, goahttp.ErrValidationError("spin-registry", "storage_images_get", err)
-			}
-			res := NewStorageImagesGetImageOK(&body)
-			return res, nil
+			return body, nil
 		default:
 			body, _ := ioutil.ReadAll(resp.Body)
 			return nil, goahttp.ErrInvalidResponse("spin-registry", "storage_images_get", resp.StatusCode, string(body))
 		}
 	}
-}
-
-// marshalSpinregistryImageToImageRequestBody builds a value of type
-// *ImageRequestBody from a value of type *spinregistry.Image.
-func marshalSpinregistryImageToImageRequestBody(v *spinregistry.Image) *ImageRequestBody {
-	res := &ImageRequestBody{
-		Path:   v.Path,
-		Cdrom:  v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
-}
-
-// marshalImageRequestBodyToSpinregistryImage builds a value of type
-// *spinregistry.Image from a value of type *ImageRequestBody.
-func marshalImageRequestBodyToSpinregistryImage(v *ImageRequestBody) *spinregistry.Image {
-	res := &spinregistry.Image{
-		Path:   v.Path,
-		Cdrom:  v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
-}
-
-// marshalSpinregistryUpdatedVMToUpdatedVMRequestBody builds a value of type
-// *UpdatedVMRequestBody from a value of type *spinregistry.UpdatedVM.
-func marshalSpinregistryUpdatedVMToUpdatedVMRequestBody(v *spinregistry.UpdatedVM) *UpdatedVMRequestBody {
-	res := &UpdatedVMRequestBody{
-		Name:   v.Name,
-		Cpus:   v.Cpus,
-		Memory: v.Memory,
-	}
-	if v.Images != nil {
-		res.Images = make([]*ImageRequestBody, len(v.Images))
-		for i, val := range v.Images {
-			res.Images[i] = marshalSpinregistryImageToImageRequestBody(val)
-		}
-	}
-	if v.Ports != nil {
-		res.Ports = make(map[uint]string, len(v.Ports))
-		for key, val := range v.Ports {
-			tk := key
-			tv := val
-			res.Ports[tk] = tv
-		}
-	}
-
-	return res
-}
-
-// marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM builds a value of type
-// *spinregistry.UpdatedVM from a value of type *UpdatedVMRequestBody.
-func marshalUpdatedVMRequestBodyToSpinregistryUpdatedVM(v *UpdatedVMRequestBody) *spinregistry.UpdatedVM {
-	res := &spinregistry.UpdatedVM{
-		Name:   v.Name,
-		Cpus:   v.Cpus,
-		Memory: v.Memory,
-	}
-	if v.Images != nil {
-		res.Images = make([]*spinregistry.Image, len(v.Images))
-		for i, val := range v.Images {
-			res.Images[i] = marshalImageRequestBodyToSpinregistryImage(val)
-		}
-	}
-	if v.Ports != nil {
-		res.Ports = make(map[uint]string, len(v.Ports))
-		for key, val := range v.Ports {
-			tk := key
-			tv := val
-			res.Ports[tk] = tv
-		}
-	}
-
-	return res
-}
-
-// unmarshalImageResponseBodyToSpinregistryImage builds a value of type
-// *spinregistry.Image from a value of type *ImageResponseBody.
-func unmarshalImageResponseBodyToSpinregistryImage(v *ImageResponseBody) *spinregistry.Image {
-	res := &spinregistry.Image{
-		Path:   *v.Path,
-		Cdrom:  *v.Cdrom,
-		Volume: v.Volume,
-	}
-
-	return res
 }

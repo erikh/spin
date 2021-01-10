@@ -20,7 +20,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/erikh/spin/clients/api"
-	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
+	"github.com/erikh/spin/pkg/vm"
 
 	_ "github.com/erikh/spin/statik"
 )
@@ -177,23 +177,25 @@ func create(ctx *cli.Context) error {
 	name := ctx.Args().Get(0)
 	volume := ctx.Args().Get(1)
 
-	vm := &spinapiserver.CreateVM{
-		Name:   name,
-		Cpus:   ctx.Uint("cpus"),
-		Memory: ctx.Uint("memory"),
-		Storage: []*spinapiserver.Storage{
+	v := &vm.Create{
+		Core: vm.Core{
+			Name:   name,
+			CPUs:   ctx.Uint("cpus"),
+			Memory: ctx.Uint("memory"),
+			Ports:  map[uint]string{},
+		},
+		Storage: []vm.Storage{
 			{
 				Volume:    stringPtr(volume),
 				Image:     name,
 				ImageSize: uintPtr(ctx.Uint("image-size")),
 			},
 		},
-		Ports: map[uint]string{},
 	}
 
 	if ctx.String("cdrom") != "" {
-		vm.Storage = append(vm.Storage, &spinapiserver.Storage{
-			Cdrom: true,
+		v.Storage = append(v.Storage, vm.Storage{
+			CDROM: true,
 			Image: ctx.String("cdrom"),
 		})
 	}
@@ -209,10 +211,10 @@ func create(ctx *cli.Context) error {
 			return err
 		}
 
-		vm.Ports[uint(guestPort)] = parts[1]
+		v.Ports[uint(guestPort)] = parts[1]
 	}
 
-	id, err := getClient(ctx).VMCreate(context.Background(), vm)
+	id, err := getClient(ctx).VMCreate(context.Background(), v)
 	if err != nil {
 		return err
 	}
@@ -325,7 +327,7 @@ func vmImageList(ctx *cli.Context) error {
 	fmt.Fprintf(w, "INDEX\tPATH\tCDROM?\n")
 
 	for x, image := range ret.Images {
-		fmt.Fprintf(w, "%d\t%s\t%v\n", x, image.Path, image.Cdrom)
+		fmt.Fprintf(w, "%d\t%s\t%v\n", x, image.Path, image.CDROM)
 	}
 
 	return w.Flush()

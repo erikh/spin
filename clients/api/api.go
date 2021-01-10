@@ -7,6 +7,7 @@ import (
 
 	"github.com/erikh/spin/gen/http/spin_apiserver/client"
 	spinapiserver "github.com/erikh/spin/gen/spin_apiserver"
+	"github.com/erikh/spin/pkg/vm"
 	goahttp "goa.design/goa/v3/http"
 )
 
@@ -37,7 +38,7 @@ func New(cc Config) *Client {
 }
 
 // VMCreate creates a new VM based on the properties provided.
-func (c *Client) VMCreate(ctx context.Context, vm *spinapiserver.CreateVM) (uint64, error) {
+func (c *Client) VMCreate(ctx context.Context, vm *vm.Create) (uint64, error) {
 	res, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
@@ -63,19 +64,19 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 }
 
 // VMUpdate updates a single VM for an ID.
-func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *spinapiserver.UpdatedVM) error {
+func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *vm.Transient) error {
 	_, err := c.client.VMUpdate()(ctx, &spinapiserver.VMUpdatePayload{ID: id, VM: vm})
 	return err
 }
 
 // VMGet gets a VM by ID
-func (c *Client) VMGet(ctx context.Context, id uint64) (*spinapiserver.UpdatedVM, error) {
+func (c *Client) VMGet(ctx context.Context, id uint64) (*vm.Transient, error) {
 	res, err := c.client.VMGet()(ctx, &spinapiserver.VMGetPayload{ID: id})
 	if err != nil {
 		return nil, err
 	}
 
-	return res.(*spinapiserver.UpdatedVM), nil
+	return res.(*vm.Transient), nil
 }
 
 // ControlStart starts a VM by id.

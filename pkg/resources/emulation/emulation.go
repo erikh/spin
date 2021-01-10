@@ -1,8 +1,8 @@
 package emulation
 
 import (
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
 	"github.com/erikh/spin/pkg/agent/dispatcher"
+	"github.com/erikh/spin/pkg/vm"
 )
 
 // ResourceType encapuslates our standard resource type, for all storage
@@ -27,7 +27,7 @@ func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 	return dispatcher.Table{
 		"write_config": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"vm": func() interface{} { return &spinregistry.UpdatedVM{} },
+				"vm": func() interface{} { return &vm.Transient{} },
 				"id": dispatcher.TypeUint64,
 			},
 			Dispatch: dc.WriteConfig,

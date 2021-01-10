@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 )
 
 func TestDispatcher(t *testing.T) {
@@ -33,7 +33,7 @@ func TestDispatcher(t *testing.T) {
 			},
 		},
 		"with_typed_parameters": Action{
-			OptionalParameters: ParameterTable{"vm": func() interface{} { return &spinregistry.UpdatedVM{} }},
+			OptionalParameters: ParameterTable{"vm": func() interface{} { return &vm.Transient{} }},
 			RequiredParameters: ParameterTable{"string": TypeString, "uint": TypeUint64},
 			Dispatch: func(c Command) error {
 				switch c.Parameter("string").(type) {
@@ -49,7 +49,7 @@ func TestDispatcher(t *testing.T) {
 				}
 
 				switch c.Parameter("vm").(type) {
-				case *spinregistry.UpdatedVM:
+				case *vm.Transient:
 				case nil:
 				default:
 					return errors.New("invalid type for string")
@@ -60,11 +60,13 @@ func TestDispatcher(t *testing.T) {
 		},
 	}
 
-	vm, _ := json.Marshal(&spinregistry.UpdatedVM{
-		Name:   "foo",
-		Cpus:   1,
-		Memory: 1024,
-		Images: []*spinregistry.Image{
+	vm, _ := json.Marshal(&vm.Transient{
+		Core: vm.Core{
+			Name:   "foo",
+			CPUs:   1,
+			Memory: 1024,
+		},
+		Images: []vm.Image{
 			{
 				Path: "test.raw",
 			},

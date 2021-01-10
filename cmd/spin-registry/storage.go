@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	"github.com/urfave/cli/v2"
 )
 
@@ -71,7 +71,7 @@ func messageStorageImageGet(ctx *cli.Context) error {
 }
 
 func messageStorageImageCreate(ctx *cli.Context) error {
-	s := &spinregistry.Storage{}
+	s := &vm.Storage{}
 
 	if err := json.NewDecoder(os.Stdin).Decode(s); err != nil {
 		return err

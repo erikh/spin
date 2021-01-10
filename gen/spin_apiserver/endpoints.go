@@ -10,6 +10,7 @@ package spinapiserver
 import (
 	"context"
 
+	"github.com/erikh/spin/pkg/vm"
 	goa "goa.design/goa/v3/pkg"
 )
 
@@ -57,7 +58,7 @@ func (e *Endpoints) Use(m func(goa.Endpoint) goa.Endpoint) {
 // "vm_create" of service "spin-apiserver".
 func NewVMCreateEndpoint(s Service) goa.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
-		p := req.(*CreateVM)
+		p := req.(*vm.Create)
 		return s.VMCreate(ctx, p)
 	}
 }

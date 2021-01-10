@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"os"
 
-	spinregistry "github.com/erikh/spin/gen/spin_registry"
+	"github.com/erikh/spin/pkg/vm"
 	"github.com/urfave/cli/v2"
 )
 
 func messageVMCreate(ctx *cli.Context) error {
-	var vm spinregistry.UpdatedVM
+	var vm vm.Transient
 
 	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
@@ -32,7 +32,7 @@ func messageVMUpdate(ctx *cli.Context) error {
 		return err
 	}
 
-	var vm spinregistry.UpdatedVM
+	var vm vm.Transient
 
 	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
 		return fmt.Errorf("Error decoding JSON document: %v", err)

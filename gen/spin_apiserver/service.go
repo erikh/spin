@@ -9,18 +9,20 @@ package spinapiserver
 
 import (
 	"context"
+
+	"github.com/erikh/spin/pkg/vm"
 )
 
 // Bridge between the outer-facing UIs and the internals
 type Service interface {
 	// VMCreate implements vm_create.
-	VMCreate(context.Context, *CreateVM) (res uint64, err error)
+	VMCreate(context.Context, *vm.Create) (res uint64, err error)
 	// VMDelete implements vm_delete.
 	VMDelete(context.Context, *VMDeletePayload) (err error)
 	// VMList implements vm_list.
 	VMList(context.Context) (res []uint64, err error)
 	// VMGet implements vm_get.
-	VMGet(context.Context, *VMGetPayload) (res *UpdatedVM, err error)
+	VMGet(context.Context, *VMGetPayload) (res *vm.Transient, err error)
 	// VMUpdate implements vm_update.
 	VMUpdate(context.Context, *VMUpdatePayload) (err error)
 	// ControlStart implements control_start.
@@ -41,20 +43,6 @@ const ServiceName = "spin-apiserver"
 // MethodKey key.
 var MethodNames = [8]string{"vm_create", "vm_delete", "vm_list", "vm_get", "vm_update", "control_start", "control_stop", "control_shutdown"}
 
-// CreateVM is the payload type of the spin-apiserver service vm_create method.
-type CreateVM struct {
-	// Storage references
-	Storage []*Storage
-	// Name of VM; does not need to be unique
-	Name string
-	// CPU count
-	Cpus uint
-	// Memory (in megabytes)
-	Memory uint
-	// Ports to map to this vm: guest -> host addr:port
-	Ports map[uint]string
-}
-
 // VMDeletePayload is the payload type of the spin-apiserver service vm_delete
 // method.
 type VMDeletePayload struct {
@@ -68,27 +56,13 @@ type VMGetPayload struct {
 	ID uint64
 }
 
-// UpdatedVM is the result type of the spin-apiserver service vm_get method.
-type UpdatedVM struct {
-	// Image references
-	Images []*Image
-	// Name of VM; does not need to be unique
-	Name string
-	// CPU count
-	Cpus uint
-	// Memory (in megabytes)
-	Memory uint
-	// Ports to map to this vm: guest -> host addr:port
-	Ports map[uint]string
-}
-
 // VMUpdatePayload is the payload type of the spin-apiserver service vm_update
 // method.
 type VMUpdatePayload struct {
 	// ID of VM to Update
 	ID uint64
 	// VM Manifest to Update
-	VM *UpdatedVM
+	VM *vm.Transient
 }
 
 // ControlStartPayload is the payload type of the spin-apiserver service
@@ -110,24 +84,4 @@ type ControlStopPayload struct {
 type ControlShutdownPayload struct {
 	// ID of VM to shutdown
 	ID uint64
-}
-
-type Storage struct {
-	// Volume name; required if image is not a cdrom
-	Volume *string
-	// Image filename, no `/` characters
-	Image string
-	// Image size (in gigabytes); required if image is not a cdrom
-	ImageSize *uint
-	// Is this image a cdrom?
-	Cdrom bool
-}
-
-type Image struct {
-	// Image path
-	Path string
-	// Is this a cdrom image?
-	Cdrom bool
-	// Volume name
-	Volume *string
 }
