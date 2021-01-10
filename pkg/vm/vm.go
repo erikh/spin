@@ -8,7 +8,17 @@ import (
 	"strconv"
 )
 
-var nameRegex = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+// StringPtr returns the string provided as a pointer.
+func StringPtr(s string) *string {
+	return &s
+}
+
+// UIntPtr returns the uint provided as a pointer.
+func UIntPtr(u uint) *uint {
+	return &u
+}
+
+var nameRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_-]*$`)
 
 // Storage is for creating and referencing new storage. Existing storage
 // references, with the exception of adding cdroms should consult with the
@@ -32,18 +42,18 @@ type Core struct {
 	Ports  PortMap `json:"ports"`
 }
 
-// Create is for creating new VMs. Storage definitons are created as necessary
-// and turned into image definitions (see Updated type)
-type Create struct {
-	Core    `json:",inline"`
-	Storage []Storage `json:"storage"`
-}
-
 // Image is an image that is already created.
 type Image struct {
 	Path   string  `json:"path"`
 	CDROM  bool    `json:"cdrom"`
 	Volume *string `json:"volume"`
+}
+
+// Create is for creating new VMs. Storage definitons are created as necessary
+// and turned into image definitions (see Updated type)
+type Create struct {
+	Core    `json:",inline"`
+	Storage []Storage `json:"storage"`
 }
 
 // Transient is for in-situ records that are usually being transformed.
@@ -141,11 +151,22 @@ func (p PortMap) Validate() error {
 
 // Validate the Storage structure
 func (s Storage) Validate() error {
+	// TODO
+	// additional validations around image paths, specifically WRT use of whitespace
+
 	if s.Image == "" {
 		return errors.New("path to image is empty")
 	}
 
-	if !s.CDROM {
+	if s.CDROM {
+		if s.Volume != nil {
+			return errors.New("volumes aren't used with cdroms")
+		}
+
+		if s.ImageSize != nil {
+			return errors.New("image size isn't used with cdroms")
+		}
+	} else {
 		if s.Volume == nil {
 			return errors.New("volume is unset")
 		}
@@ -168,11 +189,18 @@ func (s Storage) Validate() error {
 
 // Validate the Image structure
 func (i Image) Validate() error {
+	// TODO
+	// additional validations around image paths, specifically WRT use of whitespace
+
 	if i.Path == "" {
 		return errors.New("path is empty")
 	}
 
-	if !i.CDROM {
+	if i.CDROM {
+		if i.Volume != nil {
+			return errors.New("volumes aren't used with cdroms")
+		}
+	} else {
 		if i.Volume == nil {
 			return errors.New("volume is unset")
 		}
