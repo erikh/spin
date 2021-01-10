@@ -54,7 +54,11 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 	return DispatcherConfig{
 		WriteConfig: func(c dispatcher.Command) error {
 			id := c.Parameter("id").(*uint64)
+
 			vm := c.Parameter("vm").(*vm.Transient)
+			if err := vm.Validate(); err != nil {
+				return err
+			}
 
 			tc, err := vmToTemplateConfig(ac, *id, vm)
 			if err != nil {

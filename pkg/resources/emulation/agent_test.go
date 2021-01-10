@@ -60,10 +60,12 @@ var testTable = map[string]test{
 						Name:   "foo",
 						CPUs:   1,
 						Memory: 1024,
+						Ports:  vm.PortMap{},
 					},
 					Images: []vm.Image{
 						{
-							Path: "test.raw",
+							Volume: vm.StringPtr("test"),
+							Path:   "test.raw",
 						},
 					},
 				},
@@ -128,10 +130,12 @@ var testTable = map[string]test{
 							Name:   "foo",
 							CPUs:   1,
 							Memory: 1024,
+							Ports:  vm.PortMap{},
 						},
 						Images: []vm.Image{
 							{
-								Path: "test.raw",
+								Path:   "test.raw",
+								Volume: vm.StringPtr("test"),
 							},
 						},
 					},

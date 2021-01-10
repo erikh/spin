@@ -17,6 +17,10 @@ func messageVMCreate(ctx *cli.Context) error {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
 	}
 
+	if err := vm.Validate(); err != nil {
+		return err
+	}
+
 	id, err := getClient(ctx).VMCreate(context.Background(), &vm)
 	if err != nil {
 		return err
@@ -36,6 +40,10 @@ func messageVMUpdate(ctx *cli.Context) error {
 
 	if err := json.NewDecoder(os.Stdin).Decode(&vm); err != nil {
 		return fmt.Errorf("Error decoding JSON document: %v", err)
+	}
+
+	if err := vm.Validate(); err != nil {
+		return err
 	}
 
 	return getClient(ctx).VMUpdate(context.Background(), id, &vm)

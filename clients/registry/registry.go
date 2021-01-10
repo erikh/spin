@@ -39,6 +39,10 @@ func New(cc Config) *Client {
 
 // VMCreate creates a new vm.
 func (c *Client) VMCreate(ctx context.Context, vm *vm.Transient) (uint64, error) {
+	if err := vm.Validate(); err != nil {
+		return 0, err
+	}
+
 	pkg, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
@@ -49,6 +53,10 @@ func (c *Client) VMCreate(ctx context.Context, vm *vm.Transient) (uint64, error)
 
 // VMUpdate updates a vm by id.
 func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *vm.Transient) error {
+	if err := vm.Validate(); err != nil {
+		return err
+	}
+
 	_, err := c.client.VMUpdate()(ctx, &spinregistry.UpdateVM{ID: id, VM: vm})
 	return err
 }
@@ -126,6 +134,10 @@ func (c *Client) StorageImageGet(ctx context.Context, volumeName, imageName stri
 
 // StorageImageCreate creates an image
 func (c *Client) StorageImageCreate(ctx context.Context, s *vm.Storage) (*vm.Image, error) {
+	if err := s.Validate(); err != nil {
+		return nil, err
+	}
+
 	img, err := c.client.StorageImagesCreate()(ctx, s)
 	if err != nil {
 		return nil, err

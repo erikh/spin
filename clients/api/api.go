@@ -39,6 +39,10 @@ func New(cc Config) *Client {
 
 // VMCreate creates a new VM based on the properties provided.
 func (c *Client) VMCreate(ctx context.Context, vm *vm.Create) (uint64, error) {
+	if err := vm.Validate(); err != nil {
+		return 0, err
+	}
+
 	res, err := c.client.VMCreate()(ctx, vm)
 	if err != nil {
 		return 0, err
@@ -65,6 +69,10 @@ func (c *Client) VMList(ctx context.Context) ([]uint64, error) {
 
 // VMUpdate updates a single VM for an ID.
 func (c *Client) VMUpdate(ctx context.Context, id uint64, vm *vm.Transient) error {
+	if err := vm.Validate(); err != nil {
+		return err
+	}
+
 	_, err := c.client.VMUpdate()(ctx, &spinapiserver.VMUpdatePayload{ID: id, VM: vm})
 	return err
 }

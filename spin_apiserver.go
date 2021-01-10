@@ -97,6 +97,10 @@ func (s *spinApiserversrvc) apiOneShot(ctx context.Context, adds ...*spinbroker.
 }
 
 func (s *spinApiserversrvc) VMUpdate(ctx context.Context, p *spinapiserver.VMUpdatePayload) error {
+	if err := p.VM.Validate(); err != nil {
+		return err
+	}
+
 	ret := &vm.Transient{
 		Core: vm.Core{
 			Name:   p.VM.Name,
@@ -146,6 +150,10 @@ func (s *spinApiserversrvc) VMList(ctx context.Context) ([]uint64, error) {
 }
 
 func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *vm.Create) (uint64, error) {
+	if err := p.Validate(); err != nil {
+		return 0, err
+	}
+
 	images := []vm.Image{}
 
 	for _, storage := range p.Storage {
