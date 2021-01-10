@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/rakyll/statik/fs"
@@ -39,9 +40,10 @@ func main() {
 
 	app.Commands = []*cli.Command{
 		{
-			Name:   "serve",
-			Usage:  "Serve consoles for your VMs",
-			Action: serve,
+			Name:      "serve",
+			Usage:     "Serve consoles for your VMs",
+			ArgsUsage: " ",
+			Action:    serve,
 		},
 		{
 			Name:      "view",
@@ -114,6 +116,11 @@ func main() {
 					ArgsUsage: "[name] [volume]",
 					Action:    create,
 					Flags: []cli.Flag{
+						&cli.StringSliceFlag{
+							Name:    "port",
+							Aliases: []string{"p"},
+							Usage:   "Syntax: <guestport>:<hostaddr>:<hostport>",
+						},
 						&cli.StringFlag{
 							Name:    "cdrom",
 							Aliases: []string{"d"},
@@ -181,6 +188,7 @@ func create(ctx *cli.Context) error {
 				ImageSize: uintPtr(ctx.Uint("image-size")),
 			},
 		},
+		Ports: map[uint]string{},
 	}
 
 	if ctx.String("cdrom") != "" {
@@ -188,6 +196,20 @@ func create(ctx *cli.Context) error {
 			Cdrom: true,
 			Image: ctx.String("cdrom"),
 		})
+	}
+
+	for _, port := range ctx.StringSlice("port") {
+		parts := strings.SplitN(port, ":", 2)
+		if len(parts) != 2 {
+			return fmt.Errorf("invalid port specification: %v", port)
+		}
+
+		guestPort, err := strconv.ParseUint(parts[0], 10, 16)
+		if err != nil {
+			return err
+		}
+
+		vm.Ports[uint(guestPort)] = parts[1]
 	}
 
 	id, err := getClient(ctx).VMCreate(context.Background(), vm)

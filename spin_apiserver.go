@@ -38,6 +38,7 @@ func toRegistryVM(p *spinapiserver.CreateVM, images []*spinregistry.Image) *spin
 		Cpus:   p.Cpus,
 		Memory: p.Memory,
 		Images: images,
+		Ports:  p.Ports,
 	}
 }
 
@@ -98,6 +99,7 @@ func (s *spinApiserversrvc) VMUpdate(ctx context.Context, p *spinapiserver.VMUpd
 		Name:   p.VM.Name,
 		Cpus:   p.VM.Cpus,
 		Memory: p.VM.Memory,
+		Ports:  p.VM.Ports,
 	}
 
 	for _, image := range p.VM.Images {
@@ -129,6 +131,7 @@ func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPay
 		Name:   vm.Name,
 		Cpus:   vm.Cpus,
 		Memory: vm.Memory,
+		Ports:  vm.Ports,
 	}
 
 	for _, image := range vm.Images {
@@ -137,6 +140,7 @@ func (s *spinApiserversrvc) VMGet(ctx context.Context, p *spinapiserver.VMGetPay
 
 	return ret, nil
 }
+
 func (s *spinApiserversrvc) VMList(ctx context.Context) ([]uint64, error) {
 	return s.registry.VMList(ctx)
 }
