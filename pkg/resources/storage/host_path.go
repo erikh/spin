@@ -13,6 +13,18 @@ import (
 	"github.com/erikh/spin/pkg/agent/dispatcher"
 )
 
+func validateVolumePath(p string) error {
+	if strings.Contains(p, "/") || strings.Contains(p, "..") {
+		return errors.New("volumes may not contain path components")
+	}
+
+	if p == "" || p == "." {
+		return errors.New("volumes may not refer to the root directory")
+	}
+
+	return nil
+}
+
 func hostPathDispatcher(basePath string) DispatcherConfig {
 	bp := func(strs ...interface{}) (string, error) {
 		if len(strs) == 0 {
@@ -22,7 +34,11 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 		res := []string{basePath}
 
 		for _, str := range strs {
-			if str, ok := str.(*string); ok {
+			if str, ok := str.(*string); ok && str != nil {
+				if err := validateVolumePath(*str); err != nil {
+					return "", err
+				}
+
 				res = append(res, *str)
 			} else {
 				return "", errors.New("path must be a string")
