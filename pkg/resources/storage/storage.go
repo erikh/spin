@@ -16,6 +16,7 @@ type DispatcherConfig struct {
 	DeleteImage  dispatcher.Func
 	ResizeImage  dispatcher.Func
 	MoveImage    dispatcher.Func
+	CopyImage    dispatcher.Func
 }
 
 // Dispatcher customizes a dispatcher for the purposes of making a storage
@@ -45,6 +46,15 @@ func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 				"image":  dispatcher.TypeString,
 			},
 			Dispatch: dc.DeleteImage,
+		},
+		"copy_image": {
+			RequiredParameters: dispatcher.ParameterTable{
+				"from_volume": dispatcher.TypeString,
+				"to_volume":   dispatcher.TypeString,
+				"from_image":  dispatcher.TypeString,
+				"to_image":    dispatcher.TypeString,
+			},
+			Dispatch: dc.CopyImage,
 		},
 		"resize_image": {
 			RequiredParameters: dispatcher.ParameterTable{

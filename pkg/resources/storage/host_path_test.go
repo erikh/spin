@@ -707,6 +707,191 @@ var testTable = map[string]test{
 		},
 		pass: false,
 	},
+	"copy_image green": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "test",
+					"from_image":  "test.raw",
+					"to_volume":   "test",
+					"to_image":    "test2.raw",
+				},
+			},
+		},
+		pass: true,
+		validate: func(ta testArgs) error {
+			fi, err := os.Stat(filepath.Join(ta.dir, "test", "test.raw"))
+			if err != nil {
+				return err
+			}
+
+			fi2, err := os.Stat(filepath.Join(ta.dir, "test", "test2.raw"))
+			if err != nil {
+				return err
+			}
+
+			if fi.Size() != fi2.Size() {
+				return errors.New("invalid size")
+			}
+
+			return nil
+		},
+	},
+	"copy_image red 1": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "test",
+					"from_image":  "nonexistent",
+					"to_volume":   "test",
+					"to_image":    "test2.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"copy_image red 2": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "nonexistent",
+					"from_image":  "test.raw",
+					"to_volume":   "test",
+					"to_image":    "test2.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"copy_image red 3": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "test",
+					"from_image":  "test.raw",
+					"to_volume":   "nonexistent",
+					"to_image":    "test2.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"copy_image red 4": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "test",
+					"from_image":  "test.raw",
+					"to_volume":   "test",
+					"to_image":    "",
+				},
+			},
+		},
+		pass: false,
+	},
+	"copy_image red 5": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "copy_image",
+				Parameters: map[string]interface{}{
+					"from_volume": "test",
+					"from_image":  "test.raw",
+					"to_volume":   "test",
+					"to_image":    nil,
+				},
+			},
+		},
+		pass: false,
+	},
 }
 
 func sendMessages(ctx context.Context, t *testing.T, client *brokerclient.Client, commands []command) string {
@@ -797,7 +982,7 @@ func TestHostPathAgent(t *testing.T) {
 			}
 
 			if !result.Status && test.pass {
-				t.Fatalf("Status was not success for test %q", name)
+				t.Fatalf("Status was not success for test %q: %v (%v)", name, *result.Reason, *result.Causer)
 			} else if result.Status && !test.pass {
 				t.Fatalf("Status was true and test %q was not supposed to pass", name)
 			}

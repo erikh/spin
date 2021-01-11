@@ -3,6 +3,7 @@ package storage
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,6 +12,7 @@ import (
 	brokerclient "github.com/erikh/spin/clients/broker"
 	"github.com/erikh/spin/pkg/agent"
 	"github.com/erikh/spin/pkg/agent/dispatcher"
+	"golang.org/x/sys/unix"
 )
 
 func validateVolumePath(p string) error {
@@ -110,13 +112,57 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return nil
 		},
 		DeleteImage: func(c dispatcher.Command) error {
-			// FIXME change the protocol for this so it's safer
 			path, err := bp(c.Parameter("volume").(*string), c.Parameter("image").(*string))
 			if err != nil {
 				return err
 			}
 
 			return os.Remove(path)
+		},
+		CopyImage: func(c dispatcher.Command) error {
+			fromPath, err := bp(c.Parameter("from_volume").(*string), c.Parameter("from_image").(*string))
+			if err != nil {
+				return err
+			}
+
+			toPath, err := bp(c.Parameter("to_volume").(*string), c.Parameter("to_image").(*string))
+			if err != nil {
+				return err
+			}
+			fromStat, err := os.Stat(fromPath)
+			if err != nil {
+				return fmt.Errorf("while locating original image: %v", err)
+			}
+
+			if _, err := os.Stat(toPath); err == nil {
+				return errors.New("target file exists")
+			}
+
+			to, err := os.Create(toPath)
+			if err != nil {
+				return fmt.Errorf("while opening target file: %v", err)
+			}
+			defer to.Close()
+
+			from, err := os.Open(fromPath)
+			if err != nil {
+				return fmt.Errorf("while reading from file: %v", err)
+			}
+			defer from.Close()
+
+			for toWrite := fromStat.Size(); toWrite > 0; {
+				written, err := unix.Sendfile(int(to.Fd()), int(from.Fd()), nil, int(toWrite))
+				if err != nil {
+					if err == io.EOF {
+						return nil
+					}
+					return err
+				}
+
+				toWrite -= int64(written)
+			}
+
+			return nil
 		},
 		ResizeImage: func(c dispatcher.Command) error {
 			return nil
