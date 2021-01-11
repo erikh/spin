@@ -101,7 +101,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if img.Path != "/tmp/test/test.raw" {
+	if img.Path != "test.raw" {
 		t.Fatal("image path was invalid")
 	}
 
@@ -141,7 +141,7 @@ func TestStorageImageDBCRUD(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if img.Path != filepath.Join("/tmp/test", imgName) {
+		if img.Path != imgName {
 			t.Fatal("filepath was not equal to expectation")
 		}
 	}
