@@ -90,7 +90,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return os.RemoveAll(path)
 		},
 		CreateImage: func(c dispatcher.Command) error {
-			path, err := bp(c.Parameter("volume_path").(*string), c.Parameter("image_name").(*string))
+			path, err := bp(c.Parameter("volume").(*string), c.Parameter("image").(*string))
 			if err != nil {
 				return err
 			}
@@ -111,7 +111,12 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 		},
 		DeleteImage: func(c dispatcher.Command) error {
 			// FIXME change the protocol for this so it's safer
-			return os.Remove(*c.Parameter("image_path").(*string))
+			path, err := bp(c.Parameter("volume").(*string), c.Parameter("image").(*string))
+			if err != nil {
+				return err
+			}
+
+			return os.Remove(path)
 		},
 		ResizeImage: func(c dispatcher.Command) error {
 			return nil

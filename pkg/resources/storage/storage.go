@@ -33,29 +33,29 @@ func Dispatcher(dc DispatcherConfig) dispatcher.Table {
 		},
 		"create_image": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"volume_path": dispatcher.TypeString,
-				"image_name":  dispatcher.TypeString,
-				"image_size":  dispatcher.TypeUint64,
+				"volume":     dispatcher.TypeString,
+				"image":      dispatcher.TypeString,
+				"image_size": dispatcher.TypeUint64,
 			},
 			Dispatch: dc.CreateImage,
 		},
 		"delete_image": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"image_path": dispatcher.TypeString,
+				"volume": dispatcher.TypeString,
 			},
 			Dispatch: dc.DeleteImage,
 		},
 		"resize_image": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"volume_path": dispatcher.TypeString,
-				"image_name":  dispatcher.TypeString,
-				"image_size":  dispatcher.TypeUint64,
+				"volume":     dispatcher.TypeString,
+				"image":      dispatcher.TypeString,
+				"image_size": dispatcher.TypeUint64,
 			},
 			Dispatch: dc.ResizeImage,
 		},
 		"move_image": {
 			RequiredParameters: dispatcher.ParameterTable{
-				"image_name":    dispatcher.TypeString,
+				"image":         dispatcher.TypeString,
 				"volume":        dispatcher.TypeString,
 				"target_volume": dispatcher.TypeString,
 			},

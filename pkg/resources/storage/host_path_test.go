@@ -202,9 +202,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  "test.raw",
-					"image_size":  5,
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
 				},
 			},
 		},
@@ -232,9 +232,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  "test.raw",
-					"image_size":  0,
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 0,
 				},
 			},
 		},
@@ -251,9 +251,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  "test.raw",
-					"image_size":  nil,
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": nil,
 				},
 			},
 		},
@@ -270,9 +270,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  "",
-					"image_size":  5,
+					"volume":     "test",
+					"image":      "",
+					"image_size": 5,
 				},
 			},
 		},
@@ -289,9 +289,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  nil,
-					"image_size":  5,
+					"volume":     "test",
+					"image":      nil,
+					"image_size": 5,
 				},
 			},
 		},
@@ -308,9 +308,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "",
-					"image_name":  "test.raw",
-					"image_size":  5,
+					"volume":     "",
+					"image":      "test.raw",
+					"image_size": 5,
 				},
 			},
 		},
@@ -327,9 +327,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": nil,
-					"image_name":  "test.raw",
-					"image_size":  5,
+					"volume":     nil,
+					"image":      "test.raw",
+					"image_size": 5,
 				},
 			},
 		},
@@ -346,9 +346,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": ".",
-					"image_name":  "test.raw",
-					"image_size":  5,
+					"volume":     ".",
+					"image":      "test.raw",
+					"image_size": 5,
 				},
 			},
 		},
@@ -365,9 +365,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "/",
-					"image_name":  "test.raw",
-					"image_size":  5,
+					"volume":     "/",
+					"image":      "test.raw",
+					"image_size": 5,
 				},
 			},
 		},
@@ -384,9 +384,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  ".",
-					"image_size":  5,
+					"volume":     "test",
+					"image":      ".",
+					"image_size": 5,
 				},
 			},
 		},
@@ -403,9 +403,9 @@ var testTable = map[string]test{
 			{
 				Action: "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": "test",
-					"image_name":  "/",
-					"image_size":  5,
+					"volume":     "test",
+					"image":      "/",
+					"image_size": 5,
 				},
 			},
 		},
