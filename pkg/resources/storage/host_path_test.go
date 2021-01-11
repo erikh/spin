@@ -411,6 +411,302 @@ var testTable = map[string]test{
 		},
 		pass: false,
 	},
+	"delete_image green": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+					"image":  "test.raw",
+				},
+			},
+		},
+		pass: true,
+		validate: func(ta testArgs) error {
+			_, err := os.Stat(filepath.Join(ta.dir, "test", "test.raw"))
+			if os.IsNotExist(err) {
+				return nil
+			}
+
+			if err == nil {
+				return errors.New("image still exists")
+			}
+
+			return err
+		},
+	},
+	"delete_image red 1": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "",
+					"image":  "test.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 2": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": nil,
+					"image":  "test.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 3": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": ".",
+					"image":  "test.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 4": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test/one",
+					"image":  "test.raw",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 5": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+					"image":  nil,
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 6": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+					"image":  "",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 7": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+					"image":  "..",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 8": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+					"image":  "test/",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 9": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"volume": "test",
+				},
+			},
+		},
+		pass: false,
+	},
+	"delete_image red 10": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume":     "test",
+					"image":      "test.raw",
+					"image_size": 5,
+				},
+			},
+			{
+				Action: "delete_image",
+				Parameters: map[string]interface{}{
+					"image": "test/",
+				},
+			},
+		},
+		pass: false,
+	},
 }
 
 func sendMessages(ctx context.Context, t *testing.T, client *brokerclient.Client, commands []command) string {
