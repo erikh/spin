@@ -95,9 +95,13 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 				return err
 			}
 
+			size := c.Parameter("image_size").(*uint64)
+			if size == nil || *size == 0 {
+				return errors.New("image size must not be empty")
+			}
+
 			// FIXME add a debug trap for these shell commands later
-			// NOTE the integer parameters come back from JSON by default as float64s
-			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%dG", *c.Parameter("image_size").(*uint64)))
+			cmd := exec.Command("qemu-img", "create", "-f", "raw", path, fmt.Sprintf("%dG", *size))
 			out, err := cmd.CombinedOutput()
 			if err != nil {
 				return errors.New(string(out))
@@ -106,6 +110,7 @@ func hostPathDispatcher(basePath string) DispatcherConfig {
 			return nil
 		},
 		DeleteImage: func(c dispatcher.Command) error {
+			// FIXME change the protocol for this so it's safer
 			return os.Remove(*c.Parameter("image_path").(*string))
 		},
 		ResizeImage: func(c dispatcher.Command) error {

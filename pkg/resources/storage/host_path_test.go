@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
+	"math"
 	"os"
 	"path/filepath"
 	"testing"
@@ -185,6 +186,226 @@ var testTable = map[string]test{
 				Action: "remove_volume",
 				Parameters: map[string]interface{}{
 					"path": "",
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image green": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  "test.raw",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: true,
+		validate: func(ta testArgs) error {
+			fi, err := os.Stat(filepath.Join(ta.dir, "test", "test.raw"))
+			if err != nil {
+				return err
+			}
+
+			if fi.Size() != int64(5*math.Pow(1024, 3)) {
+				return errors.New("image_size is not valid")
+			}
+			return nil
+		},
+	},
+	"create_image red 1": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  "test.raw",
+					"image_size":  0,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 2": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  "test.raw",
+					"image_size":  nil,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 3": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  "",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 4": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  nil,
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 5": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "",
+					"image_name":  "test.raw",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 6": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": nil,
+					"image_name":  "test.raw",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 7": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": ".",
+					"image_name":  "test.raw",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 8": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "/",
+					"image_name":  "test.raw",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 9": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  ".",
+					"image_size":  5,
+				},
+			},
+		},
+		pass: false,
+	},
+	"create_image red 10": {
+		commands: []command{
+			{
+				Action: "add_volume",
+				Parameters: map[string]interface{}{
+					"path": "test",
+				},
+			},
+			{
+				Action: "create_image",
+				Parameters: map[string]interface{}{
+					"volume_path": "test",
+					"image_name":  "/",
+					"image_size":  5,
 				},
 			},
 		},
