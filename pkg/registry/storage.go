@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"path/filepath"
 
 	"github.com/erikh/spin/pkg/vm"
 	"go.etcd.io/bbolt"
@@ -79,7 +78,7 @@ func (db *DB) StorageImageCreate(s *vm.Storage) (*vm.Image, error) {
 			return errors.New("invalid volume")
 		}
 
-		image.Path = filepath.Join(string(volPath), s.Image)
+		image.Path = s.Image
 		image.CDROM = false
 		image.Volume = s.Volume
 

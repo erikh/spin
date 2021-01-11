@@ -199,9 +199,9 @@ func (s *spinApiserversrvc) VMCreate(ctx context.Context, p *vm.Create) (uint64,
 				Resource: "storage",
 				Action:   "create_image",
 				Parameters: map[string]interface{}{
-					"volume_path": stor.Volume,
-					"image_name":  stor.Image,
-					"image_size":  *stor.ImageSize,
+					"volume":     stor.Volume,
+					"image":      stor.Image,
+					"image_size": *stor.ImageSize,
 				},
 			})
 			if err != nil {
@@ -269,7 +269,8 @@ func (s *spinApiserversrvc) VMDelete(ctx context.Context, p *spinapiserver.VMDel
 				Resource: "storage",
 				Action:   "delete_image",
 				Parameters: map[string]interface{}{
-					"image_path": stor.Path,
+					"volume": stor.Volume,
+					"image":  stor.Path,
 				},
 				Dependencies: []string{vmid},
 			})

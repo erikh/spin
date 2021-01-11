@@ -123,10 +123,14 @@ func emulationAgent(ac AgentConfig) DispatcherConfig {
 // MonitorDir is the directory where the qemu control monitors are kept
 var MonitorDir = filepath.Join(spin.ConfigDir(), "monitors")
 
+// VolumeRoot is the directory where the qemu images are kept
+var VolumeRoot = filepath.Join(spin.ConfigDir(), "images")
+
 // AgentConfig is the configuration struct for the constructor.
 type AgentConfig struct {
 	SystemDir    string
 	MonitorDir   string
+	VolumeRoot   string
 	ClientConfig brokerclient.Config
 	Supervisor   supervisor.Interface
 }
@@ -142,6 +146,10 @@ func (ac *AgentConfig) Validate() error {
 		ac.MonitorDir = MonitorDir
 	}
 
+	if ac.VolumeRoot == "" {
+		ac.VolumeRoot = VolumeRoot
+	}
+
 	if ac.Supervisor == nil {
 		var err error
 		ac.Supervisor, err = supervisor.New()
@@ -155,6 +163,10 @@ func (ac *AgentConfig) Validate() error {
 
 func (ac *AgentConfig) monitorPath(id uint64) string {
 	return filepath.Join(ac.MonitorDir, fmt.Sprintf("%d", id))
+}
+
+func (ac *AgentConfig) volumeImage(vol, img string) string {
+	return filepath.Join(ac.VolumeRoot, vol, img)
 }
 
 // NewAgent creates an agent; the configuration is validated and errors are

@@ -68,7 +68,7 @@ func vmToTemplateConfig(ac AgentConfig, id uint64, vm *vm.Transient) (templateCo
 				"-drive",
 				fmt.Sprintf(
 					"driver=raw,if=virtio,file=%s,cache=none,media=disk,index=%d",
-					storage.Path, i,
+					ac.volumeImage(*storage.Volume, storage.Path), i,
 				))
 		}
 	}
